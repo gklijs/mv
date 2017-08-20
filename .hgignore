@@ -1,8 +1,10 @@
 syntax: glob
 pom.xml
 pom.xml.asc
+resources/public/js/app.js
 *.jar
 *.class
+*.iml
 .gitignore
 .git/**
 
@@ -12,3 +14,7 @@ syntax: regexp
 ^target/
 ^classes/
 ^checkouts/
+^.idea/
+^logs/
+^resources/public/js/out
+
