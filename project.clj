@@ -4,6 +4,7 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
+                 [jayq "2.5.4" :scope "provided"]
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-anti-forgery "1.1.0"]
                  [org.clojure/tools.logging "0.4.0"]
@@ -29,16 +30,16 @@
                         :main         m-venue.embed-server
                         :uberjar-name "m-venue-embed.jar"
                         :cljsbuild {
-                                    :builds {
-                                       :main {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                                             :compiler
-                                                               {:main          "m-venue.app"
-                                                                :asset-path    "/js/out"
-                                                                :output-to     "resources/public/js/app.js"
-                                                                :output-dir    "resources/public/js/out"
-                                                                :source-map    true
-                                                                :optimizations :none
-                                                                :pretty-print  true}}}}
+                                    :builds [
+                                             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                                              :compiler
+                                                            {:main          "m-venue.app"
+                                                             :asset-path    "/js/out"
+                                                             :output-to     "resources/public/js/app.js"
+                                                             :output-dir    "resources/public/js/out"
+                                                             :source-map    true
+                                                             :optimizations :none
+                                                             :pretty-print  true}}]}
                         :source-paths   ["env/dev/clj"]
                         }
              :uberjar {:omit-source    true
@@ -52,7 +53,7 @@
                                                          :pretty-print  false
                                                          :closure-warnings
                                                                         {:externs-validation :off :non-standard-jsdoc :off}
-                                                         :externs       ["env/prod/resources/vue-externs.js"]}}}}
+                                                         :externs       ["env/prod/resources/jquery-externs-3.2.js"]}}}}
                        :aot            [m-venue.handler]
                        :uberjar-name   "m-venue-default.jar"
                        :source-paths   ["env/prod/clj"]

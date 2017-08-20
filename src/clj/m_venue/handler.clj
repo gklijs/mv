@@ -1,7 +1,6 @@
 (ns m-venue.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [hiccup.page :as hiccup]
             [clojure.tools.logging :as log]
             [m-venue.templates :as templates]
             [nginx.clojure.core :as ncc]
@@ -74,13 +73,14 @@
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (templates/render-page
+             (templates/page
                "home page"
+               (templates/nav-bar)
                [:div.jumbotron
                 [:h1 "Nginx-Clojure Web Example"]
                 [:hr]
                 [:div.alert.alert-success {:role "alert"} (str "Current User: " (get-user req))]
-                [:div#app2 {:v-html "message"} "initial content"]
+                [:div#app2 "initial content"]
                 [:p
                  [:div.btn-toolbar
                   (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
@@ -94,8 +94,9 @@
            ;; Websocket based chatroom
            ;; We can open two browser sessions to test it.
            (GET "/chatroom" [:as req]
-             (templates/render-page
+             (templates/page
                "chatroom"
+               (templates/nav-bar)
                [:div.container
                 [:div.panel.panel-success
                  [:div.panel-heading [:h3.panel-title "Chat Room" "@" (get-user req)]]
@@ -136,8 +137,9 @@
            (POST "/login" [uid pass :as {session :session}]
              (handle-login uid pass session))
            (GET "/login" []
-             (templates/render-page
+             (templates/page
                "login page"
+               (templates/nav-bar)
                [:div.container
                 [:div.panel.panel-primary
                  [:div.panel-heading [:h3.panel-title "Login Form"]]
