@@ -1,4 +1,4 @@
-(ns clojure-web-example.handler
+(ns m-venue.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [hiccup.page :as hiccup]

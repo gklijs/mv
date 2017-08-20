@@ -9,7 +9,7 @@
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>logs/clojure-web-example-%d{yyyy-MM-dd}-${MY_PNO}.log</fileNamePattern>
+      <fileNamePattern>logs/m-venue-%d{yyyy-MM-dd}-${MY_PNO}.log</fileNamePattern>
       <!-- keep 30 days' worth of history -->
       <maxHistory>30</maxHistory>
     </rollingPolicy>

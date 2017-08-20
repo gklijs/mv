@@ -1,7 +1,7 @@
-(ns clojure-web-example.handler-test
+(ns m-venue.handler-test
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
-            [clojure-web-example.handler :refer :all]))
+            [m-venue.handler :refer :all]))
 
 
 (deftest test-app

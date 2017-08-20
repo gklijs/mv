@@ -1,11 +1,9 @@
-(ns clojure-web-example.embed-server
+(ns m-venue.embed-server
   (:gen-class)
-  (:use [clojure-web-example.handler])
+  (:use [m-venue.handler])
   (:require [nginx.clojure.embed      :as embed]
             [clojure.tools.logging    :as log]
             [ring.middleware.reload :refer [wrap-reload]]))
-
-
 
 (defn start-server 
   "Run an emebed nginx-clojure for debug/test usage."

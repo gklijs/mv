@@ -1,5 +1,5 @@
-(defproject clojure-web-example "0.1.0"
-  :description "FIXME: write description"
+(defproject m-vanue "0.1.0"
+  :description "Site for cat lovers"
   :url "https://github.com/nginx-clojure/nginx-clojure/tree/master/example-projects/clojure-web-example"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
@@ -25,9 +25,9 @@
              :embed    {:dependencies
                                       [[nginx-clojure/nginx-clojure-embed "0.4.5"]
                                        [ring/ring-devel "1.6.2"]]
-                        :aot          [clojure-web-example.embed-server]
-                        :main         clojure-web-example.embed-server
-                        :uberjar-name "clojure-web-example-embed.jar"
+                        :aot          [m-venue.embed-server]
+                        :main         m-venue.embed-server
+                        :uberjar-name "m-venue-embed.jar"
                         :cljsbuild {
                                     :builds {
                                        :main {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
@@ -53,8 +53,8 @@
                                                          :closure-warnings
                                                                         {:externs-validation :off :non-standard-jsdoc :off}
                                                          :externs       ["env/prod/resources/vue-externs.js"]}}}}
-                       :aot            [clojure-web-example.handler]
-                       :uberjar-name   "clojure-web-example-default.jar"
+                       :aot            [m-venue.handler]
+                       :uberjar-name   "m-venue-default.jar"
                        :source-paths   ["env/prod/clj"]
                        :resource-paths ["env/prod/resources"]
                        }

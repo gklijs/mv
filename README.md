@@ -9,7 +9,7 @@ A basic example about nginx-clojure & clojure web dev. It uses:
 
 ## Run It
 
-Suppose our example project path is `/home/who/git/nginx-clojure/example-projects/clojure-web-example` .
+Suppose our example project path is `/home/who/git/nginx-clojure/example-projects/m-venue` .
 
 ```shell
 $ export EXAMPLE_ROOT=/home/who/git/nginx-clojure/example-projects/clojure-web-example
