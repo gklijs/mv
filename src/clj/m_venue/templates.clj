@@ -6,12 +6,8 @@
   [:nav.navbar
    [:div.navbar-brand
     [:a.navbar-item
-     {:href "http://bulma.io"}
-     [:img
-      {:height "28",
-       :width "112",
-       :alt "Bulma: a modern CSS framework based on Flexbox",
-       :src "http://bulma.io/images/bulma-logo.png"}]]
+     {:href "http://marthasvenue.nl"}
+     [:span.is-large "Martha's Venue"]]
     [:a.navbar-item.is-hidden-desktop
      {:target "_blank", :href "https://github.com/jgthms/bulma"}
      [:span.icon {:style "color: #333;"} [:i.fa.fa-github]]]
@@ -59,63 +55,12 @@
           [:a.bd-view-all-versions
            {:href "/versions"}
            "View all versions"]]]]]]
-     [:div.navbar-item.has-dropdown.is-hoverable
-      [:a.navbar-link
-       {:href "http://bulma.io/blog/"}
-       "\n          Blog\n        "]
-      [:div#blogDropdown.navbar-dropdown
-       {:data-style "width: 18rem;"}
-       [:a.navbar-item {:href "/2017/08/03/list-of-tags/"}]
-       [:div.navbar-content
-        [:p [:small.has-text-info "03 Aug 2017"]]
-        [:p "New feature: list of tags"]]
-       [:a.navbar-item
-        {:href "/2017/08/01/bulma-bootstrap-comparison/"}]
-       [:div.navbar-content
-        [:p [:small.has-text-info "01 Aug 2017"]]
-        [:p "Bulma / Bootstrap comparison"]]
-       [:a.navbar-item
-        {:href "/2017/07/24/access-previous-bulma-versions/"}]
-       [:div.navbar-content
-        [:p [:small.has-text-info "24 Jul 2017"]]
-        [:p "Access previous Bulma versions"]]
-       [:a.navbar-item
-        {:href "http://bulma.io/blog/"}
-        "\n            More posts\n          "]
-       [:hr.navbar-divider]
-       [:div.navbar-item
-        [:div.navbar-content
-         [:div.level.is-mobile
-          [:div.level-left
-           [:div.level-item [:strong "Stay up to date!"]]]
-          [:div.level-right
-           [:div.level-item
-            [:a.button.bd-is-rss.is-small
-             {:href "http://bulma.io/atom.xml"}
-             [:span.icon.is-small [:i.fa.fa-rss]]
-             [:span "Subscribe"]]]]]]]]]
-     [:div.navbar-item.has-dropdown.is-hoverable
-      [:div.navbar-link "\n          More\n        "]
-      [:div#moreDropdown.navbar-dropdown
-       [:a.navbar-item {:href "http://bulma.io/extensions/"}]
-       [:div.level.is-mobile
-        [:div.level-left
-         [:div.level-item
-          [:p
-           [:strong "Extensions"]
-           [:br]
-           [:small "Side projects to enhance Bulma"]]]]
-        [:div.level-right
-         [:div.level-item
-          [:span.icon.has-text-info [:i.fa.fa-plug]]]]]]]
      [:a.navbar-item
       {:href "http://bulma.io/expo/"}
-      [:span.bd-emoji "🎨"]
-      "\n        Expo\n      "]
+      [:span.icon [:i.fa.fa-paw]][:span "Cats"]]
      [:a.navbar-item
       {:href "http://bulma.io/love/"}
-      [:span.bd-emoji "❤️"]
-      "\n        Love\n      "]]
+      [:span.icon [:i.fa.fa-info]][:span "Info"]]]
     [:div.navbar-end
      [:a.navbar-item.is-hidden-desktop-only
       {:target "_blank", :href "https://github.com/jgthms/bulma"}
@@ -149,7 +94,7 @@
        {:content "width=device-width, initial-scale=1", :name "viewport"}]
      [:title title]
      [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
-     [:link {:rel "stylesheet" :href "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css"}]
+     [:link {:rel "stylesheet" :href "https://jenil.github.io/bulmaswatch/simplex/bulmaswatch.min.css"}]
       app-bar
       content
      [:script {:src "https://code.jquery.com/jquery-3.2.1.min.js"}]

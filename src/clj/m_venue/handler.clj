@@ -107,6 +107,62 @@
                   ]
                  [:div#board.list-group
                   ]
+                 [:section#card.section
+                  [:h1.title "Cards"]
+                  [:hr]
+                  [:div.columns
+                   [:div.column
+                    [:div.card
+                     [:div.card-image
+                      [:figure.image.is-4by3
+                       " "
+                       [:img
+                        {:alt "Image",
+                         :src "https://source.unsplash.com/random/800x600"}]
+                       " "]]
+                     [:div.card-content
+                      [:div.media
+                       [:div.media-left
+                        [:figure.image
+                         {:style "height: 40px; width: 40px;"}
+                         " "
+                         [:img
+                          {:alt "Image",
+                           :src "https://source.unsplash.com/random/96x96"}]
+                         " "]]
+                       [:div.media-content
+                        [:p.title.is-4 "John Smith"]
+                        [:p.subtitle.is-6 "@johnsmith"]]]
+                      [:div.content
+                       " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.\n                  "
+                       [:a "@bulmaio"]
+                       ".\n                  "
+                       [:a "#css"]
+                       [:a "#responsive"]
+                       [:br]
+                       " "
+                       [:small "11:09 PM - 1 Jan 2016"]
+                       " "]]]]
+                   [:div.column
+                    [:div.card
+                     [:header.card-header
+                      [:p.card-header-title " Component "]
+                      [:a.card-header-icon [:span.icon " " [:i.fa.fa-angle-down] " "]]]
+                     [:div.card-content
+                      [:div.content
+                       " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.\n                  "
+                       [:a "@bulmaio"]
+                       ".\n                  "
+                       [:a "#css"]
+                       [:a "#responsive"]
+                       [:br]
+                       " "
+                       [:small "11:09 PM - 1 Jan 2016"]
+                       " "]]
+                     [:footer.card-footer
+                      [:a.card-footer-item "Save"]
+                      [:a.card-footer-item "Edit"]
+                      [:a.card-footer-item "Delete"]]]]]]
                  [:div.panel-footer]
                  ]]))
            ;; chatroom Websocket server endpoint
