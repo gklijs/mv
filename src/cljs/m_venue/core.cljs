@@ -1,7 +1,7 @@
 (ns m-venue.core
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs.core.async :refer [put! chan <! >! timeout close!]])
-  (:use [jayq.core :only [$ css html text resolve] :rename {resolve jayq-resolve}])
+  (:use [jayq.core :only [$ css html text]])
   (:import goog.History))
 
 (def app (atom nil))

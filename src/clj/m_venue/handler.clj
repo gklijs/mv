@@ -164,7 +164,8 @@
                       [:a.card-footer-item "Edit"]
                       [:a.card-footer-item "Delete"]]]]]]
                  [:div.panel-footer]
-                 ]]))
+                 ]
+                [:script {:src "/js/chat.js"}]]))
            ;; chatroom Websocket server endpoint
            (GET "/chat" [:as req]
              (let [ch (ncc/hijack! req true)
