@@ -11,7 +11,8 @@
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [org.clojure/clojurescript "1.9.908" :scope "provided"]
                  [org.clojure/core.async "0.3.443" :scope "provided"]
-                 [org.clojure/tools.reader "1.0.5"]]
+                 [org.clojure/tools.reader "1.0.5"]
+                 [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj"]
   :target-path "target/%s"
