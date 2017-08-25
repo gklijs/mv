@@ -3,6 +3,7 @@
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [m-venue.templates :as templates]
+            [m-venue.repo :as repo]
             [nginx.clojure.core :as ncc]
             [nginx.clojure.session]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -70,33 +71,54 @@
                   (ncc/send! ch msg true false)))))
   nil)
 
+(def home-page {:m-venue.spec/title {:m-venue.spec/nl-label "Welkom bij Martha's Venue"}
+                :m-venue.spec/tiles [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
+                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}}
+                                     {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
+                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
+                                      :m-venue.spec/img   "uil.jpg"}
+                                     {:m-venue.spec/title {:m-venue.spec/nl-label "En nog wat meer"}
+                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Hier kan dus van alles en nogwat staan"}
+                                      :m-venue.spec/img   "blaat.jpg"}
+                                     ]})
+
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (templates/page
-               "home page"
-               (templates/nav-bar)
-               [:div.jumbotron
-                [:h1 "Nginx-Clojure Web Example"]
-                [:hr]
-                [:div.alert.alert-success {:role "alert"} (str "Current User: " (get-user req))]
-                [:div#app2 "initial content"]
-                [:p
-                 [:div.btn-toolbar
-                  (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
-                                      "/login"  "Login", "/chatroom" "ChatRoom"}]
-                    [:a.btn.btn-primary.btn-lg {:href href :role "button"} label])]
-                 ]]
+             (if-let [home-gd (repo/get-map "mv-gd-home")]
+               (templates/page
+                 (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])
+                 (templates/nav-bar :home)
+                 [:div.tile.is-ancestor
+                  [:div.tile.is-vertical.is-8
+                   [:div.tile.is-child.notification.is-primary
+                    [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]
+                   (map #(templates/tile %) (get home-gd :m-venue.spec/tiles))]
+                  [:div.tile.is-horizontal
+                   [:div.is-child
+                    (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
+                                        "/login"  "Login", "/chatroom" "ChatRoom"}]
+                      [:div.tile.notification
+                       [:div.control
+                        [:div.tags.has-addons
+                         [:span.tag label]
+                         [:a.tag.is-info {:href href} "go"]]]])
+                    ]]]
+                 )
+               "Not Found"
                ))
            (GET "/hello1" [] "Hello World!")
            (GET "/hello2" [:as req]
              (str "Hello " (get-user req) "!"))
+           (GET "/repo" []
+             (repo/set-map "mv-gd-home" home-page)
+             "data set")
            ;; Websocket based chatroom
            ;; We can open two browser sessions to test it.
            (GET "/chatroom" [:as req]
              (templates/page
                "chatroom"
-               (templates/nav-bar)
+               (templates/nav-bar :chat)
                [:div.container
                 [:div.panel.panel-success
                  [:div.panel-heading [:h3.panel-title "Chat Room" "@" (get-user req)]]
@@ -196,7 +218,7 @@
            (GET "/login" []
              (templates/page
                "login page"
-               (templates/nav-bar)
+               (templates/nav-bar :login)
                [:div.container
                 [:div.panel.panel-primary
                  [:div.panel-heading [:h3.panel-title "Login Form"]]

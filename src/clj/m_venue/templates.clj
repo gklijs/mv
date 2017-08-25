@@ -2,11 +2,11 @@
   (:require [hiccup.page :as hiccup]))
 
 (defn nav-bar
-  []
+  [sel-key]
   [:nav.navbar
    [:div.navbar-brand
     [:a.navbar-item
-     {:href "http://marthasvenue.nl"}
+     {:href "http://marthasvenue.nl" :class (if (= :home sel-key) "is-active" "")}
      [:span.is-large "Martha's Venue"]]
     [:a.navbar-item.is-hidden-desktop
      {:target "_blank", :href "https://github.com/jgthms/bulma"}
@@ -94,8 +94,17 @@
        {:content "width=device-width, initial-scale=1", :name "viewport"}]
      [:title title]
      [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
-     [:link {:rel "stylesheet" :href "https://jenil.github.io/bulmaswatch/simplex/bulmaswatch.min.css"}]
+     [:link {:rel "stylesheet" :href "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css"}]
       app-bar
       content
      [:script {:src "https://code.jquery.com/jquery-3.2.1.min.js"}]
      [:script {:src "/js/app.js"}]))
+
+(defn tile
+  "renders a tile"
+  [tile]
+   (let [type-class (rand-nth ["is-primary" "is-info" "is-warning" "is-danger" "is-success"])]
+     [:article.tile.is-child.notification {:class type-class}
+      [:div.content
+       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
+       [:p.subtitle (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]))

@@ -3,6 +3,7 @@
   (:use [m-venue.handler])
   (:require [nginx.clojure.embed      :as embed]
             [clojure.tools.logging    :as log]
+            [m-venue.demo-data :as demo-data]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defn start-server 
