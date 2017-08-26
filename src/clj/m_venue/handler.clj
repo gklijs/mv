@@ -71,17 +71,6 @@
                   (ncc/send! ch msg true false)))))
   nil)
 
-(def home-page {:m-venue.spec/title {:m-venue.spec/nl-label "Welkom bij Martha's Venue"}
-                :m-venue.spec/tiles [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
-                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}}
-                                     {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
-                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
-                                      :m-venue.spec/img   "uil.jpg"}
-                                     {:m-venue.spec/title {:m-venue.spec/nl-label "En nog wat meer"}
-                                      :m-venue.spec/text  {:m-venue.spec/nl-text "Hier kan dus van alles en nogwat staan"}
-                                      :m-venue.spec/img   "blaat.jpg"}
-                                     ]})
-
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
@@ -94,25 +83,21 @@
                    [:div.tile.is-child.notification.is-primary
                     [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]
                    (map #(templates/tile %) (get home-gd :m-venue.spec/tiles))]
-                  [:div.tile.is-horizontal
-                   [:div.is-child
+                  [:div.tile.is-vertical.is-4
                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                         "/login"  "Login", "/chatroom" "ChatRoom"}]
-                      [:div.tile.notification
+                      [:div.tile..is-child.notification
                        [:div.control
                         [:div.tags.has-addons
                          [:span.tag label]
                          [:a.tag.is-info {:href href} "go"]]]])
-                    ]]]
+                    ]]
                  )
                "Not Found"
                ))
            (GET "/hello1" [] "Hello World!")
            (GET "/hello2" [:as req]
              (str "Hello " (get-user req) "!"))
-           (GET "/repo" []
-             (repo/set-map "mv-gd-home" home-page)
-             "data set")
            ;; Websocket based chatroom
            ;; We can open two browser sessions to test it.
            (GET "/chatroom" [:as req]
@@ -210,6 +195,7 @@
            ;; In production environments it will be overwrited by
            ;; nginx static files service, see conf/nginx.conf
            (route/resources "/js")
+           (route/resources "/css")
            (route/not-found "Not Found"))
 
 (defroutes auth-routes

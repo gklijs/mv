@@ -11,7 +11,4 @@
                                             :m-venue.spec/text  {:m-venue.spec/nl-text "Hier kan dus van alles en nogwat staan"}
                                             :m-venue.spec/img   "blaat.jpg"}
                                            ]})
-
-(defn init!
-  []
-  (repo/set-map "mv-gd-home" home-page))
+(repo/set-map "mv-gd-home" home-page)

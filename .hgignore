@@ -2,6 +2,8 @@ syntax: glob
 pom.xml
 pom.xml.asc
 resources/public/js/app.js
+resources/public/css/mv.css
+resources/public/css/mv.css.map
 *.jar
 *.class
 *.iml
