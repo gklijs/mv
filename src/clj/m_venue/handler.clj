@@ -78,20 +78,25 @@
                (templates/page
                  (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])
                  (templates/nav-bar :home)
-                 [:div.tile.is-ancestor
-                  [:div.tile.is-vertical.is-8
-                   [:div.tile.is-child.notification.is-primary
-                    [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]
-                   (map #(templates/tile %) (get home-gd :m-venue.spec/tiles))]
-                  [:div.tile.is-vertical.is-4
+                 [:section.section.app
+                  [:div.tile.is-ancestor
+                   [:div.tile.is-vertical.is-8
+                    [:div.tile
+                     [:div.tile.is-parent.is-vertical
+                      [:article.tile.is-parent.notification.is-primary
+                       [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]]]
+                    [:div.tile.is-horizontal
+                     (map #(templates/tile %) (get home-gd :m-venue.spec/tiles))]]
+                   [:div.tile.is-parent.is-vertical
                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                         "/login"  "Login", "/chatroom" "ChatRoom"}]
-                      [:div.tile..is-child.notification
+                      [:article.tile.is-child.notification
                        [:div.control
                         [:div.tags.has-addons
                          [:span.tag label]
                          [:a.tag.is-info {:href href} "go"]]]])
                     ]]
+                  ]
                  )
                "Not Found"
                ))

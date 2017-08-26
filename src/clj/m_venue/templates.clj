@@ -22,7 +22,7 @@
    [:div#navMenubd-example.navbar-menu
     [:div.navbar-start
      [:div.navbar-item.has-dropdown.is-hoverable
-      [:a.navbar-link.is-active
+      [:a.navbar-link
        {:href "/documentation/overview/start/"}
        "\n          Docs\n        "]
       [:div.navbar-dropdown
@@ -57,10 +57,10 @@
            "View all versions"]]]]]]
      [:a.navbar-item
       {:href "http://bulma.io/expo/"}
-      [:span.icon [:i.fa.fa-paw]][:span "Cats"]]
+      [:span.icon [:i.fa.fa-paw]] [:span "Cats"]]
      [:a.navbar-item
       {:href "http://bulma.io/love/"}
-      [:span.icon [:i.fa.fa-info]][:span "Info"]]]
+      [:span.icon [:i.fa.fa-info]] [:span "Info"]]]
     [:div.navbar-end
      [:a.navbar-item.is-hidden-desktop-only
       {:target "_blank", :href "https://github.com/jgthms/bulma"}
@@ -74,9 +74,9 @@
         [:a.bd-tw-button.button
          {:href
                                "https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&hashtags=bulmaio&url=http://bulma.io&via=jgthms",
-          :target "_blank",
-          :data-social-target "http://bulma.io",
-          :data-social-action "tweet",
+          :target              "_blank",
+          :data-social-target  "http://bulma.io",
+          :data-social-action  "tweet",
           :data-social-network "Twitter"}
          [:span.icon [:i.fa.fa-twitter]]
          [:span "\n    Tweet\n  "]]]
@@ -88,23 +88,24 @@
 
 (defn page
   [title app-bar content]
-    (hiccup/html5
-      [:meta {:charset "utf-8"}]
-      [:meta
-       {:content "width=device-width, initial-scale=1", :name "viewport"}]
-     [:title title]
-     [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
-     [:link {:rel "stylesheet" :href "/css/mv.css"}]
-      app-bar
-      content
-     [:script {:src "https://code.jquery.com/jquery-3.2.1.min.js"}]
-     [:script {:src "/js/app.js"}]))
+  (hiccup/html5
+    [:meta {:charset "utf-8"}]
+    [:meta
+     {:content "width=device-width, initial-scale=1", :name "viewport"}]
+    [:title title]
+    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
+    [:link {:rel "stylesheet" :href "/css/mv.css"}]
+    app-bar
+    content
+    [:script {:src "https://code.jquery.com/jquery-3.2.1.min.js"}]
+    [:script {:src "/js/app.js"}]))
 
 (defn tile
   "renders a tile"
   [tile]
-   (let [type-class (rand-nth ["is-primary" "is-info" "is-warning" "is-danger" "is-success"])]
-     [:article.tile.is-child.notification {:class type-class}
+  (let [type-class (rand-nth ["is-primary" "is-info" "is-warning" "is-danger" "is-success"])]
+    [:div.tile.is-parent
+     [:article.tile.notification {:class type-class}
       [:div.content
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
-       [:p.subtitle (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]))
+       [:p.subtitle (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]]))

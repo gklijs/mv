@@ -4,15 +4,24 @@
 // Add a serif family
 $family-serif: "Merriweather", "Georgia", serif
 
-// Set the derived variables
-// Use the new pink as the primary color
 $red: #ff393e
-$primary: $red
+$primary: $red !default
+$primary-dark: darken($primary, 10)
 // Use the new serif family
 $family-primary: $family-serif
-$navbar-background-color: $red
 
-// 4. Import the rest of Bulma
+$navbar-background-color: $primary
+$navbar-item-color: $white
+$navbar-item-hover-color: $white
+$navbar-item-active-color: $white
+$navbar-item-active-background-color: darken($primary, 15)
+$navbar-item-hover-background-color: darken($primary, 15)
+$navbar-dropdown-arrow: $navbar-item-color
+
+.section.app
+  background: $red linear-gradient(10deg, $black, $red)
+
+// Import the rest of Bulma
 @import "../../../../bulma/sass/utilities/_all"
 @import "../../../../bulma/sass/base/all"
 @import "../../../../bulma/sass/elements/_all"
