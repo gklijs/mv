@@ -4,6 +4,7 @@
   :min-lein-version "2.0.0"
   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
+                 [image-resizer "0.1.10"]
                  [jayq "2.5.4-resolve-fix" :scope "provided"]
                  [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]
                  [org.clojure/clojure "1.9.0-alpha17"]
