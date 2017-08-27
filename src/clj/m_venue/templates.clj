@@ -13,7 +13,7 @@
   [sel-key]
   [:nav.navbar
    [:div.navbar-brand
-    [:a.navbar-item
+    [:a.navbar-item.is-tab
      {:href "http://marthasvenue.nl" :class (if (= :home sel-key) "is-active" "")}
      [:span.is-large "Martha's Venue"]]
     [:a.navbar-item.is-hidden-desktop
@@ -63,10 +63,10 @@
           [:a.bd-view-all-versions
            {:href "/versions"}
            "View all versions"]]]]]]
-     [:a.navbar-item
+     [:a.navbar-item.is-tab
       {:href "http://bulma.io/expo/"}
       [:span.icon [:i.fa.fa-paw]] [:span "Cats"]]
-     [:a.navbar-item
+     [:a.navbar-item.is-tab
       {:href "http://bulma.io/love/"}
       [:span.icon [:i.fa.fa-info]] [:span "Info"]]]
     [:div.navbar-end
