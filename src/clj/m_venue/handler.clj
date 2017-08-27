@@ -80,13 +80,15 @@
                  (templates/nav-bar :home)
                  [:section.section.app
                   [:div.tile.is-ancestor
-                   [:div.tile.is-vertical.is-8
-                    [:div.tile
-                     [:div.tile.is-parent.is-vertical
-                      [:article.tile.is-parent.notification.is-primary
-                       [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]]]
-                    [:div.tile.is-horizontal
-                     (map #(templates/tile %) (get home-gd :m-venue.spec/tiles))]]
+                   [:div.tile.is-8.is-vertical
+                    [:div.tile.is-parent
+                     [:article.tile.is-parent.notification.is-primary
+                      [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]]
+                     (let [all-tiles (get home-gd :m-venue.spec/tiles)
+                           split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
+                       [:div.tile.is-horizontal
+                       [:div.tile.is-vertical (map #(templates/tile %) (first split-tiles))]
+                       [:div.tile.is-vertical (map #(templates/tile %) (second split-tiles))]])]
                    [:div.tile.is-parent.is-vertical
                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                         "/login"  "Login", "/chatroom" "ChatRoom"}]

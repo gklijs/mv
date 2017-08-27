@@ -4,8 +4,9 @@
 // Add a serif family
 $family-serif: "Merriweather", "Georgia", serif
 
-$red: #ff393e
+$red: #ff0000
 $primary: $red !default
+$danger: $orange !default
 $primary-dark: darken($primary, 10)
 // Use the new serif family
 $family-primary: $family-serif
@@ -19,7 +20,14 @@ $navbar-item-hover-background-color: darken($primary, 15)
 $navbar-dropdown-arrow: $navbar-item-color
 
 .section.app
-  background: $red linear-gradient(10deg, $black, $red)
+  background: $red linear-gradient(45deg, #800000, $primary)
+  min-height: calc(100% - 3.25rem)
+
+html
+  height: 100%
+
+body
+  height: 100%
 
 // Import the rest of Bulma
 @import "../../../../bulma/sass/utilities/_all"
