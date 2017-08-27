@@ -1,6 +1,14 @@
 (ns m-venue.templates
   (:require [hiccup.page :as hiccup]))
 
+(def style-map
+  {:0 ""
+   :1 "is-primary"
+   :2 "is-info"
+   :3 "is-success"
+   :4 "is-warning"
+   :5 "is-danger"})
+
 (defn nav-bar
   [sel-key]
   [:nav.navbar
@@ -100,12 +108,20 @@
     [:script {:src "https://code.jquery.com/jquery-3.2.1.min.js"}]
     [:script {:src "/js/app.js"}]))
 
+(defn inner-tile
+  [tile]
+  (let [type-class (get style-map (get tile :m-venue.spec/style))]
+    [:article.tile.notification.is-child {:class type-class}
+     [:div.content
+      [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
+      [:p.subtitle (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]))
+
 (defn tile
   "renders a tile"
   [tile]
-  (let [type-class (rand-nth ["is-primary" "is-info" "is-warning" "is-danger" "is-success"])]
+  (let [href (get tile :m-venue.spec/href)]
     [:div.tile.is-parent
-     [:article.tile.notification {:class type-class}
-      [:div.content
-       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
-       [:p.subtitle (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]]))
+     (if
+       href
+       [:a {:href href} (inner-tile tile)]
+       (inner-tile tile))]))

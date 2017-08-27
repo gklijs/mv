@@ -7,15 +7,20 @@
 (def correct-label {:m-venue.spec/nl-label "Katten"})
 (def correct-tile {:m-venue.spec/title {:m-venue.spec/nl-label "Blokje over katten"}
                    :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over katten."}
+                   :m-venue.spec/style :1
+                   :m-venue.spec/href  "www.nu.nl"
                    :m-venue.spec/img   "sjors.jpg"})
 (def correct-gen-doc {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over katten"}
-  :m-venue.spec/tiles
-    [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
-    :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}}
-   {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
-    :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
-    :m-venue.spec/img   "uil.jpg"}
-   ]})
+                      :m-venue.spec/tiles
+                                          [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
+                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}
+                                            :m-venue.spec/style :1}
+                                           {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
+                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
+                                            :m-venue.spec/style :2
+                                            :m-venue.spec/img   "uil.jpg"}
+                                           correct-tile
+                                           ]})
 
 (deftest testing-correct-data
   (testing "Correct label"

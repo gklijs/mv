@@ -89,14 +89,15 @@
                        [:div.tile.is-horizontal
                        [:div.tile.is-vertical (map #(templates/tile %) (first split-tiles))]
                        [:div.tile.is-vertical (map #(templates/tile %) (second split-tiles))]])]
-                   [:div.tile.is-parent.is-vertical
+                   [:div.tile.is-vertical
                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                         "/login"  "Login", "/chatroom" "ChatRoom"}]
-                      [:article.tile.is-child.notification
-                       [:div.control
-                        [:div.tags.has-addons
-                         [:span.tag label]
-                         [:a.tag.is-info {:href href} "go"]]]])
+                       [:div.tile.is-parent
+                        [:a {:href href}
+                         [:article.tile.notification.is-child
+                          [:div.content
+                           [:p.title label]
+                           [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]]]]])
                     ]]
                   ]
                  )
