@@ -1,43 +1,30 @@
 // Import the initial variables
 @import "../../../../bulma/sass/utilities/initial-variables"
+@import "../../../../bulma/sass/utilities/functions"
 
 // Add a serif family
 $family-serif: "Merriweather", "Georgia", serif
 
-$red: #ff0000
-$purple: #A039FF
-$blue: #0059e8
-$primary: $red !default
-$danger: $orange !default
-$success: $purple !default
-$primary-dark: darken($primary, 10)
-$body-color: $black
+$primary: #b30000
+$info: darken($primary, 8) !default
+$success: darken($primary, 16) !default
+$warning: lighten($primary, 10) !default
+$danger: lighten($primary, 20) !default
+$notification-background-color: lighten($primary, 50) !default
+
+$primary-invert: findColorInvert($primary)  !default
+$info-invert: findColorInvert($info) !default
+$success-invert: findColorInvert($success) !default
+$warning-invert: findColorInvert($warning) !default
+$danger-invert: findColorInvert($danger) !default
+
+.notification
+  a:not(.button)
+    text-decoration: none !important
+    cursor : url("/img/cat.cur"),pointer
+
 // Use the new serif family
 $family-primary: $family-serif
-
-$navbar-background-color: $primary
-$navbar-item-color: $white
-$navbar-tab-active-color: $white
-$navbar-item-hover-color: $white
-$navbar-item-active-color: $white
-$navbar-item-active-background-color: darken($primary, 15)
-$navbar-item-hover-background-color: darken($primary, 15)
-$navbar-tab-hover-background-color: darken($primary, 15)
-$navbar-tab-hover-background-color: darken($primary, 15)
-$navbar-tab-active-border-bottom-color: darken($primary, 25)
-$navbar-tab-hover-border-bottom-color: darken($primary, 25)
-$navbar-tab-active-background-color: darken($primary, 15)
-$navbar-dropdown-arrow: $navbar-item-color
-
-.section.app
-  background: $red linear-gradient(45deg, #800000, $primary)
-  min-height: calc(100% - 3.25rem)
-
-html
-  height: 100%
-
-body
-  height: 100%
 
 // Import the rest of Bulma
 @import "../../../../bulma/sass/utilities/_all"

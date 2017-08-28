@@ -78,27 +78,26 @@
                (templates/page
                  (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])
                  (templates/nav-bar :home)
-                 [:section.section.app
-                  [:div.tile.is-ancestor
-                   [:div.tile.is-8.is-vertical
-                    [:div.tile.is-parent
-                     [:article.tile.is-parent.notification.is-primary
-                      [:h1.title (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])]]]
+                 [:section.section
+                  [:div.container
+                   [:div.tile.is-ancestor
+                    [:div.tile.is-9.is-vertical
+                     [:div.tile.is-parent
+                      (templates/tile (get home-gd :m-venue.spec/tile))]
                      (let [all-tiles (get home-gd :m-venue.spec/tiles)
                            split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
                        [:div.tile.is-horizontal
-                       [:div.tile.is-vertical (map #(templates/tile %) (first split-tiles))]
-                       [:div.tile.is-vertical (map #(templates/tile %) (second split-tiles))]])]
-                   [:div.tile.is-vertical
-                    (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
-                                        "/login"  "Login", "/chatroom" "ChatRoom"}]
-                       [:div.tile.is-parent
+                        [:div.tile.is-vertical.is-parent (map #(templates/tile %) (first split-tiles))]
+                        [:div.tile.is-vertical.is-parent (map #(templates/tile %) (second split-tiles))]])]
+                    [:div.tile.is-vertical.is-parent
+                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
+                                         "/login"  "Login", "/chatroom" "ChatRoom"}]
+                       [:div.tile.notification.is-child
                         [:a {:href href}
-                         [:article.tile.notification.is-child
-                          [:div.content
-                           [:p.title label]
-                           [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]]]]])
-                    ]]
+                         [:p.title label]
+                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]]])
+                     ]]
+                   ]
                   ]
                  )
                "Not Found"
