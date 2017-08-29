@@ -143,15 +143,23 @@
     component))
 
 (defn tile
+  "renders a tile"
   [tile]
   (let [type-class (get style-map (get tile :m-venue.spec/style))
-        href (get tile :m-venue.spec/href)
-        component       [:div.content
-                         [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
-                         (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
-                           [:p.subtitle sub-title])
-                         [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]]
-    [:article.content.tile.notification.is-child {:class type-class} (set-href href component)]
+        href (get tile :m-venue.spec/href)]
+    (if href
+      [:a.content.notification.tile.is-child {:class type-class :href href}
+       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
+       (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
+         [:p.subtitle sub-title])
+       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
+       ]
+      [:div.content.notification.tile.is-child {:class type-class}
+       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
+       (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
+         [:p.subtitle sub-title])
+       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
+       ])
 ))
 
 

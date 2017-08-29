@@ -92,10 +92,9 @@
                     [:div.tile.is-vertical.is-parent
                      (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                          "/login"  "Login", "/chatroom" "ChatRoom"}]
-                       [:div.tile.notification.is-child
-                        [:a {:href href}
+                       [:a.content.notification.tile.is-child {:href href}
                          [:p.title label]
-                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]]])
+                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]])
                      ]]
                    ]
                   ]
