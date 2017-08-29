@@ -10,9 +10,15 @@
 (deftest image-test
   (testing "get-spec"
     (let [result     (format/as-file
-                       (resize (clojure.java.io/file "resources/public/img/cat_in_a_box.jpg") 100 100)
-                       "/tmp/cat_in_a_box.jpg")]
-      (println (str "Image is: " result) result))
+                       (force-resize (clojure.java.io/file "resources/public/img/cat_in_a_box.jpg") 256 256)
+                       "resources/public/img/gen/cat_in_a_box.jpg")]
+      (println (str "Image is: " result)))
+    (is (= 404 404)))
+  (testing "get-spec"
+    (let [result     (format/as-file
+                       (resize-to-width (clojure.java.io/file "resources/public/img/cat_in_a_box.jpg") 250)
+                       "resources/public/img/gen/cat_in_a_box.jpg")]
+      (println (str "Image is: " result)))
     (is (= 404 404))))
 
 

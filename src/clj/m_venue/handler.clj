@@ -162,6 +162,8 @@
                       [:p.card-header-title " Component "]
                       [:a.card-header-icon [:span.icon " " [:i.fa.fa-angle-down] " "]]]
                      [:div.card-content
+                      [:figure.image.is-128x128
+                       [:img {:src "/img/gen/cat_in_a_box_256x256.jpg"}]]
                       [:div.content
                        " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.\n                  "
                        [:a "@bulmaio"]

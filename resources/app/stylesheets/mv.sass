@@ -18,13 +18,10 @@ $success-invert: findColorInvert($success) !default
 $warning-invert: findColorInvert($warning) !default
 $danger-invert: findColorInvert($danger) !default
 
-.notification
-  a:not(.button)
-    text-decoration: none !important
-    cursor : url("/img/cat.cur"),pointer
-
 // Use the new serif family
 $family-primary: $family-serif
+
+$notification-padding: 1.25rem
 
 // Import the rest of Bulma
 @import "../../../../bulma/sass/utilities/_all"
@@ -33,3 +30,15 @@ $family-primary: $family-serif
 @import "../../../../bulma/sass/components/all"
 @import "../../../../bulma/sass/grid/_all"
 @import "../../../../bulma/sass/layout/_all"
+
+a
+    cursor: url("/img/cat.cur"),pointer !important
+
+.image
+  &.is-3by4
+    img
+      +overlay
+      height: 100%
+      width: 100%
+  &.is-3by4
+    padding-top: 133.33%
