@@ -94,7 +94,13 @@
                                          "/login"  "Login", "/chatroom" "ChatRoom"}]
                        [:a.content.notification.tile.is-child {:href href}
                          [:p.title label]
-                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]])
+                        [:div.image.is-3by4
+                         [:img {:src "/img/gen/cat_in_a_box-small.jpg"}]]
+                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
+                        [:div.image.is-128x128
+                         [:img {:src "/img/gen/cat_in_a_box-b-square.jpg"}]]
+                        [:div.image.is-64x64
+                         [:img {:src "/img/gen/cat_in_a_box-s-square.jpg"}]]])
                      ]]
                    ]
                   ]

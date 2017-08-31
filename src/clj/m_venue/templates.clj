@@ -152,12 +152,16 @@
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
+       [:div.image.is-3by4
+        [:img {:src "/img/gen/cat_in_a_box-large.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ]
       [:div.content.notification.tile.is-child {:class type-class}
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
+       [:div.image.is-3by4
+        [:img {:src "/img/gen/cat_in_a_box-large.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ])
 ))

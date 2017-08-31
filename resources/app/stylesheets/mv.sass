@@ -35,10 +35,19 @@ a
     cursor: url("/img/cat.cur"),pointer !important
 
 .image
-  &.is-3by4
+  &.is-3by4,
+  &.is-2by3,
+  &.is-9by16,
+  &.is-1by2
     img
       +overlay
       height: 100%
       width: 100%
   &.is-3by4
     padding-top: 133.33%
+  &.is-2by3
+    padding-top: 150%
+  &.is-9by16
+    padding-top: 177.77%
+  &.is-1by2
+    padding-top: 200%
