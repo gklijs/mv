@@ -87,7 +87,8 @@
                      (let [all-tiles (get home-gd :m-venue.spec/tiles)
                            split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
                        [:div.tile.is-horizontal
-                        [:div.tile.is-vertical.is-parent (map #(templates/tile %) (first split-tiles))]
+                        [:div.tile.is-vertical.is-parent (map #(templates/tile %) (first split-tiles))
+                         [:div#app2.content.notification.tile.is-child]]
                         [:div.tile.is-vertical.is-parent (map #(templates/tile %) (second split-tiles))]])]
                     [:div.tile.is-vertical.is-parent
                      (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",

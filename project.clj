@@ -5,7 +5,6 @@
   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
                  [image-resizer "0.1.10"]
-                 [jayq "2.5.4-resolve-fix" :scope "provided"]
                  [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]
                  [org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.908" :scope "provided"]
@@ -53,10 +52,7 @@
                                                    :compiler
                                                                  {:output-to     "resources/public/js/app.js"
                                                                   :optimizations :advanced
-                                                                  :pretty-print  false
-                                                                  :closure-warnings
-                                                                                 {:externs-validation :off :non-standard-jsdoc :off}
-                                                                  :externs       ["env/prod/resources/jquery-externs-3.2.js"]}}}}
+                                                                  :pretty-print  false}}}}
                         :sass {:src  "resources/app/stylesheets"
                                :output-directory  "resources/public/css"
                                :source-maps false
