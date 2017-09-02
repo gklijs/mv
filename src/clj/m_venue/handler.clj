@@ -91,8 +91,13 @@
                          [:div#app2.content.notification.tile.is-child]]
                         [:div.tile.is-vertical.is-parent (map #(templates/tile %) (second split-tiles))]])]
                     [:div.tile.is-vertical.is-parent
+                     [:div.content.notification.tile.is-child
+                      [:div.control [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
+                      [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]
+                      [:div#board]
+                      ]
                      (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
-                                         "/login"  "Login", "/chatroom" "ChatRoom"}]
+                                         "/login"  "Login"}]
                        [:a.content.notification.tile.is-child {:href href}
                          [:p.title label]
                         [:div.image.is-3by4
@@ -111,83 +116,6 @@
            (GET "/hello1" [] "Hello World!")
            (GET "/hello2" [:as req]
              (str "Hello " (get-user req) "!"))
-           ;; Websocket based chatroom
-           ;; We can open two browser sessions to test it.
-           (GET "/chatroom" [:as req]
-             (templates/page
-               "chatroom"
-               (templates/nav-bar :chat)
-               [:div.container
-                [:div.panel.panel-success
-                 [:div.panel-heading [:h3.panel-title "Chat Room" "@" (get-user req)]]
-                 [:div.input-group.panel-body
-                  [:input#chat.form-control {:type :text :placeholder "type and press ENTER to chat"}]
-                  [:span.input-group-btn
-                   [:button#sendbtn.btn.btn-default {:type :button} "Send!"]]
-                  ]
-                 [:div#board.list-group
-                  ]
-                 [:section#card.section
-                  [:h1.title "Cards"]
-                  [:hr]
-                  [:div.columns
-                   [:div.column
-                    [:div.card
-                     [:div.card-image
-                      [:figure.image.is-4by3
-                       " "
-                       [:img
-                        {:alt "Image",
-                         :src "https://source.unsplash.com/random/800x600"}]
-                       " "]]
-                     [:div.card-content
-                      [:div.media
-                       [:div.media-left
-                        [:figure.image
-                         {:style "height: 40px; width: 40px;"}
-                         " "
-                         [:img
-                          {:alt "Image",
-                           :src "https://source.unsplash.com/random/96x96"}]
-                         " "]]
-                       [:div.media-content
-                        [:p.title.is-4 "John Smith"]
-                        [:p.subtitle.is-6 "@johnsmith"]]]
-                      [:div.content
-                       " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.\n                  "
-                       [:a "@bulmaio"]
-                       ".\n                  "
-                       [:a "#css"]
-                       [:a "#responsive"]
-                       [:br]
-                       " "
-                       [:small "11:09 PM - 1 Jan 2016"]
-                       " "]]]]
-                   [:div.column
-                    [:div.card
-                     [:header.card-header
-                      [:p.card-header-title " Component "]
-                      [:a.card-header-icon [:span.icon " " [:i.fa.fa-angle-down] " "]]]
-                     [:div.card-content
-                      [:figure.image.is-128x128
-                       [:img {:src "/img/gen/cat_in_a_box_256x256.jpg"}]]
-                      [:div.content
-                       " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.\n                  "
-                       [:a "@bulmaio"]
-                       ".\n                  "
-                       [:a "#css"]
-                       [:a "#responsive"]
-                       [:br]
-                       " "
-                       [:small "11:09 PM - 1 Jan 2016"]
-                       " "]]
-                     [:footer.card-footer
-                      [:a.card-footer-item "Save"]
-                      [:a.card-footer-item "Edit"]
-                      [:a.card-footer-item "Delete"]]]]]]
-                 [:div.panel-footer]
-                 ]
-                [:script {:src "/js/chat.js"}]]))
            ;; chatroom Websocket server endpoint
            (GET "/chat" [:as req]
              (let [ch (ncc/hijack! req true)

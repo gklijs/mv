@@ -1,0 +1,84 @@
+(ns m-venue.chat
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]
+            [clojure.browser.dom :as dom]
+            [clojure.browser.event :as event]
+            [clojure.string :as string])
+  (:import goog.History))
+
+(defonce ws-chan (atom nil))
+
+(defn receive-msg!
+  [msg-event]
+  (let [msg-data (.-data msg-event)
+        color (cond
+                    (string/ends-with? msg-data "[enter!]") "is-warning"
+                    (string/ends-with? msg-data "[left!]") "is-danger"
+                    :else "is-info")
+        li-item (. js/document createElement "p")
+        ]
+    (set! (.-className li-item) (str "notification " color))
+    (dom/set-text li-item msg-data)
+    (dom/insert-at (dom/get-element :board) li-item 0)
+    ))
+
+(defn make-web-socket! [])
+
+(defn send-msg!
+  [msg]
+  (if (or (nil? @ws-chan) (> (.-readyState @ws-chan) 1)) (make-web-socket!))
+  (if (= (.-readyState @ws-chan) 1)
+    (.send @ws-chan msg)
+    (go-loop []
+               (if @ws-chan
+                 (let [ready-state (.-readyState @ws-chan)]
+                   (cond
+                     (= ready-state 0) (do (<! (timeout 1000)) (recur))
+                     (= ready-state 1) (.send @ws-chan msg))
+                     :default (println (str "Could not send: '" msg "' to the server")))
+                 (println (str "Could not send: '" msg "' to the server"))))
+               ))
+
+(defn delayed-reconnect!
+  [error-or-close-event]
+  (reset! ws-chan nil)
+  (println "lost connection, will try to reconnect in 10 seconds")
+  (go
+    (<! (timeout 10000))
+    (make-web-socket!)))
+
+(defn make-web-socket! []
+  (let [url (str "ws://" (-> js/window .-location .-host) "/chat")]
+    (println "attempting to connect websocket")
+    (if-let [chan (js/WebSocket. url)]
+      (do
+        (set! (.-onopen chan) (fn [] (println "successfully connected")))
+        (set! (.-onmessage chan) receive-msg!)
+        (set! (.-onerror chan) delayed-reconnect!)
+        (set! (.-onclose chan) delayed-reconnect!)
+        (reset! ws-chan chan)
+        (println "Websocket connection established with: " url))
+      (throw (js/Error. "Websocket connection failed!")))))
+
+(defn send-chat-message
+  []
+  (if-let [msg (dom/get-value :chat)]
+    (if (> (count msg) 2)
+      (do
+        (send-msg! (dom/get-value :chat))
+        (dom/set-value :chat "")))))
+
+(defn keydown-handler
+  [event]
+  (let [char-code (.-key event)]
+    (if
+      (= char-code "Enter")
+      (send-chat-message)
+      )))
+
+(defn init!
+  "Initializes the handlers and websocket"
+  []
+  (make-web-socket!)
+  (event/listen (dom/get-element "chat") :keydown keydown-handler)
+  (event/listen (dom/get-element "sendbtn") :click send-chat-message))

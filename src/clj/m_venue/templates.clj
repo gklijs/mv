@@ -131,7 +131,8 @@
     app-bar
     content
     (footer)
-    [:script {:src "/js/app.js"}]))
+    [:script {:src "/js/app.js"}]
+    [:script {:src "/js/chat.js"}]))
 
 (defn set-href
   "renders a tile"

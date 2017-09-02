@@ -30,33 +30,33 @@
                         :aot          [m-venue.embed-server]
                         :main         m-venue.embed-server
                         :uberjar-name "m-venue-embed.jar"
-                        :cljsbuild    {:builds {:app {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                                                 :compiler
-                                                               {:main          "m-venue.app"
-                                                                :asset-path    "/js/out"
-                                                                :output-to     "resources/public/js/app.js"
-                                                                :output-dir    "resources/public/js/out"
-                                                                :source-map    true
-                                                                :optimizations :none
-                                                                :pretty-print  true}}}}
-                        :sass {:src  "resources/app/stylesheets"
-                               :output-directory  "resources/public/css"
-                               :source-maps true
-                               :style :nested}
-                        :prep-tasks     [["compile"] ["cljsbuild" "once" "app"] ["sass" "once"]]
+                        :cljsbuild    {:builds {:app  {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                                                       :compiler
+                                                                     {:main          "m-venue.app"
+                                                                      :asset-path    "/js/out"
+                                                                      :output-to     "resources/public/js/app.js"
+                                                                      :output-dir    "resources/public/js/out"
+                                                                      :source-map    true
+                                                                      :optimizations :none
+                                                                      :pretty-print  true}}}}
+                        :sass         {:src              "resources/app/stylesheets"
+                                       :output-directory "resources/public/css"
+                                       :source-maps      true
+                                       :style            :nested}
+                        :prep-tasks   [["compile"] ["cljsbuild" "once" "app"] ["sass" "once"]]
                         :source-paths ["env/dev/clj"]
                         }
              :uberjar  {:omit-source    true
-                        :cljsbuild      {:builds  {:min
+                        :cljsbuild      {:builds {:min
                                                   {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
                                                    :compiler
                                                                  {:output-to     "resources/public/js/app.js"
                                                                   :optimizations :advanced
                                                                   :pretty-print  false}}}}
-                        :sass {:src  "resources/app/stylesheets"
-                               :output-directory  "resources/public/css"
-                               :source-maps false
-                               :style :compressed}
+                        :sass           {:src              "resources/app/stylesheets"
+                                         :output-directory "resources/public/css"
+                                         :source-maps      false
+                                         :style            :compressed}
                         :prep-tasks     ["compile" ["cljsbuild" "once" "min"] ["sass" "once"]]
                         :aot            [m-venue.handler]
                         :uberjar-name   "m-venue-default.jar"
