@@ -3,10 +3,12 @@
   (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]
             [clojure.browser.dom :as dom]
             [clojure.browser.event :as event]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [goog.dom :as gdom])
   (:import goog.History))
 
 (defonce ws-chan (atom nil))
+(defonce message-counter (atom 0))
 
 (defn receive-msg!
   [msg-event]
@@ -17,9 +19,14 @@
                     :else "is-info")
         li-item (. js/document createElement "p")
         ]
-    (set! (.-className li-item) (str "notification " color))
+    (set! (.-className li-item) (str "notification tile " color))
+    (set! (.-id li-item) (str "chat-message-" @message-counter))
     (dom/set-text li-item msg-data)
-    (dom/insert-at (dom/get-element :board) li-item 0)
+    (dom/insert-at (dom/get-element :board) li-item 1)
+    (if
+      (> @message-counter 4)
+      (gdom/removeNode (dom/get-element (str "chat-message-" (- @message-counter 5)))))
+    (swap! message-counter inc)
     ))
 
 (defn make-web-socket! [])

@@ -92,9 +92,9 @@
                         [:div.tile.is-vertical.is-parent (map #(templates/tile %) (second split-tiles))]])]
                     [:div.tile.is-vertical.is-parent
                      [:div.content.notification.tile.is-child
-                      [:div.control [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
-                      [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]
-                      [:div#board]
+                      [:div.control.field [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
+                      [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
+                      [:p#board.tile.is-vertical]
                       ]
                      (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
                                          "/login"  "Login"}]
