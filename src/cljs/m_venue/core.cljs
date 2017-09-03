@@ -2,12 +2,14 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]
             [clojure.browser.dom :as dom]
-            [m-venue.chat :as chat])
+            [m-venue.chat :as chat]
+            [m-venue.websocket :as websocket])
   (:import goog.History))
 
 (defn init!
       "Initializes the handlers and websocket"
       []
+      (websocket/init!)
       (chat/init!)
       (dom/set-text :app2 "It's working")
       (go-loop [seconds 1]

@@ -10,12 +10,12 @@
    :5 "is-danger"})
 
 (defn nav-bar
-  [sel-key]
+  [path]
   [:nav.navbar
    [:div.container
     [:div.navbar-brand
      [:a.navbar-item.is-tab
-      {:href "http://marthasvenue.nl" :class (if (= :home sel-key) "is-active" "")}
+      {:href "/" :class (if (= "/" path) "is-active" "")}
       [:span.is-large "Martha's Venue"]]
      [:a.navbar-item.is-hidden-desktop
       {:target "_blank", :href "https://github.com/jgthms/bulma"}
@@ -68,32 +68,12 @@
        {:href "http://bulma.io/expo/"}
        [:span.icon [:i.fa.fa-paw]] [:span "Cats"]]
       [:a.navbar-item.is-tab
-       {:href "http://bulma.io/love/"}
+       {:href "/gd/info" :class (if (= "/gd/info" path) "is-active" "")}
        [:span.icon [:i.fa.fa-info]] [:span "Info"]]]
      [:div.navbar-end
-      [:a.navbar-item.is-hidden-desktop-only
-       {:target "_blank", :href "https://github.com/jgthms/bulma"}
-       [:span.icon {:style "color: #333;"} [:i.fa.fa-github]]]
-      [:a.navbar-item.is-hidden-desktop-only
-       {:target "_blank", :href "https://twitter.com/jgthms"}
-       [:span.icon {:style "color: #55acee;"} [:i.fa.fa-twitter]]]
-      [:div.navbar-item
-       [:div.field.is-grouped
-        [:p.control
-         [:a.bd-tw-button.button
-          {:href
-                                "https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&hashtags=bulmaio&url=http://bulma.io&via=jgthms",
-           :target              "_blank",
-           :data-social-target  "http://bulma.io",
-           :data-social-action  "tweet",
-           :data-social-network "Twitter"}
-          [:span.icon [:i.fa.fa-twitter]]
-          [:span "\n    Tweet\n  "]]]
-        [:p.control
-         [:a.button.is-primary
-          {:href "https://github.com/jgthms/bulma/archive/0.5.1.zip"}
-          [:span.icon [:i.fa.fa-download]]
-          [:span "Download"]]]]]]]]])
+      [:a.navbar-item.is-tab.is-hidden-desktop-only
+       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
+       [:span.icon {:style "color: #4267b2;"} [:i.fa.fa-facebook]]]]]]])
 
 (defn footer
   "renders a footer"
@@ -149,13 +129,26 @@
     (footer)
     [:script {:src "/js/app.js"}]))
 
-(defn set-href
-  "renders a tile"
-  [href component]
-  (if
-    href
-    [:a {:href href} component]
-    component))
+(defn side-content
+  "renders the tiles on the right side"
+  []
+  [:div.tile.is-vertical.is-parent
+   [:div.content.notification.tile.is-child
+    [:div.control.field [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
+    [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
+    [:p#board.tile.is-vertical]
+    ]
+   [:a.content.notification.tile.is-child {:href "/login"}
+    [:p.title "Login"]
+    [:div.image.is-3by4
+     [:img {:src "/img/gen/cat_in_a_box-small.jpg"}]]
+    [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
+    [:div.image.is-128x128
+     [:img {:src "/img/gen/cat_in_a_box-b-square.jpg"}]]
+    [:div.image.is-64x64
+     [:img {:src "/img/gen/cat_in_a_box-s-square.jpg"}]]]
+   ]
+  )
 
 (defn tile
   "renders a tile"
@@ -180,5 +173,28 @@
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ])
     ))
+
+(defn gd-page
+  [gd-map req]
+  (page
+    (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
+    (nav-bar (:uri req))
+    [:section.section
+     [:div.container
+      [:div.tile.is-ancestor
+       [:div.tile.is-9.is-vertical
+        [:div.tile.is-parent
+         (tile (get gd-map :m-venue.spec/tile))]
+        (let [all-tiles (get gd-map :m-venue.spec/tiles)
+              split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
+          [:div.tile.is-horizontal
+           [:div.tile.is-vertical.is-parent (map #(tile %) (first split-tiles))
+            [:div#app2.content.notification.tile.is-child]]
+           [:div.tile.is-vertical.is-parent (map #(tile %) (second split-tiles))]])]
+       (side-content)]
+      ]
+     ]
+    )
+  )
 
 
