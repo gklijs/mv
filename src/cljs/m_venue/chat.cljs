@@ -33,8 +33,7 @@
 
 (defn send-msg!
   [msg]
-  (if (or (nil? @ws-chan) (> (.-readyState @ws-chan) 1)) (make-web-socket!))
-  (if (= (.-readyState @ws-chan) 1)
+  (if (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
     (.send @ws-chan msg)
     (go-loop []
                (if @ws-chan
@@ -43,7 +42,7 @@
                      (= ready-state 0) (do (<! (timeout 1000)) (recur))
                      (= ready-state 1) (.send @ws-chan msg))
                      :default (println (str "Could not send: '" msg "' to the server")))
-                 (println (str "Could not send: '" msg "' to the server"))))
+                 (do (<! (timeout 1000)) (recur))))
                ))
 
 (defn delayed-reconnect!

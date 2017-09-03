@@ -18,7 +18,7 @@
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path "resources/public/js/app.js" "resources/public/js/out" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-sass "0.4.0"]
+            [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.908"]]
   :profiles {
              :provided {:dependencies [[nginx-clojure "0.4.5"]]}

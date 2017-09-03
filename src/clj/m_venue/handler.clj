@@ -76,7 +76,7 @@
            (GET "/" [:as req]
              (if-let [home-gd (repo/get-map "mv-gd-home")]
                (templates/page
-                 (get-in home-gd [:m-venue.spec/title :m-venue.spec/nl-label])
+                 (get-in home-gd [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
                  (templates/nav-bar :home)
                  [:section.section
                   [:div.container
@@ -96,26 +96,21 @@
                       [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
                       [:p#board.tile.is-vertical]
                       ]
-                     (for [[href label] {"/hello1" "HelloWorld", "/hello2" "HelloUser",
-                                         "/login"  "Login"}]
-                       [:a.content.notification.tile.is-child {:href href}
-                         [:p.title label]
-                        [:div.image.is-3by4
-                         [:img {:src "/img/gen/cat_in_a_box-small.jpg"}]]
-                         [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
-                        [:div.image.is-128x128
-                         [:img {:src "/img/gen/cat_in_a_box-b-square.jpg"}]]
-                        [:div.image.is-64x64
-                         [:img {:src "/img/gen/cat_in_a_box-s-square.jpg"}]]])
+                     [:a.content.notification.tile.is-child {:href "/login"}
+                      [:p.title "Login"]
+                      [:div.image.is-3by4
+                       [:img {:src "/img/gen/cat_in_a_box-small.jpg"}]]
+                      [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
+                      [:div.image.is-128x128
+                       [:img {:src "/img/gen/cat_in_a_box-b-square.jpg"}]]
+                      [:div.image.is-64x64
+                       [:img {:src "/img/gen/cat_in_a_box-s-square.jpg"}]]]
                      ]]
                    ]
                   ]
                  )
                "Not Found"
                ))
-           (GET "/hello1" [] "Hello World!")
-           (GET "/hello2" [:as req]
-             (str "Hello " (get-user req) "!"))
            ;; chatroom Websocket server endpoint
            (GET "/chat" [:as req]
              (let [ch (ncc/hijack! req true)
