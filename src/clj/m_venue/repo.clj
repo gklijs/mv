@@ -1,7 +1,7 @@
 (ns m-venue.repo
   (:require [clojure.spec.alpha :as s]
             [m-venue.spec :refer :all]
-            [spec-serialize.transform :as tf]))
+            [spec-serialize.impl :as tf]))
 
 (def repo (atom {}))
 

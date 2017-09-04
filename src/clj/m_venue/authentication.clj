@@ -23,21 +23,21 @@
 
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
-                 (handle-login uid pass session))
+             (handle-login uid pass session))
            (GET "/login" []
-                (templates/page
-                  "login page"
-                  (templates/nav-bar :login)
-                  [:div.container
-                   [:div.panel.panel-primary
-                    [:div.panel-heading [:h3.panel-title "Login Form"]]
-                    [:div.input-group.panel-body
-                     [:form.form-signin {:action "/login" :method "POST"}
-                      [:h2.form-signin-heading "Please sign in"]
-                      (anti-forgery-field)
-                      [:input#user-id.form-control {:type :text :name :uid :placeholder "User ID"}]
-                      [:input#user-pass.form-control {:type :password :name :pass :placeholder "Password"}]
-                      [:p]
-                      [:input#submit-btn.btn.btn-primary.btn-block {:type "submit" :value "Login!"}]
-                      ]]
-                    [:div.panel-footer]]])))
+             (templates/page
+               "login page"
+               (templates/nav-bar :login)
+               [:div.container
+                [:div.panel.panel-primary
+                 [:div.panel-heading [:h3.panel-title "Login Form"]]
+                 [:div.input-group.panel-body
+                  [:form.form-signin {:action "/login" :method "POST"}
+                   [:h2.form-signin-heading "Please sign in"]
+                   (anti-forgery-field)
+                   [:input#user-id.form-control {:type :text :name :uid :placeholder "User ID"}]
+                   [:input#user-pass.form-control {:type :password :name :pass :placeholder "Password"}]
+                   [:p]
+                   [:input#submit-btn.btn.btn-primary.btn-block {:type "submit" :value "Login!"}]
+                   ]]
+                 [:div.panel-footer]]])))

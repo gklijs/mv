@@ -3,6 +3,7 @@
   :url "https://github.com/nginx-clojure/nginx-clojure/tree/master/example-projects/clojure-web-example"
   :min-lein-version "2.0.0"
   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
+                 [com.taoensso/nippy "2.13.0"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
                  [image-resizer "0.1.10"]
                  [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]
@@ -30,15 +31,15 @@
                         :aot          [m-venue.embed-server]
                         :main         m-venue.embed-server
                         :uberjar-name "m-venue-embed.jar"
-                        :cljsbuild    {:builds {:app  {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-                                                       :compiler
-                                                                     {:main          "m-venue.app"
-                                                                      :asset-path    "/js/out"
-                                                                      :output-to     "resources/public/js/app.js"
-                                                                      :output-dir    "resources/public/js/out"
-                                                                      :source-map    true
-                                                                      :optimizations :none
-                                                                      :pretty-print  true}}}}
+                        :cljsbuild    {:builds {:app {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                                                      :compiler
+                                                                    {:main          "m-venue.app"
+                                                                     :asset-path    "/js/out"
+                                                                     :output-to     "resources/public/js/app.js"
+                                                                     :output-dir    "resources/public/js/out"
+                                                                     :source-map    true
+                                                                     :optimizations :none
+                                                                     :pretty-print  true}}}}
                         :sass         {:src              "resources/app/stylesheets"
                                        :output-directory "resources/public/css"
                                        :source-maps      true

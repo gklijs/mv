@@ -4,6 +4,7 @@
 
 (defonce ws-chan (atom nil))
 (defonce subscriptions (atom {}))
+(defonce reconnecting (atom false))
 (defn make-web-socket! [])
 
 (defn subscribe
@@ -12,7 +13,6 @@
 
 (defn msg-handler
   [[handled? msg] validation-f execution-f]
-  (println (str "handler called with data: " handled? "and " msg "on validation-f: " validation-f "and execution-f " execution-f))
   (if (and (false? handled?) (validation-f msg))
     (do
       (execution-f msg)
@@ -31,10 +31,15 @@
 (defn delayed-reconnect!
   [error-or-close-event]
   (reset! ws-chan nil)
-  (println "lost connection, will try to reconnect in 10 seconds")
-  (go
-    (<! (timeout 10000))
-    (make-web-socket!)))
+  (println "lost connection, will try to reconnect in 15 seconds")
+  (if (not @reconnecting)
+    (do
+      (reset! reconnecting true)
+      (go
+        (<! (timeout 15000))
+        (make-web-socket!)
+        (reset! reconnecting false)))
+    ))
 
 (defn make-web-socket! []
   (let [url (str "ws://" (-> js/window .-location .-host) "/ws")]
@@ -44,7 +49,7 @@
         (set! (.-onopen chan) (fn [] (println "successfully connected")))
         (set! (.-onmessage chan) receive-msg!)
         (set! (.-onerror chan) delayed-reconnect!)
-        (set! (.-onclose chan) (fn [] (println "connection closed")))
+        (set! (.-onclose chan) delayed-reconnect!)
         (reset! ws-chan chan)
         (println "Websocket connection established with: " url))
       (throw (js/Error. "Websocket connection failed!")))))

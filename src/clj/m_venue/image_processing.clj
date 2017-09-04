@@ -16,8 +16,8 @@
     (> ratio 1.85) "is-2by1"
     (> ratio 1.6) "is-16by9"
     (> ratio 1.4) "is-3by2"
-    (> ratio 1.2)  "is-4by3"
-    (> ratio 0.85)  "is-1by1"
+    (> ratio 1.2) "is-4by3"
+    (> ratio 0.85) "is-1by1"
     (> ratio 0.7) "is-3by4"
     (> ratio 0.6) "is-2by3"
     (> ratio 0.53) "is-9-by-16"
@@ -34,8 +34,8 @@
         square-intermediate (if (> ratio 1) (resize-to-height buffered-image 256) (resize-to-width buffered-image 256))
         [x-square y-square] (util/dimensions square-intermediate)
         square-buffered (if (> ratio 1)
-                         (crop-from square-intermediate (/ (- x-square 256) 2) 0 256 256)
-                         (crop-from square-intermediate 0 (/ (- y-square 256) 2) 256 256))
+                          (crop-from square-intermediate (/ (- x-square 256) 2) 0 256 256)
+                          (crop-from square-intermediate 0 (/ (- y-square 256) 2) 256 256))
         big-square-image (format/as-file square-buffered (str destination-image-path image-name "-b-square.jpg") :verbatim)
         small-square-image (format/as-file
                              (resize-to-width square-buffered 64)

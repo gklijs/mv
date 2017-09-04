@@ -10,9 +10,9 @@
 (defn receive
   [msg]
   (let [color (cond
-                    (string/ends-with? msg "[enter!]") "is-warning"
-                    (string/ends-with? msg "[left!]") "is-danger"
-                    :else "is-info")
+                (string/ends-with? msg "[enter!]") "is-warning"
+                (string/ends-with? msg "[left!]") "is-danger"
+                :else "is-info")
         li-item (. js/document createElement "p")
         ]
     (set! (.-className li-item) (str "notification tile " color))

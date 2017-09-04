@@ -3,7 +3,8 @@
             [compojure.core :refer [defroutes GET]]
             [clojure.string :as string]
             [m-venue.authentication :refer [get-user]]
-            [nginx.clojure.core :as ncc]))
+            [nginx.clojure.core :as ncc]
+            [spec-serialize.impl :as tf]))
 
 (def chatroom-users-channels (atom {}))
 (def chatroom-topic)
@@ -37,29 +38,30 @@
     (ncc/sub! chatroom-topic nil
               (fn [msg _]
                 (doseq [[uid ch] @chatroom-users-channels]
-                  (ncc/send! ch (str "ch-" msg) true false)))))
+                  (ncc/send! ch (str "ch-" msg) true false)
+                  (ncc/send! ch (str "mc-" (tf/ser-to-string :m-venue.spec/label {:m-venue.spec/nl-label "kaas"})) true false)))))
   nil)
 
 (defroutes web-socket-route
            ;; Websocket server endpoint
            (GET "/ws" [:as req]
-                (let [ch (ncc/hijack! req true)
-                      uid (get-user req)]
-                  (when (ncc/websocket-upgrade! ch true)
-                    (ncc/add-aggregated-listener! ch 500
-                                                  {:on-open    (fn [ch]
-                                                                 (log/debug "user:" uid " connected!")
-                                                                 (swap! chatroom-users-channels assoc uid ch)
-                                                                 (ncc/pub! chatroom-topic (str uid ":[enter!]")))
-                                                   :on-message (fn [ch msg]
-                                                                 (log/debug "user:" uid " msg:" msg)
-                                                                 (cond
-                                                                   (string/starts-with? msg "ch-") (ncc/pub! chatroom-topic (str uid ":" (subs msg 3)))
-                                                                   :else (log/error "Unknown message type: " msg))
-                                                                 )
-                                                   :on-close   (fn [ch reason]
-                                                                 (log/debug "user:" uid " left!")
-                                                                 (swap! chatroom-users-channels dissoc uid)
-                                                                 (ncc/pub! chatroom-topic (str uid ":[left!]")))})
-                    {:status 200 :body ch})))
+             (let [ch (ncc/hijack! req true)
+                   uid (get-user req)]
+               (when (ncc/websocket-upgrade! ch true)
+                 (ncc/add-aggregated-listener! ch 500
+                                               {:on-open    (fn [ch]
+                                                              (log/debug "user:" uid " connected!")
+                                                              (swap! chatroom-users-channels assoc uid ch)
+                                                              (ncc/pub! chatroom-topic (str uid ":[enter!]")))
+                                                :on-message (fn [ch msg]
+                                                              (log/debug "user:" uid " msg:" msg)
+                                                              (cond
+                                                                (string/starts-with? msg "ch-") (ncc/pub! chatroom-topic (str uid ":" (subs msg 3)))
+                                                                :else (log/error "Unknown message type: " msg))
+                                                              )
+                                                :on-close   (fn [ch reason]
+                                                              (log/debug "user:" uid " left!")
+                                                              (swap! chatroom-users-channels dissoc uid)
+                                                              (ncc/pub! chatroom-topic (str uid ":[left!]")))})
+                 {:status 200 :body ch})))
            )

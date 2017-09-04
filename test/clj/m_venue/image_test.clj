@@ -9,7 +9,7 @@
       (is (= 1536 width) "width should be image width")
       (is (= 2048 height) "height should be image height")))
   (testing "processing"
-    (let [result     (processing/process "cat_in_a_box")]
+    (let [result (processing/process "cat_in_a_box")]
       (println (str "Result is: " result)))
     (is (= 404 404))))
 
