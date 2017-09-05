@@ -18,16 +18,17 @@
                                            ]})
 
 (deftest repo-test
-  (testing "get-spec"
-    (is (keyword? (repo/get-spec "mh-gd-home")))
-    (is (nil? (repo/get-spec "mh-xx-xxxx"))))
   (testing "set"
-    (is (map? (repo/set-map "mh-gd-home" correct-gen-doc)))
-    (is (nil? (repo/set-map "mh-xx-xxxx" correct-gen-doc))))
+    (is (map? (repo/set-map "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
+    (let [result (repo/set-map "mvp-xxxx" :m-venue.spec/label correct-gen-doc)]
+      (is (map? result))
+      (is (seq? (::s/problems result)))
+      ))
   (testing "get"
     (s/explain :m-venue.spec/gen-doc correct-gen-doc)
-    (println (str "result from repo: " (repo/get-map "mh-gd-home")))
-    (is (= correct-gen-doc (repo/get-map "mh-gd-home")))
-    (is (nil? (repo/get-map "mh-xx-xxxx")))))
+    (println (str "result from repo: " (repo/get-map "mvp-home")))
+    (is (= :m-venue.spec/gen-doc (first (repo/get-map "mvp-home"))))
+    (is (= correct-gen-doc (second (repo/get-map "mvp-home"))))
+    (is (nil? (repo/get-map "mvp-xxxx")))))
 
 

@@ -5,6 +5,9 @@
 (defonce ws-chan (atom nil))
 (defonce subscriptions (atom {}))
 (defonce reconnecting (atom false))
+(defonce default-wait-time 5000)
+(defonce max-wait-time 300000)
+(defonce wait-time (atom default-wait-time))
 (defn make-web-socket! [])
 
 (defn subscribe
@@ -31,27 +34,26 @@
 (defn delayed-reconnect!
   [error-or-close-event]
   (reset! ws-chan nil)
-  (println "lost connection, will try to reconnect in 15 seconds")
   (if (not @reconnecting)
     (do
       (reset! reconnecting true)
+      (println (str "lost connection, will try to reconnect in " (/ @wait-time 1000) " seconds"))
       (go
-        (<! (timeout 15000))
+        (<! (timeout @wait-time))
         (make-web-socket!)
+        (if (< @wait-time max-wait-time) (swap! wait-time #(* % 2)))
         (reset! reconnecting false)))
     ))
 
 (defn make-web-socket! []
   (let [url (str "ws://" (-> js/window .-location .-host) "/ws")]
-    (println "attempting to connect websocket")
     (if-let [chan (js/WebSocket. url)]
       (do
-        (set! (.-onopen chan) (fn [] (println "successfully connected")))
+        (set! (.-onopen chan) (fn [] (println "opening connection to " url)))
         (set! (.-onmessage chan) receive-msg!)
         (set! (.-onerror chan) delayed-reconnect!)
         (set! (.-onclose chan) delayed-reconnect!)
-        (reset! ws-chan chan)
-        (println "Websocket connection established with: " url))
+        (reset! ws-chan chan))
       (throw (js/Error. "Websocket connection failed!")))))
 
 (defn send-msg!
@@ -60,13 +62,10 @@
     (.send @ws-chan msg)
     (go-loop []
              (if @ws-chan
-               (let [ready-state (.-readyState @ws-chan)]
-                 (cond
-                   (= ready-state 0) (do (<! (timeout 1000)) (recur))
-                   (= ready-state 1) (.send @ws-chan msg))
-                 :default (println (str "Could not send: '" msg "' to the server")))
-               (do (<! (timeout 1000)) (recur))))
-    ))
+                 (if (= (.-readyState @ws-chan) 1)
+                   (.send @ws-chan msg)
+                   (do (<! (timeout 1000)) (recur)))
+                 (do (<! (timeout 1000)) (recur))))))
 
 (defn init!
   "Initializes the websocket"

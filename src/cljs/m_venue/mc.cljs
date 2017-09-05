@@ -7,5 +7,5 @@
 (defn init!
   "Initializes the handlers"
   []
-  (subscribe (fn [msg] (string/starts-with? msg "mc-")) (fn [msg] (println (tf/de-ser-string :m-venue.spec/label (subs msg 3))))))
+  (subscribe (fn [msg] (string/starts-with? msg "mc-")) (fn [msg] (println (tf/from-string (subs msg 3))))))
 

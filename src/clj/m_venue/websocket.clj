@@ -39,7 +39,7 @@
               (fn [msg _]
                 (doseq [[uid ch] @chatroom-users-channels]
                   (ncc/send! ch (str "ch-" msg) true false)
-                  (ncc/send! ch (str "mc-" (tf/ser-to-string :m-venue.spec/label {:m-venue.spec/nl-label "kaas"})) true false)))))
+                  (ncc/send! ch (str "mc-" (tf/to-string :m-venue.spec/label {:m-venue.spec/nl-label "kaas"})) true false)))))
   nil)
 
 (defroutes web-socket-route

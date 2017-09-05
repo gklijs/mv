@@ -26,15 +26,15 @@
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (if-let [home-gd (repo/get-map "mv-gd-home")]
-               (templates/gd-page home-gd req)
-               "Not Found"
+             (if-let [home-gd (repo/get-map "mvp-home")]
+               (templates/gd-page (second home-gd) req)
+               {:status 404 :body "Not Found"}
                ))
            ;; Other general document pages
-           (GET "/gd/:id" [id :as req]
-             (if-let [some-gd (repo/get-map (str "mv-gd-" id))]
-               (templates/gd-page some-gd req)
-               "Not Found"
+           (GET "/:id" [id :as req]
+             (if-let [some-gd (repo/get-map (str "mvp-" id))]
+               (templates/gd-page (second some-gd) req)
+               {:status 404 :body "Not Found"}
                ))
            ;; Static files, e.g js/chat.js in dir `public`
            ;; In production environments it will be overwrited by

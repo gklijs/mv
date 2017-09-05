@@ -46,5 +46,5 @@
                                       :m-venue.spec/href  "https://www.facebook.com/Marthasvenue"
                                       :m-venue.spec/style :5}
                                      ]})
-(repo/set-map "mv-gd-home" home-page)
-(repo/set-map "mv-gd-info" info-page)
+(repo/set-map "mvp-home" :m-venue.spec/gen-doc home-page)
+(repo/set-map "mvp-info" :m-venue.spec/gen-doc info-page)

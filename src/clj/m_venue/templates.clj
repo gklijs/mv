@@ -68,7 +68,7 @@
        {:href "http://bulma.io/expo/"}
        [:span.icon [:i.fa.fa-paw]] [:span "Cats"]]
       [:a.navbar-item.is-tab
-       {:href "/gd/info" :class (if (= "/gd/info" path) "is-active" "")}
+       {:href "/info" :class (if (= "/info" path) "is-active" "")}
        [:span.icon [:i.fa.fa-info]] [:span "Info"]]]
      [:div.navbar-end
       [:a.navbar-item.is-tab.is-hidden-desktop-only
