@@ -8,7 +8,7 @@
 (defonce default-wait-time 5000)
 (defonce max-wait-time 300000)
 (defonce wait-time (atom default-wait-time))
-(defn make-web-socket! [])
+(declare make-web-socket!)
 
 (defn subscribe
   [validation-f execution-f]

@@ -44,6 +44,6 @@
 (defn init!
   "Initializes the handlers"
   []
-  (event/listen (dom/get-element "chat") :keydown keydown-handler)
-  (event/listen (dom/get-element "sendbtn") :click send-chat-message)
+  (event/listen (dom/get-element :chat) :keydown keydown-handler)
+  (event/listen (dom/get-element :sendbtn) :click send-chat-message)
   (subscribe (fn [msg] (string/starts-with? msg "ch-")) (fn [msg] (receive (subs msg 3)))))

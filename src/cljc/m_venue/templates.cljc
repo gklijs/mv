@@ -1,5 +1,4 @@
-(ns m-venue.templates
-  (:require [hiccup.page :as hiccup]))
+(ns m-venue.templates)
 
 (def style-map
   {:0 ""
@@ -99,36 +98,6 @@
        {:href "https://github.com/jgthms/bulma"}
        [:i.fa.fa-github]]]]]])
 
-(defn page
-  [title app-bar content]
-  (hiccup/html5
-    [:meta {:charset "utf-8"}]
-    [:meta {:content "width=device-width, initial-scale=1", :name "viewport"}]
-    [:title title]
-    [:link {:href "/apple-icon-57x57.png", :sizes "57x57", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-60x60.png", :sizes "60x60", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-72x72.png", :sizes "72x72", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-76x76.png", :sizes "76x76", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-114x114.png", :sizes "114x114", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-120x120.png", :sizes "120x120", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-144x144.png", :sizes "144x144", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-152x152.png", :sizes "152x152", :rel "apple-touch-icon"}]
-    [:link {:href "/apple-icon-180x180.png", :sizes "180x180", :rel "apple-touch-icon"}]
-    [:link {:href "/android-icon-192x192.png", :sizes "192x192", :type "image/png", :rel "icon"}]
-    [:link {:href "/favicon-32x32.png", :sizes "32x32", :type "image/png", :rel "icon"}]
-    [:link {:href "/favicon-96x96.png", :sizes "96x96", :type "image/png", :rel "icon"}]
-    [:link {:href "/favicon-16x16.png", :sizes "16x16", :type "image/png", :rel "icon"}]
-    [:link {:href "/manifest.json", :rel "manifest"}]
-    [:meta {:content "#ffffff", :name "msapplication-TileColor"}]
-    [:meta {:content "/ms-icon-144x144.png", :name "msapplication-TileImage"}]
-    [:meta {:content "#ffffff", :name "theme-color"}]
-    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
-    [:link {:rel "stylesheet" :href "/css/mv.css"}]
-    app-bar
-    content
-    (footer)
-    [:script {:src "/js/app.js"}]))
-
 (defn side-content
   "renders the tiles on the right side"
   []
@@ -153,10 +122,10 @@
 (defn tile
   "renders a tile"
   [tile]
-  (let [type-class (get style-map (get tile :m-venue.spec/style))
+  (let [type-class (str "content notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
         href (get tile :m-venue.spec/href)]
     (if href
-      [:a.content.notification.tile.is-child {:class type-class :href href}
+      [:a {:class type-class :href href}
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
@@ -164,7 +133,7 @@
         [:img {:src "/img/gen/cat_in_a_box-large.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ]
-      [:div.content.notification.tile.is-child {:class type-class}
+      [:div {:class type-class}
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
@@ -174,27 +143,19 @@
        ])
     ))
 
-(defn gd-page
-  [gd-map req]
-  (page
-    (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
-    (nav-bar (:uri req))
-    [:section.section
-     [:div.container
-      [:div.tile.is-ancestor
-       [:div.tile.is-9.is-vertical
-        [:div.tile.is-parent
-         (tile (get gd-map :m-venue.spec/tile))]
-        (let [all-tiles (get gd-map :m-venue.spec/tiles)
-              split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
-          [:div.tile.is-horizontal
-           [:div.tile.is-vertical.is-parent (map #(tile %) (first split-tiles))
-            [:div#app2.content.notification.tile.is-child]]
-           [:div.tile.is-vertical.is-parent (map #(tile %) (second split-tiles))]])]
-       (side-content)]
-      ]
-     ]
-    )
-  )
-
-
+(defn gd-content
+  "renders content based on a general document"
+  [gd-map]
+  [:section.section
+   [:div.container
+    [:div.tile.is-ancestor
+     [:div.tile.is-9.is-vertical
+      [:div.tile.is-parent
+       (tile (get gd-map :m-venue.spec/tile))]
+      (let [all-tiles (get gd-map :m-venue.spec/tiles)
+            split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
+        [:div.tile.is-horizontal
+         [:div.tile.is-vertical.is-parent (map #(tile %) (first split-tiles))
+          [:div#app2.content.notification.tile.is-child]]
+         [:div.tile.is-vertical.is-parent (map #(tile %) (second split-tiles))]])]
+     (side-content)]]])

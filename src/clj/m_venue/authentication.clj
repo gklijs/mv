@@ -1,6 +1,7 @@
 (ns m-venue.authentication
   (:require [clojure.tools.logging :as log]
             [compojure.core :refer [defroutes GET POST]]
+            [m-venue.page-templates :as page-templates]
             [m-venue.templates :as templates]
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
@@ -25,7 +26,7 @@
            (POST "/login" [uid pass :as {session :session}]
              (handle-login uid pass session))
            (GET "/login" []
-             (templates/page
+             (page-templates/page
                "login page"
                (templates/nav-bar :login)
                [:div.container

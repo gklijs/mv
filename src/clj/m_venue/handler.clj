@@ -3,7 +3,7 @@
             [compojure.route :as route]
             [m-venue.authentication :refer [auth-routes]]
             [m-venue.repo :as repo]
-            [m-venue.templates :as templates]
+            [m-venue.page-templates :as page-templates]
             [m-venue.websocket :refer [web-socket-route]]
             [nginx.clojure.core :as ncc]
             [nginx.clojure.session]
@@ -27,14 +27,14 @@
            ;; home page
            (GET "/" [:as req]
              (if-let [home-gd (repo/get-map "mvp-home")]
-               (templates/gd-page (second home-gd) req)
-               {:status 404 :body "Not Found"}
+               (page-templates/gd-page (second home-gd) req)
+               (route/not-found "Not Found")
                ))
            ;; Other general document pages
            (GET "/:id" [id :as req]
              (if-let [some-gd (repo/get-map (str "mvp-" id))]
-               (templates/gd-page (second some-gd) req)
-               {:status 404 :body "Not Found"}
+               (page-templates/gd-page (second some-gd) req)
+               (route/not-found "Not Found")
                ))
            ;; Static files, e.g js/chat.js in dir `public`
            ;; In production environments it will be overwrited by
