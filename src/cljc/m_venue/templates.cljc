@@ -10,7 +10,7 @@
 
 (defn nav-bar
   [path]
-  [:nav.navbar
+  [:nav#nav-bar.navbar
    [:div.container
     [:div.navbar-brand
      [:a.navbar-item.is-tab
@@ -77,7 +77,7 @@
 (defn footer
   "renders a footer"
   []
-  [:footer.footer
+  [:footer#footer.footer
    [:div.container
     [:div.content.has-text-centered
      [:p
@@ -101,7 +101,7 @@
 (defn side-content
   "renders the tiles on the right side"
   []
-  [:div.tile.is-vertical.is-parent
+  [:div#side-content.tile.is-vertical.is-parent
    [:div.content.notification.tile.is-child
     [:div.control.field [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
     [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
@@ -121,11 +121,12 @@
 
 (defn tile
   "renders a tile"
-  [tile]
+  [tile id]
   (let [type-class (str "content notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
-        href (get tile :m-venue.spec/href)]
+        href (get tile :m-venue.spec/href)
+        id (str "tile-" id)]
     (if href
-      [:a {:class type-class :href href}
+      [:a {:class type-class :href href :id id}
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
@@ -133,7 +134,7 @@
         [:img {:src "/img/gen/cat_in_a_box-large.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ]
-      [:div {:class type-class}
+      [:div {:class type-class :id id}
        [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
@@ -143,19 +144,23 @@
        ])
     ))
 
+(defn main
+  "renders content based on a general document"
+  [left right]
+  [:section#main.section
+   [:div.container
+    [:div.tile.is-ancestor
+     left right]]])
+
 (defn gd-content
   "renders content based on a general document"
   [gd-map]
-  [:section.section
-   [:div.container
-    [:div.tile.is-ancestor
-     [:div.tile.is-9.is-vertical
+     [:div#gd-content.tile.is-9.is-vertical
       [:div.tile.is-parent
-       (tile (get gd-map :m-venue.spec/tile))]
+       (tile (get gd-map :m-venue.spec/tile) (str "gd-" 1))]
       (let [all-tiles (get gd-map :m-venue.spec/tiles)
             split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
         [:div.tile.is-horizontal
-         [:div.tile.is-vertical.is-parent (map #(tile %) (first split-tiles))
+         [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))
           [:div#app2.content.notification.tile.is-child]]
-         [:div.tile.is-vertical.is-parent (map #(tile %) (second split-tiles))]])]
-     (side-content)]]])
+         [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) ) (second split-tiles))]])])

@@ -10,11 +10,14 @@
             [m-venue.templates :as templates]
             [spec-serialize.impl :as tf]))
 
+(defonce counter (atom 1))
+
 (defn set-gen-doc
   [msg]
-  (let [[spec map-data] (tf/from-string (subs msg 3))]
-    (dom/remove-children :blabla)
-    (dom/append (dom/get-element :blabla)(gdom/safeHtmlToNode (legacy/safeHtmlFromString (html (templates/gd-content map-data)))))))
+  (let [[spec map-data] (tf/from-string (subs msg 3))
+        parent (if (even? @counter) (dom/get-element :child-tiles-left) (dom/get-element :child-tiles-right))]
+    (dom/append parent (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html (templates/tile map-data (str "gen-" @counter))))))
+    (swap! counter inc)))
 
 (defn init!
   "Initializes the handlers"

@@ -28,7 +28,6 @@
     [:link {:rel "stylesheet" :href "/css/mv.css"}]
     app-bar
     content
-    [:div#blabla]
     (footer)
     [:script {:src "/js/app.js"}]))
 
@@ -37,4 +36,4 @@
   (page
     (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar (:uri req))
-    (gd-content gd-map)))
+    (main (gd-content gd-map) (side-content))))

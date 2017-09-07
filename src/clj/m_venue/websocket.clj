@@ -10,19 +10,10 @@
 (def chatroom-topic)
 (def sub-listener-removal-fn)
 
-(def correct-gen-doc {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Alles over katten"}
-                                           :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door Martha"}
-                                           :m-venue.spec/text      {:m-venue.spec/nl-text "Een mogelijk erg lange text over katten."}
-                                           :m-venue.spec/style     :1}
-                      :m-venue.spec/tiles [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
-                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}
-                                            :m-venue.spec/style :4
-                                            :m-venue.spec/href  "http://www.nu.nl"}
-                                           {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
-                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
-                                            :m-venue.spec/img   "uil.jpg"
-                                            :m-venue.spec/style :3}
-                                           ]})
+(def correct-tile {:m-venue.spec/title     {:m-venue.spec/nl-label "Een extra blokje"}
+                                           :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door clojurescript"}
+                                           :m-venue.spec/text      {:m-venue.spec/nl-text "Hier moet dan ook nog iets nuttigs"}
+                                           :m-venue.spec/style     :1})
 
 ;; Because if we use embeded nginx-clojure the nginx-clojure JNI methods
 ;; won't be registered until the first startup of the nginx server so we need
@@ -53,7 +44,7 @@
               (fn [msg _]
                 (doseq [[uid ch] @chatroom-users-channels]
                   (ncc/send! ch (str "ch-" msg) true false)
-                  (ncc/send! ch (str "mc-" (tf/to-string :m-venue.spec/gen-doc correct-gen-doc)) true false)))))
+                  (ncc/send! ch (str "mc-" (tf/to-string :m-venue.spec/tile correct-tile)) true false)))))
   nil)
 
 (defroutes web-socket-route
