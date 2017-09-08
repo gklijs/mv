@@ -4,7 +4,7 @@
   (:require [nginx.clojure.embed :as embed]
             [clojure.tools.logging :as log]
             [m-venue.demo-data :as demo-data]
-            [m-venue.websocket :refer [jvm-init-handler]]
+            [m-venue.chat :refer [jvm-init-handler]]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defn start-server

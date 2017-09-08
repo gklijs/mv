@@ -1,7 +1,7 @@
 (ns m-venue.websocket
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require      [clojure.string :as string]
-                 [cljs.core.async :refer [<! timeout]]))
+  (:require [clojure.string :as string]
+            [cljs.core.async :refer [<! timeout]]))
 
 (defonce ws-chan (atom nil))
 (defonce subscriptions (atom {}))
@@ -12,15 +12,13 @@
 (declare make-web-socket!)
 
 (defn subscribe
-  [validation-f execution-f]
-  (swap! subscriptions #(assoc % validation-f execution-f)))
+  [id message-f]
+  (swap! subscriptions #(assoc % id message-f)))
 
 (defn msg-handler
-  [[handled? msg] id execution-f]
+  [[handled? msg] id message-f]
   (if (and (false? handled?) (string/starts-with? msg id))
-    (do
-      (execution-f (subs msg 3))
-      [true msg])
+    [true (message-f (subs msg 3))]
     [handled? msg]))
 
 (defn receive-msg!
@@ -63,10 +61,10 @@
     (.send @ws-chan msg)
     (go-loop []
              (if @ws-chan
-                 (if (= (.-readyState @ws-chan) 1)
-                   (.send @ws-chan msg)
-                   (do (<! (timeout 1000)) (recur)))
-                 (do (<! (timeout 1000)) (recur))))))
+               (if (= (.-readyState @ws-chan) 1)
+                 (.send @ws-chan msg)
+                 (do (<! (timeout 1000)) (recur)))
+               (do (<! (timeout 1000)) (recur))))))
 
 (defn init!
   "Initializes the websocket"

@@ -6,46 +6,38 @@
             [nginx.clojure.core :as ncc]
             [spec-serialize.impl :as tf]))
 
-(def chatroom-users-channels (atom {}))
-(def chatroom-topic)
-(def sub-listener-removal-fn)
+(defonce subscriptions (atom {}))
 
-(def correct-tile {:m-venue.spec/title     {:m-venue.spec/nl-label "Een extra blokje"}
-                                           :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door clojurescript"}
-                                           :m-venue.spec/text      {:m-venue.spec/nl-text "Hier moet dan ook nog iets nuttigs"}
-                                           :m-venue.spec/style     :1})
+(defn subscribe
+  [id open-f message-f close-f]
+  (swap! subscriptions #(assoc % id [open-f message-f close-f])))
 
-;; Because if we use embeded nginx-clojure the nginx-clojure JNI methods
-;; won't be registered until the first startup of the nginx server so we need
-;; use delayed initialization to make sure some initialization work
-;; to be done after nginx-clojure JNI methods being registered.
-(defn jvm-init-handler [_]
-  ;; init chatroom topic
-  ;; When worker_processes  > 1 in nginx.conf, there're more than one JVM instances
-  ;; and requests from the same session perphaps will be handled by different JVM instances.
-  ;; We need setup subscribing message listener here to get chatroom messages from other JVM instances.
-  ;; The below graph show the message flow in a chatroom
+(defn on-open!
+  [ch uid]
+  (doseq [[id [open-f message-f close-f]] @subscriptions]
+    (let [result (open-f ch uid)]
+      (log/debug result))))
 
-  ;            \-----/     (1)send  (js)    +-------+
-  ;            |User1| -------------------->|WorkerA|
-  ;            /-----\                      +-------+
-  ;               ^                           | |
-  ;               |       (3)send!            | |(2)pub!
-  ;               '---------------------------' |
-  ;                                             V
-  ;             \-----/   (3)send!          +-------+
-  ;             |User2| <------------------ |WorkerB|
-  ;             /-----\                     +-------+
-  (def chatroom-topic (ncc/build-topic! "chatroom-topic"))
-  ;; avoid duplicate adding when auto-reload namespace is enabled in dev enviroments.
-  (when (bound? #'sub-listener-removal-fn) (sub-listener-removal-fn))
-  (def sub-listener-removal-fn
-    (ncc/sub! chatroom-topic nil
-              (fn [msg _]
-                (doseq [[uid ch] @chatroom-users-channels]
-                  (ncc/send! ch (str "ch-" msg) true false)
-                  (ncc/send! ch (str "mc-" (tf/to-string :m-venue.spec/tile correct-tile)) true false)))))
-  nil)
+(defn on-message-handler
+  [[handled? ch uid msg] id [open-f message-f close-f]]
+  (log/debug "--------msg " msg " by " uid)
+  (if (and (false? handled?) (string/starts-with? msg id))
+    [true (message-f ch uid (subs msg 3))]
+    [handled? ch msg]))
+
+(defn on-message!
+  [ch uid msg]
+  (let [result (reduce-kv on-message-handler [false ch uid msg] @subscriptions)]
+    (if
+      (false? (first result))
+      (println (str "message was not handled by one of the subscribe handlers: " msg " from " uid)))
+    ))
+
+(defn on-close!
+  [ch uid reason]
+  (doseq [[id [open-f message-f close-f]] @subscriptions]
+    (let [result (close-f ch uid reason)]
+      (log/debug result))))
 
 (defroutes web-socket-route
            ;; Websocket server endpoint
@@ -54,19 +46,7 @@
                    uid (get-user req)]
                (when (ncc/websocket-upgrade! ch true)
                  (ncc/add-aggregated-listener! ch 500
-                                               {:on-open    (fn [ch]
-                                                              (log/debug "user:" uid " connected!")
-                                                              (swap! chatroom-users-channels assoc uid ch)
-                                                              (ncc/pub! chatroom-topic (str uid ":[enter!]")))
-                                                :on-message (fn [ch msg]
-                                                              (log/debug "user:" uid " msg:" msg)
-                                                              (cond
-                                                                (string/starts-with? msg "ch-") (ncc/pub! chatroom-topic (str uid ":" (subs msg 3)))
-                                                                :else (log/error "Unknown message type: " msg))
-                                                              )
-                                                :on-close   (fn [ch reason]
-                                                              (log/debug "user:" uid " left!")
-                                                              (swap! chatroom-users-channels dissoc uid)
-                                                              (ncc/pub! chatroom-topic (str uid ":[left!]")))})
-                 {:status 200 :body ch})))
-           )
+                                               {:on-open    (fn [ch] (on-open! ch uid))
+                                                :on-message (fn [ch msg] (on-message! ch uid msg))
+                                                :on-close   (fn [ch reason] (on-close! ch uid reason))})
+                 {:status 200 :body ch}))))
