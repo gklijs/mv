@@ -1,6 +1,7 @@
 (ns m-venue.websocket
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]))
+  (:require      [clojure.string :as string]
+                 [cljs.core.async :refer [<! timeout]]))
 
 (defonce ws-chan (atom nil))
 (defonce subscriptions (atom {}))
@@ -15,10 +16,10 @@
   (swap! subscriptions #(assoc % validation-f execution-f)))
 
 (defn msg-handler
-  [[handled? msg] validation-f execution-f]
-  (if (and (false? handled?) (validation-f msg))
+  [[handled? msg] id execution-f]
+  (if (and (false? handled?) (string/starts-with? msg id))
     (do
-      (execution-f msg)
+      (execution-f (subs msg 3))
       [true msg])
     [handled? msg]))
 

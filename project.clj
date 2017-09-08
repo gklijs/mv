@@ -14,7 +14,7 @@
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-anti-forgery "1.1.0"]
                  [org.clojure/core.async "0.3.443" :scope "provided"]
-                 [org.clojure/tools.reader "1.0.5"]]
+                 [org.clojure/tools.reader "1.0.6"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj"]
   :target-path "target/%s"
