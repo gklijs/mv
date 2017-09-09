@@ -15,10 +15,10 @@
                 :else "is-info")
         li-item (. js/document createElement "p")
         ]
-    (set! (.-className li-item) (str "notification tile " color))
+    (set! (.-className li-item) (str "notification tile chat-tile " color))
     (set! (.-id li-item) (str "chat-message-" @message-counter))
     (dom/set-text li-item msg)
-    (dom/insert-at (dom/get-element :board) li-item 1)
+    (dom/insert-at (dom/get-element :board) li-item 0)
     (if
       (> @message-counter 4)
       (gdom/removeNode (dom/get-element (str "chat-message-" (- @message-counter 5)))))

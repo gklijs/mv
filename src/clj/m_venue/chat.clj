@@ -1,6 +1,5 @@
 (ns m-venue.chat
-  (:require [clojure.tools.logging :as log]
-            [clojure.string :as string]
+  (:require [clojure.string :as string]
             [m-venue.websocket :refer [subscribe]]
             [nginx.clojure.core :as ncc]))
 
@@ -42,14 +41,12 @@
 (subscribe
   "ch-"
   (fn [ch uid]
-    (log/debug "user:" uid " connected!")
     (swap! chatroom-users-channels assoc uid ch)
-    (ncc/pub! chatroom-topic (str uid ":[enter!]")))
-  (fn [ch uid msg]
-    (log/debug "user: " uid " msg " msg)
-    (ncc/pub! chatroom-topic (str uid ":" msg)))
+    (ncc/pub! chatroom-topic (str uid ":[enter!]"))
+    (str "user: " uid " connected!"))
+  (fn [ch uid msg] (ncc/pub! chatroom-topic (str uid ":" msg)))
   (fn [ch uid reason]
-    (log/debug "user:" uid " left! Because " reason)
     (swap! chatroom-users-channels dissoc uid)
-    (ncc/pub! chatroom-topic (str uid ":[left!]")))
+    (ncc/pub! chatroom-topic (str uid ":[left!]"))
+    (str "user: " uid " left! Because " reason))
   )

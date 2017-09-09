@@ -20,7 +20,6 @@
 
 (defn on-message-handler
   [[handled? ch uid msg] id [open-f message-f close-f]]
-  (log/debug "--------msg " msg " by " uid)
   (if (and (false? handled?) (string/starts-with? msg id))
     [true (message-f ch uid (subs msg 3))]
     [handled? ch msg]))
