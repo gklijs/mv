@@ -9,6 +9,7 @@
 (defonce default-wait-time 5000)
 (defonce max-wait-time 300000)
 (defonce wait-time (atom default-wait-time))
+(defonce ws-location (atom nil))
 (declare make-web-socket!)
 
 (defn subscribe
@@ -45,7 +46,7 @@
     ))
 
 (defn make-web-socket! []
-  (let [url (str "ws://" (-> js/window .-location .-host) "/ws")]
+  (let [url (str "ws://" (-> js/window .-location .-host) @ws-location)]
     (if-let [chan (js/WebSocket. url)]
       (do
         (set! (.-onopen chan) (fn [] (println "opening connection to " url)))
@@ -68,5 +69,6 @@
 
 (defn init!
   "Initializes the websocket"
-  []
+  [location]
+  (reset! ws-location location)
   (make-web-socket!))

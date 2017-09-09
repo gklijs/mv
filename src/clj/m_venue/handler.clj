@@ -4,7 +4,7 @@
             [m-venue.authentication :refer [auth-routes]]
             [m-venue.repo :as repo]
             [m-venue.page-templates :as page-templates]
-            [m-venue.websocket :refer [web-socket-route]]
+            [m-venue.websocket :refer [web-socket-routes]]
             [nginx.clojure.core :as ncc]
             [nginx.clojure.session]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
@@ -27,13 +27,19 @@
            ;; home page
            (GET "/" [:as req]
              (if-let [home-gd (repo/get-map "mvp-home")]
-               (page-templates/gd-page (second home-gd) req)
+               (page-templates/gd-page (second home-gd) req false)
                (route/not-found "Not Found")
                ))
            ;; Other general document pages
            (GET "/:id" [id :as req]
              (if-let [some-gd (repo/get-map (str "mvp-" id))]
-               (page-templates/gd-page (second some-gd) req)
+               (page-templates/gd-page (second some-gd) req false)
+               (route/not-found "Not Found")
+               ))
+           ;; edit variant other pages todo add check for is-editor
+           (GET "/edit/:id" [id :as req]
+             (if-let [some-gd (repo/get-map (str "mvp-" id))]
+               (page-templates/gd-page (second some-gd) req true)
                (route/not-found "Not Found")
                ))
            ;; Static files, e.g js/chat.js in dir `public`
@@ -44,6 +50,6 @@
            (route/not-found "Not Found"))
 
 (def app
-  (wrap-defaults (routes auth-routes web-socket-route app-routes)
+  (wrap-defaults (routes auth-routes web-socket-routes app-routes)
                  (update-in site-defaults [:session]
                             assoc :store my-session-store)))

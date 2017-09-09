@@ -1,5 +1,5 @@
 (ns m-venue.app
-  (:require [m-venue.core :as core]))
+  (:require [m-venue.pub :as core]))
 
 ;;ignore println statements in prod
 (set! *print-fn* (fn [& _]))

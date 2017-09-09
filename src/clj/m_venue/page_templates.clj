@@ -2,7 +2,7 @@
   (:require [hiccup.page :refer [html5]]
             [m-venue.templates :refer :all]))
 (defn page
-  [title app-bar content]
+  [title app-bar content editable]
   (html5
     [:meta {:charset "utf-8"}]
     [:meta {:content "width=device-width, initial-scale=1", :name "viewport"}]
@@ -26,14 +26,20 @@
     [:meta {:content "#ffffff", :name "theme-color"}]
     [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
     [:link {:rel "stylesheet" :href "/css/mv.css"}]
+    (if editable
+      [:div#edit-bar])
     app-bar
     content
     (footer)
-    [:script {:src "/js/app.js"}]))
+    (if test
+      [:script {:src "/js/edit.js"}]
+      [:script {:src "/js/app.js"}])
+    ))
 
 (defn gd-page
-  [gd-map req]
+  [gd-map req editable]
   (page
     (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar (:uri req))
-    (main (gd-content gd-map) (side-content))))
+    (main (gd-content gd-map) (side-content))
+    editable))

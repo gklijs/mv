@@ -18,7 +18,7 @@
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj"]
   :target-path "target/%s"
-  :clean-targets ^{:protect false} [:target-path "resources/public/js/app.js" "resources/public/js/out" "resources/public/css"]
+  :clean-targets ^{:protect false} [:target-path "resources/public/js" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.908"]]
@@ -40,26 +40,43 @@
                                                                      :output-dir    "resources/public/js/out"
                                                                      :source-map    true
                                                                      :optimizations :none
+                                                                     :pretty-print  true}}
+                                                :edit {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                                                      :compiler
+                                                                    {:main          "m-venue.edit-app"
+                                                                     :asset-path    "/js/edit-out"
+                                                                     :output-to     "resources/public/js/edit.js"
+                                                                     :output-dir    "resources/public/js/edit-out"
+                                                                     :source-map    true
+                                                                     :optimizations :none
                                                                      :pretty-print  true}}}}
                         :sass         {:src              "resources/app/stylesheets"
                                        :output-directory "resources/public/css"
                                        :source-maps      true
                                        :style            :nested}
-                        :prep-tasks   [["compile"] ["cljsbuild" "once" "app"] ["sass" "once"]]
+                        :prep-tasks   [["compile"] ["cljsbuild" "once" "app"] ["cljsbuild" "once" "edit"] ["sass" "once"]]
                         :source-paths ["env/dev/clj"]
                         }
              :uberjar  {:omit-source    true
-                        :cljsbuild      {:builds {:min
+                        :cljsbuild      {:builds {:app
                                                   {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
                                                    :compiler
-                                                                 {:output-to     "resources/public/js/app.js"
+                                                                 {:main          "m-venue.app"
+                                                                  :output-to     "resources/public/js/app.js"
+                                                                  :optimizations :advanced
+                                                                  :pretty-print  false}}
+                                                  :edit
+                                                  {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
+                                                   :compiler
+                                                                 {:main          "m-venue.edit-app"
+                                                                  :output-to     "resources/public/js/edit.js"
                                                                   :optimizations :advanced
                                                                   :pretty-print  false}}}}
                         :sass           {:src              "resources/app/stylesheets"
                                          :output-directory "resources/public/css"
                                          :source-maps      false
                                          :style            :compressed}
-                        :prep-tasks     ["compile" ["cljsbuild" "once" "min"] ["sass" "once"]]
+                        :prep-tasks     ["compile" ["cljsbuild" "once" "app"] ["cljsbuild" "once" "edit"] ["sass" "once"]]
                         :aot            [m-venue.handler]
                         :uberjar-name   "m-venue-default.jar"
                         :source-paths   ["env/prod/clj"]

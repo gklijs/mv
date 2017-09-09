@@ -161,6 +161,5 @@
    (let [all-tiles (get gd-map :m-venue.spec/tiles)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))
-       [:div#app2.content.notification.tile.is-child]]
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))]
       [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1))) (second split-tiles))]])])

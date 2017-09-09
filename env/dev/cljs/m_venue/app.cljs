@@ -1,5 +1,5 @@
 (ns m-venue.app
-  (:require [m-venue.core :as core]))
+  (:require [m-venue.pub :as core]))
 
 (enable-console-print!)
 

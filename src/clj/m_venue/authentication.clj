@@ -15,12 +15,19 @@
       (str "guest-" @guest-counter))
     ))
 
+(defn is-editor
+  "For now everyone is an editor, should come from some data"
+  [uid]
+  true)
+
 (defn handle-login [uid pass session]
   "Here we can add server-side auth. In this example we'll just always authenticate
    the user successfully regardless what inputted."
   (log/debug "login with " uid ", old session :" session)
-  ;; redirect to /
-  {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}})
+  ;; redirect to / or /edit depending on whether logged in user has admin rights
+  (if (is-editor uid)
+    {:status 303 :session (assoc session :uid uid) :headers {"Location" "/edit/home"}}
+    {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}))
 
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
@@ -41,4 +48,5 @@
                    [:p]
                    [:input#submit-btn.btn.btn-primary.btn-block {:type "submit" :value "Login!"}]
                    ]]
-                 [:div.panel-footer]]])))
+                 [:div.panel-footer]]]
+               false)))
