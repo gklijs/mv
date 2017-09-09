@@ -5,6 +5,7 @@
             [clojure.tools.logging :as log]
             [m-venue.demo-data :as demo-data]
             [m-venue.chat :refer [jvm-init-handler]]
+            [m-venue.image-processing :as image-processing]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defn start-server

@@ -27,7 +27,7 @@
     [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
     [:link {:rel "stylesheet" :href "/css/mv.css"}]
     (if editable
-      [:div#edit-bar])
+      (edit-bar))
     app-bar
     content
     (footer)

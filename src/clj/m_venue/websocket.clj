@@ -27,9 +27,10 @@
 
 (defn on-message-handler
   [[handled? ch uid msg] id [open-f message-f close-f]]
+  (log/debug "checked for id" id "with msg of" (count msg))
   (if (and (false? handled?) (string/starts-with? msg id))
     [true (message-f ch uid (subs msg 3))]
-    [handled? ch msg]))
+    [handled? ch uid msg]))
 
 (defn on-message!
   [ch uid msg edit-only]
@@ -38,7 +39,7 @@
     (if
       (false? (first result))
       (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
-      (log/debug "message was handled successfully")
+      (log/debug "message was handled successfully with result" (second result))
     ))
 
 (defn on-close!
@@ -66,10 +67,10 @@
                    uid (get-user req)]
                (if (and (is-editor uid) (ncc/websocket-upgrade! ch true))
                  (do
-                   (ncc/add-aggregated-listener! ch 500
-                                                 {:on-open    (fn [ch] (on-open! ch uid false))
-                                                  :on-message (fn [ch msg] (on-message! ch uid msg false))
-                                                  :on-close   (fn [ch reason] (on-close! ch uid reason false))
+                   (ncc/add-aggregated-listener! ch (* 5 1024 1024)
+                                                 {:on-open    (fn [ch] (on-open! ch uid true))
+                                                  :on-message (fn [ch msg] (on-message! ch uid msg true))
+                                                  :on-close   (fn [ch reason] (on-close! ch uid reason true))
                                                   :on-error   (fn [ch status] (log/warn "error on edit web socket with status" status))})
                    {:status 200 :body ch})
                  (do

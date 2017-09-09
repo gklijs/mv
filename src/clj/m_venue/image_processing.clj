@@ -1,10 +1,12 @@
 (ns m-venue.image-processing
   (:require [clojure.test :refer :all]
+            [clojure.tools.logging :as log]
             [image-resizer.crop :refer :all]
             [image-resizer.core :refer :all]
             [image-resizer.format :as format]
             [image-resizer.resize :refer :all]
-            [image-resizer.util :as util]))
+            [image-resizer.util :as util]
+            [m-venue.websocket :refer [edit-subscribe]]))
 
 (def original-image-path "resources/public/img/")
 (def destination-image-path "resources/public/img/gen/")
@@ -56,6 +58,13 @@
     [css-class big-square-image small-square-image small-image medium-image large-image]
     ))
 
+(edit-subscribe
+  "img"
+  (fn [ch uid]
+    (str "user: " uid " connected! to send images"))
+  (fn [ch uid msg] (log/warn "image with size" (count msg) "received, but not yet handled"))
+  (fn [ch uid reason]
+    (str "user: " uid " left! Because " reason)))
 
 
 
