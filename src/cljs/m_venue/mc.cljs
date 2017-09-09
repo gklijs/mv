@@ -5,7 +5,7 @@
             [goog.dom :as gdom]
             [goog.html.legacyconversions :as legacy]
             [hiccups.runtime :as hiccupsrt]
-            [m-venue.websocket :refer [send-msg! subscribe]]
+            [m-venue.web-socket :refer [send-msg! subscribe]]
             [m-venue.templates :as templates]
             [spec-serialize.impl :as tf]))
 

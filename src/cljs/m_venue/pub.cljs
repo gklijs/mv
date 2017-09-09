@@ -1,11 +1,11 @@
 (ns m-venue.pub
   (:require [m-venue.chat :as chat]
             [m-venue.mc :as mc]
-            [m-venue.websocket :as websocket]))
+            [m-venue.web-socket :as web-socket]))
 
 (defn init!
   "Initializes the handlers and websocket"
   []
-  (websocket/init! "/public")
+  (web-socket/init! "/public")
   (chat/init!)
   (mc/init!))

@@ -3,7 +3,7 @@
             [clojure.browser.event :as event]
             [clojure.string :as string]
             [goog.dom :as gdom]
-            [m-venue.websocket :refer [send-msg! subscribe]]))
+            [m-venue.web-socket :refer [send-msg! subscribe]]))
 
 (defonce message-counter (atom 0))
 

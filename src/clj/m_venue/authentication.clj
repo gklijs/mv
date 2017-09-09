@@ -16,9 +16,9 @@
     ))
 
 (defn is-editor
-  "For now everyone is an editor, should come from some data"
+  "For now only admin is an editor, should come from some data"
   [uid]
-  true)
+  (if (= uid "admin") true false))
 
 (defn handle-login [uid pass session]
   "Here we can add server-side auth. In this example we'll just always authenticate

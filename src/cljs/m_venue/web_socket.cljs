@@ -1,4 +1,4 @@
-(ns m-venue.websocket
+(ns m-venue.web-socket
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [clojure.string :as string]
             [cljs.core.async :refer [<! timeout]]))
@@ -34,6 +34,7 @@
 (defn delayed-reconnect!
   [error-or-close-event]
   (reset! ws-chan nil)
+  (js/console.log error-or-close-event)
   (if (not @reconnecting)
     (do
       (reset! reconnecting true)

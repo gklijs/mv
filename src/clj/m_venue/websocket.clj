@@ -57,9 +57,10 @@
                  (ncc/add-aggregated-listener! ch 500
                                                {:on-open    (fn [ch] (on-open! ch uid false))
                                                 :on-message (fn [ch msg] (on-message! ch uid msg false))
-                                                :on-close   (fn [ch reason] (on-close! ch uid reason false))})
+                                                :on-close   (fn [ch reason] (on-close! ch uid reason false))
+                                                :on-error   (fn [ch status] (log/warn "error on public web socket with status" status))})
                  {:status 200 :body ch})))
-           ;; edit Websocket server endpoint
+           ;; edit Webs ocket server endpoint
            (GET "/editable" [:as req]
              (let [ch (ncc/hijack! req true)
                    uid (get-user req)]
@@ -68,6 +69,10 @@
                    (ncc/add-aggregated-listener! ch 500
                                                  {:on-open    (fn [ch] (on-open! ch uid false))
                                                   :on-message (fn [ch msg] (on-message! ch uid msg false))
-                                                  :on-close   (fn [ch reason] (on-close! ch uid reason false))})
+                                                  :on-close   (fn [ch reason] (on-close! ch uid reason false))
+                                                  :on-error   (fn [ch status] (log/warn "error on edit web socket with status" status))})
                    {:status 200 :body ch})
-                 {:status 403 :body "Your not logged in as an user with edit rights"}))))
+                 (do
+                   (log/debug "user with uid" uid "tried to connect to the editable web socket, but doesn't have the rights")
+                   (ncc/send-response! ch {:status 403}))
+                 ))))

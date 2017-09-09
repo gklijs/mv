@@ -31,7 +31,7 @@
     app-bar
     content
     (footer)
-    (if test
+    (if (true? editable)
       [:script {:src "/js/edit.js"}]
       [:script {:src "/js/app.js"}])
     ))

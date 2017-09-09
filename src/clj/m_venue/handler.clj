@@ -20,8 +20,7 @@
   ;(ring.middleware.session.cookie/cookie-store {:key "a 16-byte secret"})
 
   ;; use nginx shared map store
-  (nginx.clojure.session/shared-map-store "mySessionStore")
-  )
+  (nginx.clojure.session/shared-map-store "mySessionStore"))
 
 (defroutes app-routes
            ;; home page
