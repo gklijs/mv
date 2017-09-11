@@ -16,8 +16,8 @@
     (doseq [file files]
       (js/console.log file)
       (let [file-reader (js/FileReader.)]
-        (set! (.-onloadend file-reader) (fn [] (send-msg! (str "img" (.-result file-reader)))))
-        (.readAsText file-reader file)
+        (set! (.-onloadend file-reader) (fn [] (send-msg! (.-result file-reader))))
+        (.readAsArrayBuffer file-reader file)
         ))))
 
 (defn init!

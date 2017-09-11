@@ -3,8 +3,10 @@
             [compojure.core :refer [defroutes GET]]
             [clojure.string :as string]
             [m-venue.authentication :refer [get-user is-editor]]
+            [m-venue.image-processing :refer [process-bytes]]
             [nginx.clojure.core :as ncc]
-            [spec-serialize.impl :as tf]))
+            [spec-serialize.impl :as tf])
+  (:import (java.io ByteArrayInputStream)))
 
 (defonce subscriptions (atom {}))
 (defonce edit-subscriptions (atom {}))
@@ -34,20 +36,23 @@
 
 (defn on-message!
   [ch uid msg edit-only]
-  (let [subs-map (if edit-only @edit-subscriptions @subscriptions)
-        result (reduce-kv on-message-handler [false ch uid msg] subs-map)]
-    (if
-      (false? (first result))
-      (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
-      (log/debug "message was handled successfully with result" (second result))
-    ))
+  (cond
+    (string? msg)
+    (let [subs-map (if edit-only @edit-subscriptions @subscriptions)
+          result (reduce-kv on-message-handler [false ch uid msg] subs-map)]
+      (if
+        (false? (first result))
+        (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
+      (log/debug "message was handled successfully with result" (second result)))
+    (bytes? msg) (process-bytes msg)
+    :else (process-bytes (.array msg))))
 
 (defn on-close!
   [ch uid reason edit-only]
   (let [subs-map (if edit-only @edit-subscriptions @subscriptions)]
-  (doseq [[id [open-f message-f close-f]] subs-map]
-    (let [result (close-f ch uid reason)]
-      (log/debug result)))))
+    (doseq [[id [open-f message-f close-f]] subs-map]
+      (let [result (close-f ch uid reason)]
+        (log/debug result)))))
 
 (defroutes web-socket-routes
            ;; public Websocket server endpoint

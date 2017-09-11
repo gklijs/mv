@@ -1,7 +1,7 @@
 (ns m-venue.handler
   (:require [compojure.core :refer [defroutes GET routes]]
             [compojure.route :as route]
-            [m-venue.authentication :refer [auth-routes]]
+            [m-venue.authentication :refer [auth-routes get-user is-editor]]
             [m-venue.repo :as repo]
             [m-venue.page-templates :as page-templates]
             [m-venue.websocket :refer [web-socket-routes]]
@@ -37,9 +37,12 @@
                ))
            ;; edit variant other pages todo add check for is-editor
            (GET "/edit/:id" [id :as req]
-             (if-let [some-gd (repo/get-map (str "mvp-" id))]
-               (page-templates/gd-page (second some-gd) req true)
-               (route/not-found "Not Found")
+             (if
+               (is-editor (get-user req))
+               (if-let [some-gd (repo/get-map (str "mvp-" id))]
+                 (page-templates/gd-page (second some-gd) req true)
+                 (route/not-found "Not Found"))
+               {:status 303 :headers {"Location" "/login"}}
                ))
            ;; Static files, e.g js/chat.js in dir `public`
            ;; In production environments it will be overwrited by

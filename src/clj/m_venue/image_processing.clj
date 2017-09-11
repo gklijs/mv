@@ -1,12 +1,13 @@
 (ns m-venue.image-processing
-  (:require [clojure.test :refer :all]
+  (:import java.io.ByteArrayInputStream)
+  (:require [clojure.string :as string]
+            [clojure.test :refer :all]
             [clojure.tools.logging :as log]
             [image-resizer.crop :refer :all]
             [image-resizer.core :refer :all]
             [image-resizer.format :as format]
             [image-resizer.resize :refer :all]
-            [image-resizer.util :as util]
-            [m-venue.websocket :refer [edit-subscribe]]))
+            [image-resizer.util :as util]))
 
 (def original-image-path "resources/public/img/")
 (def destination-image-path "resources/public/img/gen/")
@@ -58,13 +59,10 @@
     [css-class big-square-image small-square-image small-image medium-image large-image]
     ))
 
-(edit-subscribe
-  "img"
-  (fn [ch uid]
-    (str "user: " uid " connected! to send images"))
-  (fn [ch uid msg] (log/warn "image with size" (count msg) "received, but not yet handled"))
-  (fn [ch uid reason]
-    (str "user: " uid " left! Because " reason)))
-
-
+(defn process-bytes
+  [byte-array]
+  (let [inputstream (ByteArrayInputStream. byte-array)
+        buffered-image (util/buffered-image inputstream)
+        [x-size y-size] (util/dimensions buffered-image)]
+    (log/debug "received image with size" x-size "by" y-size)))
 
