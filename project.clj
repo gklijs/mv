@@ -16,7 +16,7 @@
                  [org.clojure/core.async "0.3.443" :scope "provided"]
                  [org.clojure/tools.reader "1.0.6"]]
   :source-paths ["src/clj" "src/cljc"]
-  :test-paths ["test/clj"]
+  :test-paths ["test/clj" "env/test/clj"]
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path "resources/public/js" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]

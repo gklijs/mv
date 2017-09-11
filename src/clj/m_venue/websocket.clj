@@ -3,10 +3,9 @@
             [compojure.core :refer [defroutes GET]]
             [clojure.string :as string]
             [m-venue.authentication :refer [get-user is-editor]]
-            [m-venue.image-processing :refer [process-bytes]]
+            [m-venue.image-processing :refer [process]]
             [nginx.clojure.core :as ncc]
-            [spec-serialize.impl :as tf])
-  (:import (java.io ByteArrayInputStream)))
+            [spec-serialize.impl :as tf]))
 
 (defonce subscriptions (atom {}))
 (defonce edit-subscriptions (atom {}))
@@ -44,8 +43,8 @@
         (false? (first result))
         (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
       (log/debug "message was handled successfully with result" (second result)))
-    (bytes? msg) (process-bytes msg)
-    :else (process-bytes (.array msg))))
+    (bytes? msg) (process msg)
+    :else (process (.array msg))))
 
 (defn on-close!
   [ch uid reason edit-only]

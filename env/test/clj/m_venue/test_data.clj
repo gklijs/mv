@@ -1,4 +1,4 @@
-(ns m-venue.demo-data
+(ns m-venue.test-data
     (:require [m-venue.repo :as repo]))
 
 (def home-page {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Welkom bij Martha's venue"}
@@ -48,7 +48,7 @@
                                      ]})
 
 (def initial-img-info {:m-venue.spec/img-path "resources/public/img/gen/"
-                       :m-venue.spec/latest-img 0})
+                       :m-venue.spec/latest-img 10})
 
 (repo/set-map "mvp-home" :m-venue.spec/gen-doc home-page)
 (repo/set-map "mvp-info" :m-venue.spec/gen-doc info-page)
