@@ -47,7 +47,7 @@
                                       :m-venue.spec/style :5}
                                      ]})
 
-(def initial-img-info {:m-venue.spec/img-path "resources/public/img/gen/"
+(def initial-img-info {:m-venue.spec/img-path "resources/public/img/"
                        :m-venue.spec/latest-img 0})
 
 (repo/set-map "mvp-home" :m-venue.spec/gen-doc home-page)

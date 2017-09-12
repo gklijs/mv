@@ -124,12 +124,12 @@
    [:a.content.notification.tile.is-child {:href "/login"}
     [:p.title "Login"]
     [:div.image.is-3by4
-     [:img {:src "/img/gen/11-s.jpg"}]]
+     [:img {:src "/img/11/s.jpg"}]]
     [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
     [:div.image.is-128x128
-     [:img {:src "/img/gen/11-256.jpg"}]]
+     [:img {:src "/img/11/256.jpg"}]]
     [:div.image.is-64x64
-     [:img {:src "/img/gen/11-64.jpg"}]]]
+     [:img {:src "/img/11/64.jpg"}]]]
    ]
   )
 
@@ -145,7 +145,7 @@
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
        [:div.image.is-3by4
-        [:img {:src "/img/gen/11-l.jpg"}]]
+        [:img {:src "/img/11/l.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ]
       [:div {:class type-class :id id}
@@ -153,7 +153,7 @@
        (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
          [:p.subtitle sub-title])
        [:div.image.is-3by4
-        [:img {:src "/img/gen/11-l.jpg"}]]
+        [:img {:src "/img/11/l.jpg"}]]
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
        ])
     ))

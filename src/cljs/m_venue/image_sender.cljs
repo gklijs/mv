@@ -23,4 +23,5 @@
 (defn init!
   "Initializes the handlers"
   []
-  (event/listen (dom/get-element :upload-image-button) :click upload-images))
+  (event/listen (dom/get-element :upload-image-button) :click (fn [] (dom/click-element :upload-image-files)))
+  (event/listen (dom/get-element :upload-image-files) :change upload-images))

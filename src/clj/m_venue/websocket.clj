@@ -43,6 +43,7 @@
         (false? (first result))
         (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
       (log/debug "message was handled successfully with result" (second result)))
+    (not (is-editor uid)) (log/warn "non-editor tried to send bytes instead of string uid: "uid)
     (bytes? msg) (process msg)
     :else (process (.array msg))))
 
