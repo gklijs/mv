@@ -14,7 +14,6 @@
   (let [file-selector (dom/get-element :upload-image-files)
         files (toArray (.-files file-selector))]
     (doseq [file files]
-      (js/console.log file)
       (let [file-reader (js/FileReader.)]
         (set! (.-onloadend file-reader) (fn [] (send-msg! (.-result file-reader))))
         (.readAsArrayBuffer file-reader file)
