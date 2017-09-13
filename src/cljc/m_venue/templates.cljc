@@ -10,17 +10,11 @@
 
 (defn edit-bar
   []
-  [:nav#edit-bar.navbar
-   [:div.container
-    [:div.navbar-brand
-     [:div.navbar-item.is-tab
-      [:span.is-large "Edit bar"]]]
-    [:div.navbar-end
-     [:div.field.is-grouped
-      [:div.control.navbar-item [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]]
-      [:button#upload-image-button.is-primary.navbar-item
-       [:span.icon
-        [:i.fa.fa-file-image-o]]]]]]])
+  [:div#edit-buttons.container
+   [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]
+   [:button#upload-image-button.button.is-primary
+    [:span.icon
+     [:i.fa.fa-file-image-o]]]])
 
 (defn nav-bar
   [path]
@@ -28,7 +22,7 @@
    [:div.container
     [:div.navbar-brand
      [:a.navbar-item.is-tab
-      {:href "/" :class (if (or (= "/" path) (= "/home" path))  "is-active" "")}
+      {:href "/" :class (if (or (= "/" path) (= "/home" path)) "is-active" "")}
       [:span.is-large "Martha's Venue"]]
      [:a.navbar-item.is-hidden-desktop
       {:target "_blank", :href "https://github.com/jgthms/bulma"}
