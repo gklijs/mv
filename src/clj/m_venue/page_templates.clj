@@ -1,6 +1,7 @@
 (ns m-venue.page-templates
   (:require [hiccup.page :refer [html5]]
-            [m-venue.templates :refer :all]))
+            [m-venue.templates :refer :all]
+            [m-venue.repo :as repo]))
 (defn page
   [title app-bar content editable]
   (html5
@@ -27,7 +28,7 @@
     [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
     [:link {:rel "stylesheet" :href "/css/mv.css"}]
     (if editable
-      (edit-bar))
+      (edit-bars (:m-venue.spec/latest-img (second (repo/get-map "mvi-info")))))
     app-bar
     content
     (footer)

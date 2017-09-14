@@ -8,13 +8,28 @@
    :4 "is-warning"
    :5 "is-danger"})
 
-(defn edit-bar
-  []
-  [:div#edit-buttons.container
-   [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]
-   [:button#upload-image-button.button.is-primary
-    [:span.icon
-     [:i.fa.fa-file-image-o]]]])
+(defn small-square-img
+  [id]
+  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") }])
+
+(defn edit-bars
+  [latest]
+  [:section#edit-selection.section
+   [:div#edit-buttons.container
+    [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]
+    [:button#upload-image-button.button.is-primary
+     [:span.icon
+      [:i.fa.fa-upload]]]
+    [:button#image-selection-button.button.is-black.is-inverted
+     [:span.icon
+      [:i.fa.fa-picture-o]]]]
+   [:div#image-selection-box.box {:style "display: none;"}
+    [:article.media
+     [:div.media-left
+      [:div.content [:p [:strong "Selected"]]]
+      [:figure.image.is-64x64 [:img {:src "/img/11/64.jpg"}]]]
+     [:div#all-images.media-content
+      [:figure (map small-square-img (take latest (iterate dec latest)))]]]]])
 
 (defn nav-bar
   [path]
@@ -123,7 +138,7 @@
     [:div.image.is-128x128
      [:img {:src "/img/11/256.jpg"}]]
     [:div.image.is-64x64
-     [:img {:src "/img/11/64.jpg"}]]]
+     [:img {:src (str "/img/11/64.jpg") }]]]
    ]
   )
 

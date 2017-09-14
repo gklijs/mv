@@ -1,6 +1,7 @@
 (ns m-venue.editable
   (:require [m-venue.chat :as chat]
             [m-venue.image-sender :as image-sender]
+            [m-venue.image-selection :as image-selection]
             [m-venue.mc :as mc]
             [m-venue.web-socket :as web-socket]))
 
@@ -10,4 +11,5 @@
   (web-socket/init! "/editable")
   (chat/init!)
   (image-sender/init!)
+  (image-selection/init!)
   (mc/init!))
