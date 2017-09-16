@@ -28,7 +28,7 @@
     [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"}]
     [:link {:rel "stylesheet" :href "/css/mv.css"}]
     (if editable
-      (edit-bars (:m-venue.spec/latest-img (second (repo/get-map "mvi-info")))))
+      (edit-bars (:m-venue.spec/latest-img (second (repo/get-map "i-info")))))
     app-bar
     content
     (footer)

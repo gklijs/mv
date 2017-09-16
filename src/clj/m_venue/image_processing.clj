@@ -34,13 +34,13 @@
         [x-size y-size] (util/dimensions buffered-image)
         ratio (/ x-size y-size)
         css-class (best-matching-class ratio)
-        img-info (second (repo/get-map "mvi-info"))
+        img-info (second (repo/get-map "i-info"))
         destination-image-path (:m-venue.spec/img-path img-info)
         new-img-latest (inc (:m-venue.spec/latest-img img-info))
         path (str destination-image-path new-img-latest "/")
-        set-new-img-info (repo/set-map "mvi-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
+        set-new-img-info (repo/set-map "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
         create-parents (io/make-parents (io/file (str path "o.jpg")))
-        set-img (repo/set-map (str "mvi-" new-img-latest) :m-venue.spec/img
+        set-img (repo/set-map (str "i-" new-img-latest) :m-venue.spec/img
                               {:m-venue.spec/x-size        x-size
                                :m-venue.spec/y-size        y-size
                                :m-venue.spec/img-css-class css-class
@@ -71,6 +71,6 @@
                       (format/as-file (resize-to-width buffered-image 962)
                                       (str path "l.jpg")
                                       :verbatim))]
-    [x-size y-size css-class original-image big-square-image small-square-image small-image medium-image large-image]
+    [(repo/get-string "i-info") [x-size y-size css-class original-image big-square-image small-square-image small-image medium-image large-image]]
     ))
 

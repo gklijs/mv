@@ -15,7 +15,7 @@
       (is (= 2048 height) "height should be image height")))
   (testing "processing"
     (let [byte-array (Files/readAllBytes (.toPath (clojure.java.io/file "test/resources/img/cat_in_a_box.jpg")))
-          result (processing/process byte-array)]
+          result (second (processing/process byte-array))]
       (is (= 1536 (nth result 0)))
       (is (= 2048 (nth result 1)))
       (is (= "is-3by4" (nth result 2)))
@@ -27,7 +27,7 @@
       (is (string/ends-with? (nth result 8) "/resources/public/img/11/l.jpg"))))
   (testing "processing-small-image"
     (let [byte-array (Files/readAllBytes (.toPath (clojure.java.io/file "test/resources/img/celebration.png")))
-          result (processing/process byte-array)]
+          result (second (processing/process byte-array))]
       (is (= 225 (nth result 0)))
       (is (= 225 (nth result 1)))
       (is (= "is-1by1" (nth result 2)))

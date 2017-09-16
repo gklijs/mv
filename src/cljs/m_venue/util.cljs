@@ -1,6 +1,10 @@
 (ns m-venue.util
+  (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]))
+            [clojure.browser.event :as event]
+            [hiccups.runtime :as hiccupsrt]
+            [goog.dom :as gdom]
+            [goog.html.legacyconversions :as legacy]))
 
 (defn log
   [x]
@@ -19,3 +23,15 @@
     (if (= "none" style-display)
       (set! (.-display (.-style element)) "")
       (set! (.-display (.-style element)) "none"))))
+
+(defn set-html
+  [parent-id data]
+  (let [new-node (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html data)))
+        _ (log new-node)
+        node-id (.-id new-node)
+        __ (log node-id)
+        current-node (if (nil? node-id) nil (dom/get-element node-id))
+        ___ (log current-node)]
+    (if current-node
+      (dom/replace-node current-node new-node)
+      (dom/append (dom/ensure-element parent-id) new-node))))

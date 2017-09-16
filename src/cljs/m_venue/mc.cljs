@@ -1,7 +1,6 @@
 (ns m-venue.mc
   (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [clojure.browser.dom :as dom]
-            [cljs.reader]
             [goog.dom :as gdom]
             [goog.html.legacyconversions :as legacy]
             [hiccups.runtime :as hiccupsrt]

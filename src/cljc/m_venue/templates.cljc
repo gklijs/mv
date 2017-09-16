@@ -10,7 +10,11 @@
 
 (defn small-square-img
   [id]
-  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") }])
+  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") :data-id id}])
+
+(defn all-images
+  [latest]
+  [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
 
 (defn edit-bars
   [latest]
@@ -25,11 +29,11 @@
       [:i.fa.fa-picture-o]]]]
    [:div#image-selection-box.box {:style "display: none;"}
     [:article.media
-     [:div.media-left
+     [:div.media-left {:style "width: 6rem;"}
       [:div.content [:p [:strong "Selected"]]]
       [:figure.image.is-64x64 [:img {:src "/img/11/64.jpg"}]]]
-     [:div#all-images.media-content
-      [:figure (map small-square-img (take latest (iterate dec latest)))]]]]])
+     [:div#all-images-parent.media-content
+      (all-images latest)]]]])
 
 (defn nav-bar
   [path]

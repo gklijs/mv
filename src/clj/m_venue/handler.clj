@@ -3,6 +3,8 @@
             [compojure.route :as route]
             [m-venue.authentication :refer [auth-routes get-user is-editor]]
             [m-venue.repo :as repo]
+            [m-venue.repo-bridge]
+            [m-venue.spec]
             [m-venue.page-templates :as page-templates]
             [m-venue.websocket :refer [web-socket-routes]]
             [nginx.clojure.core :as ncc]
@@ -25,13 +27,13 @@
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (if-let [home-gd (repo/get-map "mvp-home")]
+             (if-let [home-gd (repo/get-map "p-home")]
                (page-templates/gd-page (second home-gd) req false)
                (route/not-found "Not Found")
                ))
            ;; Other general document pages
            (GET "/:id" [id :as req]
-             (if-let [some-gd (repo/get-map (str "mvp-" id))]
+             (if-let [some-gd (repo/get-map (str "p-" id))]
                (page-templates/gd-page (second some-gd) req false)
                (route/not-found "Not Found")
                ))
@@ -39,7 +41,7 @@
            (GET "/edit/:id" [id :as req]
              (if
                (is-editor (get-user req))
-               (if-let [some-gd (repo/get-map (str "mvp-" id))]
+               (if-let [some-gd (repo/get-map (str "p-" id))]
                  (page-templates/gd-page (second some-gd) req true)
                  (route/not-found "Not Found"))
                {:status 303 :headers {"Location" "/login"}}
