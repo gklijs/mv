@@ -21,6 +21,7 @@
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path "resources/public/js" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]
+            [lein-cooper "1.2.2"]
             [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.908"]]
   :profiles {
@@ -54,7 +55,6 @@
                                        :output-directory "resources/public/css"
                                        :source-maps      true
                                        :style            :nested}
-                        :prep-tasks   [["compile"] ["cljsbuild" "once" "app"] ["cljsbuild" "once" "edit"] ["sass" "once"]]
                         :source-paths ["env/dev/clj"]
                         }
              :uberjar  {:omit-source    true
