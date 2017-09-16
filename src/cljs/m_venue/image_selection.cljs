@@ -12,7 +12,9 @@
   (util/toggle-visibility :image-selection-box))
 
 (defn init!
-  "Initializes the handlers"
+  "Initializes html and the handlers"
   []
   (event/listen (dom/get-element :image-selection-button) :click show-hide-selection)
+  (if-let [i-info (repo/get-item "i-info")]
+    (util/set-html :all-images-parent (templates/all-images (:m-venue.spec/latest-img (second i-info)))))
   (repo/set-renderer! #"i-info" #(util/set-html :all-images-parent (templates/all-images (:m-venue.spec/latest-img (second %))))))

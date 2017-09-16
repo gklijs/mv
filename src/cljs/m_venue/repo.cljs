@@ -1,6 +1,8 @@
 (ns m-venue.repo
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require [cljs.core.async :refer [<! timeout]]
+  (:require [clojure.browser.dom :as dom]
+            [clojure.browser.event :as event]
+            [cljs.core.async :refer [<! timeout]]
             [clojure.string :as string]
             [m-venue.web-socket :refer [send-msg! subscribe]]
             [m-venue.spec]
@@ -37,23 +39,34 @@
   [key]
   (if-let [val (.getItem (.-localStorage js/window) key)]
     (from-string val)
-    (if (not-local-only key) (send-msg! (str "get" key)))))
+    (if (not-local-only key)
+      (do
+        (send-msg! (str "get" key))
+        nil))))
 
 (defn remove-item!
   "Remove the browser's localStorage value for the given `key`"
   [key]
   (.removeItem (.-localStorage js/window) key))
 
+(defn clear-local-storage!
+  "Remove the browser's localStorage value for the given `key`"
+  []
+  (.clear (.-localStorage js/window)))
+
 (defn receive
   [msg]
   (if-let [[key val] (string/split msg #":" 2)]
-    (do
-      (render-loop key val)
-      (.setItem (.-localStorage js/window) key val))))
+    (if
+      (not (= val (.getItem (.-localStorage js/window) key)))
+      (do
+        (render-loop key val)
+        (.setItem (.-localStorage js/window) key val)))))
 
 (defn init!
   "Initializes the handlers"
   []
-  (subscribe "get" #(receive %)))
+  (subscribe "get" #(receive %))
+  (event/listen (dom/get-element :clear-storage-button) :click clear-local-storage!))
 
 

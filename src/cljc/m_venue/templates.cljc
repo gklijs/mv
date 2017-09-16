@@ -26,14 +26,16 @@
       [:i.fa.fa-upload]]]
     [:button#image-selection-button.button.is-black.is-inverted
      [:span.icon
-      [:i.fa.fa-picture-o]]]]
+      [:i.fa.fa-picture-o]]]
+    [:button#clear-storage-button.button.is-danger
+     [:span.icon
+      [:i.fa.fa-trash-o]]]]
    [:div#image-selection-box.box {:style "display: none;"}
     [:article.media
      [:div.media-left {:style "width: 6rem;"}
       [:div.content [:p [:strong "Selected"]]]
       [:figure.image.is-64x64 [:img {:src "/img/11/64.jpg"}]]]
-     [:div#all-images-parent.media-content
-      (all-images latest)]]]])
+     [:div#all-images-parent.media-content]]]])
 
 (defn nav-bar
   [path]
