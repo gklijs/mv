@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes GET routes]]
             [compojure.route :as route]
             [m-venue.authentication :refer [auth-routes get-user is-editor]]
+            [m-venue.chat]
             [m-venue.repo :as repo]
             [m-venue.repo-bridge]
             [m-venue.spec]

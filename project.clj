@@ -8,6 +8,7 @@
                  [hiccups "0.3.0" :scope "provided"]
                  [image-resizer "0.1.10"]
                  [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]
+                 [nginx-clojure "0.4.5" :scope "provided"]
                  [org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.908" :scope "provided"]
                  [org.clojure/tools.logging "0.4.0"]
@@ -23,7 +24,6 @@
             [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.908"]]
   :profiles {
-             :provided {:dependencies [[nginx-clojure "0.4.5"]]}
              :dev      {:dependencies [[javax.servlet/servlet-api "2.5"]
                                        [ring-mock "0.1.5"]]}
              :embed    {:dependencies
