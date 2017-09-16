@@ -9,6 +9,7 @@
             [image-resizer.format :as format]
             [image-resizer.resize :refer :all]
             [image-resizer.util :as util]
+            [m-venue.constants :refer [image-sizes]]
             [m-venue.repo :as repo]))
 
 (defn best-matching-class
@@ -59,16 +60,20 @@
                              (resize-to-width square-buffered 64)
                              (str path "64.jpg")
                              :verbatim)
-        small-image (if (> x-size 278)
-                      (format/as-file (resize-to-width buffered-image 278)
+        button-image (format/as-file
+                             (resize-to-width square-buffered 36)
+                             (str path "36.jpg")
+                             :verbatim)
+        small-image (if (> x-size (get image-sizes "s"))
+                      (format/as-file (resize-to-width buffered-image (get image-sizes "s"))
                                       (str path "s.jpg")
                                       :verbatim))
-        medium-image (if (> x-size 449)
-                       (format/as-file (resize-to-width buffered-image 449)
+        medium-image (if (> x-size (get image-sizes "m"))
+                       (format/as-file (resize-to-width buffered-image (get image-sizes "m"))
                                        (str path "m.jpg")
                                        :verbatim))
-        large-image (if (> x-size 962)
-                      (format/as-file (resize-to-width buffered-image 962)
+        large-image (if (> x-size (get image-sizes "l"))
+                      (format/as-file (resize-to-width buffered-image (get image-sizes "l"))
                                       (str path "l.jpg")
                                       :verbatim))]
     [(repo/get-string "i-info") [x-size y-size css-class original-image big-square-image small-square-image small-image medium-image large-image]]

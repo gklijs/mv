@@ -27,11 +27,8 @@
 (defn set-html
   [parent-id data]
   (let [new-node (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html data)))
-        _ (log new-node)
         node-id (.-id new-node)
-        __ (log node-id)
-        current-node (if (nil? node-id) nil (dom/get-element node-id))
-        ___ (log current-node)]
+        current-node (if (nil? node-id) nil (dom/get-element node-id))]
     (if current-node
       (dom/replace-node current-node new-node)
       (dom/append (dom/ensure-element parent-id) new-node))))

@@ -1,4 +1,5 @@
-(ns m-venue.templates)
+(ns m-venue.templates
+  (:require [m-venue.constants :refer [image-sizes]]))
 
 (def style-map
   {:0 ""
@@ -8,16 +9,32 @@
    :4 "is-warning"
    :5 "is-danger"})
 
+(defn get-correct-image
+  [size x-size]
+  (if (> x-size (get image-sizes size))
+    size
+    "o")
+  )
+
 (defn small-square-img
   [id]
-  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") :data-id id}])
+  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") :data-id (str "i-" id)}])
 
 (defn all-images
   [latest]
   [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
 
+(defn responsive-image
+  [img-reference size id]
+  [:figure {:id    id
+            :class (str "image " (:m-venue.spec/img-css-class img-reference))}
+   [:img {:src   (str (:m-venue.spec/base-path img-reference) (get-correct-image size (:m-venue.spec/x-size img-reference)) ".jpg")
+          :title (get-in img-reference [:m-venue.spec/title :m-venue.spec/nl-label])
+          :alt   (get-in img-reference [:m-venue.spec/alt :m-venue.spec/nl-label])}]]
+  )
+
 (defn edit-bars
-  [latest]
+  []
   [:section#edit-selection.section
    [:div#edit-buttons.container
     [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]
@@ -34,7 +51,7 @@
     [:article.media
      [:div.media-left {:style "width: 6rem;"}
       [:div.content [:p [:strong "Selected"]]]
-      [:figure.image.is-64x64 [:img {:src "/img/11/64.jpg"}]]]
+      [:figure#selected-image]]
      [:div#all-images-parent.media-content]]]])
 
 (defn nav-bar
@@ -144,7 +161,7 @@
     [:div.image.is-128x128
      [:img {:src "/img/11/256.jpg"}]]
     [:div.image.is-64x64
-     [:img {:src (str "/img/11/64.jpg") }]]]
+     [:img {:src (str "/img/11/64.jpg")}]]]
    ]
   )
 

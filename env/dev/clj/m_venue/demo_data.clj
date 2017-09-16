@@ -1,5 +1,5 @@
 (ns m-venue.demo-data
-    (:require [m-venue.repo :as repo]))
+  (:require [m-venue.repo :as repo]))
 
 (def home-page {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Welkom bij Martha's venue"}
                                      :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door Martha"}
@@ -46,10 +46,47 @@
                                       :m-venue.spec/href  "https://www.facebook.com/Marthasvenue"
                                       :m-venue.spec/style :5}
                                      ]})
+(def img-1 {:m-venue.spec/x-size        871
+            :m-venue.spec/y-size        1080
+            :m-venue.spec/img-css-class "is-3by4"
+            :m-venue.spec/base-path     "/img/1/"})
+(def img-2 {:m-venue.spec/x-size        1300
+            :m-venue.spec/y-size        910
+            :m-venue.spec/img-css-class "is-3by2"
+            :m-venue.spec/base-path     "/img/2/"})
+(def img-3 {:m-venue.spec/x-size        222
+            :m-venue.spec/y-size        227
+            :m-venue.spec/img-css-class "is-1by1"
+            :m-venue.spec/base-path     "/img/3/"})
+(def img-4 {:m-venue.spec/x-size        200
+            :m-venue.spec/y-size        176
+            :m-venue.spec/img-css-class "is-1by1"
+            :m-venue.spec/base-path     "/img/4/"})
+(def img-5 {:m-venue.spec/x-size        201
+            :m-venue.spec/y-size        251
+            :m-venue.spec/img-css-class "is-3by4"
+            :m-venue.spec/base-path     "/img/5/"})
+(def img-6 {:m-venue.spec/x-size        566
+            :m-venue.spec/y-size        800
+            :m-venue.spec/img-css-class "is-3by4"
+            :m-venue.spec/base-path     "/img/6/"
+            :m-venue.spec/title {:m-venue.spec/nl-label "Uit Diablo 3"}
+            :m-venue.spec/alt {:m-venue.spec/nl-label "Een witchdoctor"}})
+(def img-7 {:m-venue.spec/x-size        2362
+            :m-venue.spec/y-size        3542
+            :m-venue.spec/img-css-class "is-2by3"
+            :m-venue.spec/base-path     "/img/7/"})
 
-(def initial-img-info {:m-venue.spec/img-path "resources/public/img/"
-                       :m-venue.spec/latest-img 7})
+(def initial-img-info {:m-venue.spec/img-path   "resources/public/img/"
+                       :m-venue.spec/latest-img 0})
 
 (repo/set-map "p-home" :m-venue.spec/gen-doc home-page)
 (repo/set-map "p-info" :m-venue.spec/gen-doc info-page)
 (repo/set-map "i-info" :m-venue.spec/img-info initial-img-info)
+(repo/set-map "i-1" :m-venue.spec/img-reference img-1)
+(repo/set-map "i-2" :m-venue.spec/img-reference img-2)
+(repo/set-map "i-3" :m-venue.spec/img-reference img-3)
+(repo/set-map "i-4" :m-venue.spec/img-reference img-4)
+(repo/set-map "i-5" :m-venue.spec/img-reference img-5)
+(repo/set-map "i-6" :m-venue.spec/img-reference img-6)
+(repo/set-map "i-7" :m-venue.spec/img-reference img-7)
