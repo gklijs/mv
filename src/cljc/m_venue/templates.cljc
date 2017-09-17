@@ -41,9 +41,15 @@
     [:button#upload-image-button.button.is-primary
      [:span.icon
       [:i.fa.fa-upload]]]
-    [:button#image-selection-button.button.is-black.is-inverted
+    [:button#image-selection-button.button.is-black.is-outlined
      [:span.icon
       [:i.fa.fa-picture-o]]]
+    [:button#edit-main-button.button.is-success.is-outlined
+     [:span.icon
+      [:i.fa.fa-pencil-square-o]]]
+    [:button#add-page-button.button.is-primary.is-outlined
+     [:span.icon
+      [:i.fa.fa-plus-circle]]]
     [:button#clear-storage-button.button.is-danger
      [:span.icon
       [:i.fa.fa-trash-o]]]]
@@ -52,7 +58,12 @@
      [:div.media-left {:style "width: 6rem;"}
       [:div.content [:p [:strong "Selected"]]]
       [:figure#selected-image]]
-     [:div#all-images-parent.media-content]]]])
+     [:div#all-images-parent.media-content]]]
+   [:div#main-content-edit.box {:style "display: none;"}
+    [:article.media
+     [:div.media-left {:style "width: 6rem;"}
+      [:p "test"]]
+     [:div [:p "will come in time"]]]]])
 
 (defn nav-bar
   [path]
@@ -201,7 +212,7 @@
 (defn gd-content
   "renders content based on a general document"
   [gd-map]
-  [:div#gd-content.tile.is-9.is-vertical
+  [:div#main-content.tile.is-9.is-vertical
    [:div.tile.is-parent
     (tile (get gd-map :m-venue.spec/tile) (str "gd-" 1))]
    (let [all-tiles (get gd-map :m-venue.spec/tiles)

@@ -1,8 +1,6 @@
 (ns m-venue.repo
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [clojure.browser.dom :as dom]
             [clojure.browser.event :as event]
-            [cljs.core.async :refer [<! timeout]]
             [clojure.string :as string]
             [m-venue.web-socket :refer [send-msg! subscribe]]
             [m-venue.spec]
@@ -35,14 +33,20 @@
   (.setItem (.-localStorage js/window) key val))
 
 (defn get-item
-  "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"
   [key]
-  (if-let [val (.getItem (.-localStorage js/window) key)]
-    (from-string val)
-    (if (not-local-only key)
-      (do
-        (send-msg! (str "get" key))
-        nil))))
+  (.getItem (.-localStorage js/window) key))
+
+(defn execute-with-map
+  "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"
+  ([key function] (execute-with-map key function false))
+  ([key function get-called] (execute-with-map key function get-called 0))
+  ([key function get-called loops]
+   (if-let [val (.getItem (.-localStorage js/window) key)]
+     (function (from-string val))
+     (if (not-local-only key)
+       (do
+         (if (false? get-called) (send-msg! (str "get" key)))
+         (if (< loops 10) (js/setTimeout #(execute-with-map key function false (inc loops)) 100)))))))
 
 (defn remove-item!
   "Remove the browser's localStorage value for the given `key`"
