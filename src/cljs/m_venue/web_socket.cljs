@@ -1,7 +1,5 @@
 (ns m-venue.web-socket
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require [clojure.string :as string]
-            [cljs.core.async :refer [<! timeout]]))
+  (:require [clojure.string :as string]))
 
 (defonce ws-chan (atom nil))
 (defonce subscriptions (atom {}))
@@ -35,16 +33,11 @@
   [error-or-close-event]
   (reset! ws-chan nil)
   (js/console.log error-or-close-event)
-  (if (not @reconnecting)
-    (do
-      (reset! reconnecting true)
-      (println (str "lost connection, will try to reconnect in " (/ @wait-time 1000) " seconds"))
-      (go
-        (<! (timeout @wait-time))
-        (make-web-socket!)
-        (if (< @wait-time max-wait-time) (swap! wait-time #(* % 2)))
-        (reset! reconnecting false)))
-    ))
+  (when (not @reconnecting)
+    (reset! reconnecting true)
+    (js/setTimeout #(do (make-web-socket!)
+                        (if (< @wait-time max-wait-time) (swap! wait-time (fn [old-value] (* old-value 2))))
+                        (reset! reconnecting false)) @wait-time)))
 
 (defn make-web-socket! []
   (let [url (str "ws://" (-> js/window .-location .-host) @ws-location)]
@@ -60,13 +53,7 @@
 (defn send-msg!
   [msg]
   (if (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
-    (.send @ws-chan msg)
-    (go-loop []
-             (if @ws-chan
-               (if (= (.-readyState @ws-chan) 1)
-                 (.send @ws-chan msg)
-                 (do (<! (timeout 1000)) (recur)))
-               (do (<! (timeout 1000)) (recur))))))
+    (.send @ws-chan msg)))
 
 (defn init!
   "Initializes the websocket"
