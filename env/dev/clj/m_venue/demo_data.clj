@@ -78,7 +78,7 @@
             :m-venue.spec/base-path     "/img/7/"})
 
 (def initial-img-info {:m-venue.spec/img-path   "resources/public/img/"
-                       :m-venue.spec/latest-img 0})
+                       :m-venue.spec/latest-img 7})
 
 (repo/set-map "p-home" :m-venue.spec/gen-doc home-page)
 (repo/set-map "p-info" :m-venue.spec/gen-doc info-page)

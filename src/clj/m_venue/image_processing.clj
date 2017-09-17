@@ -41,7 +41,8 @@
         path (str destination-image-path new-img-latest "/")
         set-new-img-info (repo/set-map "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
         create-parents (io/make-parents (io/file (str path "o.jpg")))
-        set-img (repo/set-map (str "i-" new-img-latest) :m-venue.spec/img
+        new-img-key (str "i-" new-img-latest)
+        set-img (repo/set-map new-img-key :m-venue.spec/img-reference
                               {:m-venue.spec/x-size        x-size
                                :m-venue.spec/y-size        y-size
                                :m-venue.spec/img-css-class css-class
@@ -63,19 +64,12 @@
         button-image (format/as-file
                              (resize-to-width square-buffered 36)
                              (str path "36.jpg")
-                             :verbatim)
-        small-image (if (> x-size (get image-sizes "s"))
-                      (format/as-file (resize-to-width buffered-image (get image-sizes "s"))
-                                      (str path "s.jpg")
-                                      :verbatim))
-        medium-image (if (> x-size (get image-sizes "m"))
-                       (format/as-file (resize-to-width buffered-image (get image-sizes "m"))
-                                       (str path "m.jpg")
-                                       :verbatim))
-        large-image (if (> x-size (get image-sizes "l"))
-                      (format/as-file (resize-to-width buffered-image (get image-sizes "l"))
-                                      (str path "l.jpg")
-                                      :verbatim))]
-    [(repo/get-string "i-info") [x-size y-size css-class original-image big-square-image small-square-image small-image medium-image large-image]]
+                             :verbatim)]
+    (doseq [[name value] image-sizes]
+      (if (> x-size value)
+        (format/as-file (resize-to-width buffered-image value)
+                        (str path name ".jpg")
+                        :verbatim)))
+    [(str "geti-info:" (repo/get-string "i-info")) (str "get" new-img-key ":" (repo/get-string new-img-key))]
     ))
 

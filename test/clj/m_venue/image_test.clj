@@ -15,25 +15,11 @@
       (is (= 2048 height) "height should be image height")))
   (testing "processing"
     (let [byte-array (Files/readAllBytes (.toPath (clojure.java.io/file "test/resources/img/cat_in_a_box.jpg")))
-          result (second (processing/process byte-array))]
-      (is (= 1536 (nth result 0)))
-      (is (= 2048 (nth result 1)))
-      (is (= "is-3by4" (nth result 2)))
-      (is (string/ends-with? (nth result 3) "/resources/public/img/11/o.jpg"))
-      (is (string/ends-with? (nth result 4) "/resources/public/img/11/256.jpg"))
-      (is (string/ends-with? (nth result 5) "/resources/public/img/11/64.jpg"))
-      (is (string/ends-with? (nth result 6) "/resources/public/img/11/s.jpg"))
-      (is (string/ends-with? (nth result 7) "/resources/public/img/11/m.jpg"))
-      (is (string/ends-with? (nth result 8) "/resources/public/img/11/l.jpg"))))
+          result (processing/process byte-array)]
+      (is (= "geti-info:[:m-venue.spec/img-info [[\"resources/public/img/\" 11] []]]" (first result)))
+      (is (= "geti-11:[:m-venue.spec/img-reference [[1536 2048 \"is-3by4\" \"/img/11/\"] [nil nil]]]" (second result)))))
   (testing "processing-small-image"
     (let [byte-array (Files/readAllBytes (.toPath (clojure.java.io/file "test/resources/img/celebration.png")))
-          result (second (processing/process byte-array))]
-      (is (= 225 (nth result 0)))
-      (is (= 225 (nth result 1)))
-      (is (= "is-1by1" (nth result 2)))
-      (is (string/ends-with? (nth result 3) "/resources/public/img/12/o.jpg"))
-      (is (string/ends-with? (nth result 4) "/resources/public/img/12/256.jpg"))
-      (is (string/ends-with? (nth result 5) "/resources/public/img/12/64.jpg"))
-      (is (= (nth result 6) nil))
-      (is (= (nth result 7) nil))
-      (is (= (nth result 8) nil)))))
+          result (processing/process byte-array)]
+      (is (= "geti-info:[:m-venue.spec/img-info [[\"resources/public/img/\" 12] []]]" (first result)))
+      (is (= "geti-12:[:m-venue.spec/img-reference [[225 225 \"is-1by1\" \"/img/12/\"] [nil nil]]]" (second result))))))

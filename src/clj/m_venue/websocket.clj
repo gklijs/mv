@@ -35,8 +35,8 @@
 
 (defn process-binary
   [ch binary]
-  (if-let [new-img-info (first (process binary))]
-    (ncc/send! ch (str "geti-info:" new-img-info) true false)))
+  (if-let [img-msgs (process binary)]
+    (doseq [msg img-msgs] (ncc/send! ch msg true false))))
 
 (defn on-message!
   [ch uid msg edit-only]
@@ -48,7 +48,7 @@
         (false? (first result))
         (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
       (log/debug "message was handled successfully with result" (second result)))
-    (not (is-editor uid)) (log/warn "non-editor tried to send bytes instead of string uid: "uid)
+    (not (is-editor uid)) (log/warn "non-editor tried to send bytes instead of string uid: " uid)
     (bytes? msg) (process-binary ch msg)
     :else (process-binary ch (.array msg))))
 
