@@ -63,7 +63,7 @@
            ;; public Websocket server endpoint
            (GET "/public" [:as req]
              (let [ch (ncc/hijack! req true)
-                   uid (get-user req)]
+                   uid (first (get-user req))]
                (when (ncc/websocket-upgrade! ch true)
                  (ncc/add-aggregated-listener! ch 500
                                                {:on-open    (fn [ch] (on-open! ch uid false))
@@ -74,7 +74,7 @@
            ;; edit Webs ocket server endpoint
            (GET "/editable" [:as req]
              (let [ch (ncc/hijack! req true)
-                   uid (get-user req)]
+                   uid (first (get-user req))]
                (if (and (is-editor uid) (ncc/websocket-upgrade! ch true))
                  (do
                    (ncc/add-aggregated-listener! ch (* 5 1024 1024)

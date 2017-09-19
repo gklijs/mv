@@ -8,6 +8,7 @@
 (defonce max-wait-time 300000)
 (defonce wait-time (atom default-wait-time))
 (defonce ws-location (atom nil))
+(defonce msg-queue (atom []))
 (declare make-web-socket!)
 
 (defn subscribe
@@ -53,7 +54,14 @@
 (defn send-msg!
   [msg]
   (if (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
-    (.send @ws-chan msg)))
+    (if
+      (= 0 (count @msg-queue))
+      (.send @ws-chan msg)
+      (do
+        (doseq [msg-from-q @msg-queue] (.send @ws-chan msg))
+        (reset! msg-queue [])
+        (.send @ws-chan msg)))
+    (swap! msg-queue #(conj % msg))))
 
 (defn init!
   "Initializes the websocket"

@@ -29,23 +29,28 @@
            ;; home page
            (GET "/" [:as req]
              (if-let [home-gd (repo/get-map "p-home")]
-               (page-templates/gd-page (second home-gd) req false)
+               (let [[uid new] (get-user req)
+                     body (page-templates/gd-page (second home-gd) req (is-editor uid))]
+                 (if new
+                   {:status  200
+                    :headers {"Content-Type" "text/html; charset=utf-8"}
+                    :body    body
+                    :session (assoc (:session req) :uid uid)}
+                   body))
                (route/not-found "Not Found")
                ))
            ;; Other general document pages
            (GET "/:id" [id :as req]
              (if-let [some-gd (repo/get-map (str "p-" id))]
-               (page-templates/gd-page (second some-gd) req false)
+               (let [[uid new] (get-user req)
+                     body (page-templates/gd-page (second some-gd) req (is-editor uid))]
+                 (if new
+                   {:status  200
+                    :headers {"Content-Type" "text/html; charset=utf-8"}
+                    :body    body
+                    :session (assoc (:session req) :uid uid)}
+                   body))
                (route/not-found "Not Found")
-               ))
-           ;; edit variant other pages todo add check for is-editor
-           (GET "/edit/:id" [id :as req]
-             (if
-               (is-editor (get-user req))
-               (if-let [some-gd (repo/get-map (str "p-" id))]
-                 (page-templates/gd-page (second some-gd) req true)
-                 (route/not-found "Not Found"))
-               {:status 303 :headers {"Location" "/login"}}
                ))
            ;; Static files, e.g js/chat.js in dir `public`
            ;; In production environments it will be overwrited by

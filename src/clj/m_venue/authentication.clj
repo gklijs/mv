@@ -9,10 +9,10 @@
 
 (defn get-user [req]
   (if-let [logged-in-user (-> req :session :uid)]
-    logged-in-user
+    [logged-in-user false]
     (do
       (swap! guest-counter inc)
-      (str "guest-" @guest-counter))
+      [(str "guest-" @guest-counter) true])
     ))
 
 (defn is-editor
@@ -24,10 +24,7 @@
   "Here we can add server-side auth. In this example we'll just always authenticate
    the user successfully regardless what inputted."
   (log/debug "login with " uid ", old session :" session)
-  ;; redirect to / or /edit depending on whether logged in user has admin rights
-  (if (is-editor uid)
-    {:status 303 :session (assoc session :uid uid) :headers {"Location" "/edit/home"}}
-    {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}))
+  {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}})
 
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
