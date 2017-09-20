@@ -21,8 +21,6 @@
 
 (s/def ::gen-doc (s/keys :req [::tile ::tiles]))
 
-
-
 (s/def ::img-path (s/spec string?))
 (s/def ::latest-img (s/spec number?))
 (s/def ::img-info (s/keys :req [::img-path ::latest-img]))

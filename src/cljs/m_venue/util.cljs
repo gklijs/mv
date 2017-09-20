@@ -24,11 +24,22 @@
       (set! (.-display (.-style element)) "")
       (set! (.-display (.-style element)) "none"))))
 
+(defn set-placeholder
+  [id value]
+  (if-let [element (dom/ensure-element id)]
+    (set! (.-placeholder element) value)))
+
 (defn set-html
-  [parent-id data]
-  (let [new-node (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html data)))
-        node-id (.-id new-node)
-        current-node (if (nil? node-id) nil (dom/get-element node-id))]
-    (if current-node
-      (dom/replace-node current-node new-node)
-      (dom/append (dom/ensure-element parent-id) new-node))))
+  ([data] (set-html data nil))
+  ([data parent-id] (set-html data parent-id true))
+  ([data parent-id remove-childs]
+   (let [new-node (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html data)))
+         node-id (.-id new-node)
+         current-node (if (nil? node-id) nil (dom/get-element node-id))]
+     (if current-node
+       (dom/replace-node current-node new-node)
+       (if-let [parent (dom/ensure-element parent-id)]
+         (do
+           (if remove-childs (gdom/removeChildren parent))
+           (dom/append parent new-node))
+         (log (str "could not place html: " data " on parent: " parent-id)))))))

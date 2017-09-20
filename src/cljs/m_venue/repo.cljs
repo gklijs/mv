@@ -1,10 +1,11 @@
 (ns m-venue.repo
   (:require [clojure.browser.dom :as dom]
             [clojure.browser.event :as event]
+            [cljs.spec.alpha :as s]
             [clojure.string :as string]
             [m-venue.web-socket :refer [send-msg! subscribe]]
             [m-venue.spec]
-            [spec-serialize.impl :refer [from-string]]
+            [spec-serialize.impl :refer [from-string to-string]]
             [m-venue.util :as util]))
 
 (defonce render-functions (atom {}))
@@ -29,12 +30,25 @@
   "Send the data to the server repo and set `key' in browser's localStorage to `val`."
   [key val]
   (if (not-local-only key)
-    (send-msg! (str "set" key val)))
+    (send-msg! (str "set" key ":" val)))
   (.setItem (.-localStorage js/window) key val))
+
+(defn set-map
+  "validate and add/overwrite item in repo"
+  [key spec data]
+  (if
+    (s/valid? spec data)
+    (set-item! key (to-string spec data)))
+    (util/log (str (s/explain-data spec data))))
 
 (defn get-item
   [key]
   (.getItem (.-localStorage js/window) key))
+
+(defn get-map
+  [key]
+  (if-let [val (get-item key)]
+    (from-string val)))
 
 (defn execute-with-map
   "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"

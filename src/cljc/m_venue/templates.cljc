@@ -13,8 +13,7 @@
   [size x-size]
   (if (> x-size (get image-sizes size))
     size
-    "o")
-  )
+    "o"))
 
 (defn small-square-img
   [id]
@@ -25,40 +24,48 @@
   [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
 
 (defn responsive-image
-  [img-reference size id]
-  [:figure {:id    id
-            :class (str "image " (:m-venue.spec/img-css-class img-reference))}
+  [img-reference size]
+  [:figure {:class (str "image " (:m-venue.spec/img-css-class img-reference))}
    [:img {:src   (str (:m-venue.spec/base-path img-reference) (get-correct-image size (:m-venue.spec/x-size img-reference)) ".jpg")
           :title (get-in img-reference [:m-venue.spec/title :m-venue.spec/nl-label])
-          :alt   (get-in img-reference [:m-venue.spec/alt :m-venue.spec/nl-label])}]]
-  )
+          :alt   (get-in img-reference [:m-venue.spec/alt :m-venue.spec/nl-label])}]])
+
+(defn edit-buttons
+  []
+  [:div#edit-buttons.field.is-grouped.is-grouped-multiline
+   [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple "" :style "display: none;"}]
+   [:p.control [:button#upload-image-button.button.is-primary
+                [:span.icon [:i.fa.fa-upload]]]]
+   [:p.control [:button#image-selection-button.button.is-black.is-outlined
+                [:span.icon [:i.fa.fa-picture-o]]]]
+   [:p.control [:button#edit-main-button.button.is-success.is-outlined
+                [:span.icon [:i.fa.fa-pencil-square-o]]]]
+   [:p.control [:button#add-page-button.button.is-primary.is-outlined
+                [:span.icon [:i.fa.fa-plus-circle]]]]
+   [:p.control [:button#clear-storage-button.button.is-danger
+                [:span.icon [:i.fa.fa-trash-o]]]]])
+
+(defn image-selection-columns
+  []
+  [:div#image-selection-columns.columns {:style "display: none;"}
+   [:div.column.is-one-quarter
+    [:a#selected-image]]
+   [:div#image-edit.column.is-half {:style "display: none;"}
+    [:div.field
+     [:label.label "Title 🇳🇱"]
+     [:div.control [:input#title-nl.input {:type "text"}]]]
+    [:div.field
+     [:label.label "Alt 🇳🇱"]
+     [:div.control [:input#alt-nl.input {:type "text"}]]]
+    [:div.field
+     [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
+   [:div.column [:div#all-images]]])
 
 (defn edit-bars
   []
   [:section#edit-selection.section
-   [:div#edit-buttons.container
-    [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple ""}]
-    [:button#upload-image-button.button.is-primary
-     [:span.icon
-      [:i.fa.fa-upload]]]
-    [:button#image-selection-button.button.is-black.is-outlined
-     [:span.icon
-      [:i.fa.fa-picture-o]]]
-    [:button#edit-main-button.button.is-success.is-outlined
-     [:span.icon
-      [:i.fa.fa-pencil-square-o]]]
-    [:button#add-page-button.button.is-primary.is-outlined
-     [:span.icon
-      [:i.fa.fa-plus-circle]]]
-    [:button#clear-storage-button.button.is-danger
-     [:span.icon
-      [:i.fa.fa-trash-o]]]]
-   [:div#image-selection-box.box {:style "display: none;"}
-    [:article.media
-     [:div.media-left {:style "width: 6rem;"}
-      [:div.content [:p [:strong "Selected"]]]
-      [:figure#selected-image]]
-     [:div#all-images-parent.media-content]]]
+   (edit-buttons)
+   (image-selection-columns)
    [:div#main-content-edit.box {:style "display: none;"}
     [:article.media
      [:div.media-left {:style "width: 6rem;"}
