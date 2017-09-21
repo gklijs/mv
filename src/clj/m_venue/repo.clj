@@ -12,7 +12,7 @@
   (if-let [string-value (get @repo key)]
     (from-string string-value)))
 
-(defn set-map
+(defn set-map!
   "validate and add/overwrite item in repo"
   [key spec data]
   (if
@@ -26,7 +26,7 @@
   (if-let [string-value (get @repo key)]
     string-value))
 
-(defn set-string
+(defn set-string!
   "validate and add/overwrite item in repo"
   [key data]
   (if-let [[spec vec-value] (read-string data)]

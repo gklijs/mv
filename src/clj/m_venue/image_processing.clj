@@ -39,11 +39,11 @@
         destination-image-path (:m-venue.spec/img-path img-info)
         new-img-latest (inc (:m-venue.spec/latest-img img-info))
         path (str destination-image-path new-img-latest "/")
-        set-new-img-info (repo/set-map "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
+        set-new-img-info (repo/set-map! "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
         create-parents (io/make-parents (io/file (str path "o.jpg")))
         new-img-key (str "i-" new-img-latest)
-        set-img (repo/set-map new-img-key :m-venue.spec/img-reference
-                              {:m-venue.spec/x-size        x-size
+        set-img (repo/set-map! new-img-key :m-venue.spec/img-reference
+                               {:m-venue.spec/x-size        x-size
                                :m-venue.spec/y-size        y-size
                                :m-venue.spec/img-css-class css-class
                                :m-venue.spec/base-path     (str "/img/" new-img-latest "/")})

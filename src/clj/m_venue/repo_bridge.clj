@@ -1,7 +1,7 @@
 (ns m-venue.repo-bridge
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
-            [m-venue.repo :refer [get-string set-string]]
+            [m-venue.repo :refer [get-string set-string!]]
             [m-venue.websocket :refer [edit-subscribe]]
             [nginx.clojure.core :refer [send!]]))
 
@@ -24,6 +24,6 @@
   (fn [ch uid msg]
     (log/debug "message at set is" msg)
     (if-let [[key data] (string/split msg #":" 2)]
-      (set-string key data)))
+      (set-string! key data)))
   (fn [ch uid reason]
     (str "user: " uid " left! Doesn't get data anymore")))

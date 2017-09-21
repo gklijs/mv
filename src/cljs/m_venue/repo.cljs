@@ -21,33 +21,19 @@
       (re-matches regex key)
       (render-function (from-string val)))))
 
-(defn not-local-only
-  "utility to use when not to get/set data on the server"
-  [key]
-  (not (string/starts-with? key "l-")))
-
-(defn set-item!
-  "Send the data to the server repo and set `key' in browser's localStorage to `val`."
-  [key val]
-  (if (not-local-only key)
-    (send-msg! (str "set" key ":" val)))
-  (.setItem (.-localStorage js/window) key val))
-
-(defn set-map
+(defn set-map!
   "validate and add/overwrite item in repo"
   [key spec data]
   (if
     (s/valid? spec data)
-    (set-item! key (to-string spec data)))
+    (do
+      (send-msg! (str "set" key ":" (to-string spec data)))
+      (.setItem (.-localStorage js/window) key val)))
     (util/log (str (s/explain-data spec data))))
-
-(defn get-item
-  [key]
-  (.getItem (.-localStorage js/window) key))
 
 (defn get-map
   [key]
-  (if-let [val (get-item key)]
+  (if-let [val (.getItem (.-localStorage js/window) key)]
     (from-string val)))
 
 (defn execute-with-map
@@ -57,10 +43,9 @@
   ([key function get-called loops]
    (if-let [val (.getItem (.-localStorage js/window) key)]
      (function (from-string val))
-     (if (not-local-only key)
-       (do
-         (if (false? get-called) (send-msg! (str "get" key)))
-         (if (< loops 10) (js/setTimeout #(execute-with-map key function false (inc loops)) 100)))))))
+     (do
+       (if (false? get-called) (send-msg! (str "get" key)))
+       (if (< loops 10) (js/setTimeout #(execute-with-map key function false (inc loops)) 100))))))
 
 (defn remove-item!
   "Remove the browser's localStorage value for the given `key`"

@@ -19,8 +19,8 @@
 
 (deftest repo-test
   (testing "set"
-    (is (map? (repo/set-map "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
-    (let [result (repo/set-map "mvp-xxxx" :m-venue.spec/label correct-gen-doc)]
+    (is (map? (repo/set-map! "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
+    (let [result (repo/set-map! "mvp-xxxx" :m-venue.spec/label correct-gen-doc)]
       (is (map? result))
       (is (seq? (::s/problems result)))
       ))
