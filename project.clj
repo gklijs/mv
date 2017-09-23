@@ -9,7 +9,7 @@
                  [image-resizer "0.1.10"]
                  [nl.klijs/spec-serialize "0.1.0-SNAPSHOT"]
                  [nginx-clojure "0.4.5" :scope "provided"]
-                 [org.clojure/clojure "1.9.0-alpha20"]
+                 [org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.908" :scope "provided"]
                  [org.clojure/tools.logging "0.4.0"]
                  [ring/ring-defaults "0.3.1"]

@@ -1,12 +1,10 @@
 (ns m-venue.repo
-  (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]
-            [cljs.spec.alpha :as s]
+  (:require [cljs.spec.alpha :as s]
             [clojure.string :as string]
             [m-venue.web-socket :refer [send-msg! subscribe]]
             [m-venue.spec]
-            [spec-serialize.impl :refer [from-string to-string]]
-            [m-venue.util :as util]))
+            [m-venue.util :as util]
+            [spec-serialize.impl :refer [from-string to-string]]))
 
 (defonce render-functions (atom {}))
 
@@ -26,10 +24,11 @@
   [key spec data]
   (if
     (s/valid? spec data)
-    (do
-      (send-msg! (str "set" key ":" (to-string spec data)))
-      (.setItem (.-localStorage js/window) key val)))
-    (util/log (str (s/explain-data spec data))))
+    (let [val (to-string spec data)]
+      (do
+        (send-msg! (str "set" key ":" val))
+        (.setItem (.-localStorage js/window) key val)))
+    (util/log (str (s/explain-data spec data)))))
 
 (defn get-map
   [key]
@@ -70,6 +69,6 @@
   "Initializes the handlers"
   []
   (subscribe "get" #(receive %))
-  (event/listen (dom/get-element :clear-storage-button) :click clear-local-storage!))
+  (util/on-click-0 (util/get-element :clear-storage-button) clear-local-storage!))
 
 

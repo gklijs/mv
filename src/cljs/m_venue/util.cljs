@@ -1,24 +1,52 @@
 (ns m-venue.util
+  (:import [goog.dom query]
+           [goog.events.EventType])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
-  (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]
-            [hiccups.runtime :as hiccupsrt]
+  (:require [goog.events :as gevents]
             [goog.dom :as gdom]
-            [goog.html.legacyconversions :as legacy]))
+            [goog.html.legacyconversions :as legacy]
+            [hiccups.runtime :as hiccupsrt]
+            [clojure.browser.dom :as dom]))
 
-(defn log
-  [x]
-  (js/console.log x))
+(defn log [x] (js/console.log x))
+
+(defn on-click-0 [id f] (gevents/listen id goog.events.EventType.CLICK f))
+
+(defn on-click-1
+  [id f]
+  (gevents/listen id goog.events.EventType.CLICK
+                  (fn [evt]
+                    (let [target (.-target evt)]
+                      (f target)))))
+
+(defn on-change
+  [id f]
+  (gevents/listen id goog.events.EventType.CHANGE f))
+
+(defn enter-handler
+  [f event]
+  (let [char-code (.-key event)]
+    (if (= char-code "Enter") f)))
+
+(defn on-keydown
+  [id f]
+  (gevents/listen id goog.events.EventType.KEYDOWN (fn [evt] (f evt))))
+
+(defn on-enter
+  [id f]
+  (on-keydown id (partial enter-handler f)))
+
+(defn get-element [id] (gdom/getElement (name id)))
 
 (defn toggle-class [id toggled-class]
-  (let [element (dom/ensure-element id)
-        el-classList (.-classList (dom/ensure-element element))]
+  (let [element (get-element id)
+        el-classList (.-classList element)]
     (if (.contains el-classList toggled-class)
       (.remove el-classList toggled-class)
       (.add el-classList toggled-class))))
 
 (defn toggle-visibility [id]
-  (let [element (dom/ensure-element id)
+  (let [element (get-element id)
         style-display (.-display (.-style element))]
     (if (= "none" style-display)
       (set! (.-display (.-style element)) "")
@@ -26,7 +54,7 @@
 
 (defn set-placeholder
   [id value]
-  (if-let [element (dom/ensure-element id)]
+  (if-let [element (get-element id)]
     (set! (.-placeholder element) value)))
 
 (defn set-html
@@ -35,11 +63,11 @@
   ([data parent-id remove-childs]
    (let [new-node (gdom/safeHtmlToNode (legacy/safeHtmlFromString (html data)))
          node-id (.-id new-node)
-         current-node (if (nil? node-id) nil (dom/get-element node-id))]
+         current-node (if (nil? node-id) nil (gdom/getElement node-id))]
      (if current-node
-       (dom/replace-node current-node new-node)
-       (if-let [parent (dom/ensure-element parent-id)]
+       (gdom/replaceNode new-node current-node )
+       (if-let [parent (get-element parent-id)]
          (do
            (if remove-childs (gdom/removeChildren parent))
-           (dom/append parent new-node))
+           (gdom/append parent new-node))
          (log (str "could not place html: " data " on parent: " parent-id)))))))

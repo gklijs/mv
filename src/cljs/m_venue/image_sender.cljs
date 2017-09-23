@@ -1,6 +1,5 @@
 (ns m-venue.image-sender
-  (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]
+  (:require [m-venue.util :as util]
             [m-venue.web-socket :refer [send-msg!]]))
 
 (defn toArray [js-col]
@@ -11,7 +10,7 @@
 
 (defn upload-images
   []
-  (let [file-selector (dom/get-element :upload-image-files)
+  (let [file-selector (util/get-element :upload-image-files)
         files (toArray (.-files file-selector))]
     (doseq [file files]
       (let [file-reader (js/FileReader.)]
@@ -22,5 +21,5 @@
 (defn init!
   "Initializes the handlers"
   []
-  (event/listen (dom/get-element :upload-image-button) :click (fn [] (dom/click-element :upload-image-files)))
-  (event/listen (dom/get-element :upload-image-files) :change upload-images))
+  (util/on-click-0 (util/get-element :upload-image-button) (fn [] (.click (util/get-element :upload-image-files))))
+  (util/on-change (util/get-element :upload-image-files) upload-images))

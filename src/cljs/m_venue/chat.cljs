@@ -1,9 +1,9 @@
 (ns m-venue.chat
   (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]
             [clojure.string :as string]
             [goog.dom :as gdom]
-            [m-venue.web-socket :refer [send-msg! subscribe]]))
+            [m-venue.web-socket :refer [send-msg! subscribe]]
+            [m-venue.util :as util]))
 
 (defonce message-counter (atom 0))
 
@@ -18,7 +18,7 @@
     (set! (.-className li-item) (str "notification tile chat-tile " color))
     (set! (.-id li-item) (str "chat-message-" @message-counter))
     (dom/set-text li-item msg)
-    (dom/insert-at (dom/get-element :board) li-item 0)
+    (dom/insert-at (util/get-element :board) li-item 0)
     (if
       (> @message-counter 4)
       (gdom/removeNode (dom/get-element (str "chat-message-" (- @message-counter 5)))))
@@ -44,6 +44,6 @@
 (defn init!
   "Initializes the handlers"
   []
-  (event/listen (dom/get-element :chat) :keydown keydown-handler)
-  (event/listen (dom/get-element :sendbtn) :click send-chat-message)
+  (util/on-enter (dom/get-element :chat) keydown-handler)
+  (util/on-click-0 (dom/get-element :sendbtn) send-chat-message)
   (subscribe "ch-" #(receive %)))

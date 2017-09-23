@@ -4,7 +4,8 @@
             [m-venue.repo :as repo]
             [m-venue.util :as util]
             [m-venue.templates :as templates]
-            [m-venue.web-socket :refer [send-msg!]]))
+            [m-venue.web-socket :refer [send-msg!]])
+  (:import (goog.events EventTarget EventType)))
 
 (defn view-edit-switch
   []
@@ -15,4 +16,4 @@
 (defn init!
   "Initializes html and the handlers"
   []
-  (event/listen (dom/get-element :edit-main-button) :click view-edit-switch))
+  (util/on-click-0 (util/get-element :edit-main-button) view-edit-switch))
