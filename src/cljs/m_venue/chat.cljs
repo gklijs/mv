@@ -18,7 +18,7 @@
     (set! (.-className li-item) (str "notification tile chat-tile " color))
     (set! (.-id li-item) (str "chat-message-" @message-counter))
     (dom/set-text li-item msg)
-    (dom/insert-at (util/get-element :board) li-item 0)
+    (dom/insert-at (util/ensure-element :board) li-item 0)
     (if
       (> @message-counter 4)
       (gdom/removeNode (dom/get-element (str "chat-message-" (- @message-counter 5)))))
@@ -33,17 +33,9 @@
         (send-msg! (str "ch-" (dom/get-value :chat)))
         (dom/set-value :chat "")))))
 
-(defn keydown-handler
-  [event]
-  (let [char-code (.-key event)]
-    (if
-      (= char-code "Enter")
-      (send-chat-message)
-      )))
-
 (defn init!
   "Initializes the handlers"
   []
-  (util/on-enter (dom/get-element :chat) keydown-handler)
-  (util/on-click-0 (dom/get-element :sendbtn) send-chat-message)
+  (util/on-enter :chat send-chat-message)
+  (util/on-click :sendbtn send-chat-message)
   (subscribe "ch-" #(receive %)))

@@ -69,6 +69,6 @@
   "Initializes the handlers"
   []
   (subscribe "get" #(receive %))
-  (util/on-click-0 (util/get-element :clear-storage-button) clear-local-storage!))
+  (util/on-click (util/ensure-element :clear-storage-button) clear-local-storage!))
 
 

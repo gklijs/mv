@@ -16,4 +16,4 @@
 (defn init!
   "Initializes html and the handlers"
   []
-  (util/on-click-0 (util/get-element :edit-main-button) view-edit-switch))
+  (util/on-click :edit-main-button view-edit-switch))

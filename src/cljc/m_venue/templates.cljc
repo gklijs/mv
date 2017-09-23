@@ -38,6 +38,7 @@
                 [:span.icon [:i.fa.fa-upload]]]]
    [:p.control [:button#image-selection-button.button.is-black.is-outlined
                 [:span.icon [:i.fa.fa-picture-o]]]]
+   [:p.control [:img#small-selected-image]]
    [:p.control [:button#edit-main-button.button.is-success.is-outlined
                 [:span.icon [:i.fa.fa-pencil-square-o]]]]
    [:p.control [:button#add-page-button.button.is-primary.is-outlined

@@ -10,8 +10,8 @@
 
 (add-watch selected-image nil
            (fn [k r os ns]
-             (set! (.-value (util/get-element :title-nl)) "")
-             (set! (.-value (util/get-element :alt-nl)) "")
+             (set! (.-value (util/ensure-element :title-nl)) "")
+             (set! (.-value (util/ensure-element :alt-nl)) "")
              (util/set-placeholder :title-nl (get-in ns [:m-venue.spec/title :m-venue.spec/nl-label]))
              (util/set-placeholder :alt-nl (get-in ns [:m-venue.spec/alt :m-venue.spec/nl-label]))))
 
@@ -32,8 +32,8 @@
       (repo/execute-with-map key #(if-let [[spec map] %]
                                     (do
                                       (util/set-html (templates/responsive-image map "m") :selected-image)
-                                      (set! (.-background (.-style (util/get-element :image-selection-button)))
-                                            (str "url(" (:m-venue.spec/base-path map) "/36.jpg)"))
+                                      (set!  (.-src (util/ensure-element :small-selected-image))
+                                            (str (:m-venue.spec/base-path map) "36.jpg"))
                                       (reset! selected-image map)
                                       ))))))
 (def update-map
@@ -42,7 +42,7 @@
 
 (defn add-if-not-empty
   [map [id spec] function]
-  (let [value (.-value (util/get-element id))]
+  (let [value (.-value (util/ensure-element id))]
     (if
       (s/valid? spec value)
       (function map value)
@@ -59,9 +59,9 @@
 (defn init!
   "Initializes html and the handlers"
   []
-  (util/on-click-0 (util/get-element :image-selection-button) show-hide-columns)
+  (util/on-click :image-selection-button show-hide-columns)
   (repo/execute-with-map "i-info" #(util/set-html (templates/all-images (:m-venue.spec/latest-img (second %)))))
   (repo/set-renderer! #"i-info" #(util/set-html (templates/all-images (:m-venue.spec/latest-img (second %)))))
-  (util/on-click-1 (util/get-element :image-selection-columns) #(select-image %))
-  (util/on-click-0 (util/get-element :selected-image) show-hide-edit)
-  (util/on-click-0 (util/get-element :image-save-button) save-image))
+  (util/on-click-target :image-selection-columns #(select-image %))
+  (util/on-click :selected-image show-hide-edit)
+  (util/on-click :image-save-button save-image))

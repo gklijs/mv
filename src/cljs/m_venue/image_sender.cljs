@@ -10,7 +10,7 @@
 
 (defn upload-images
   []
-  (let [file-selector (util/get-element :upload-image-files)
+  (let [file-selector (util/ensure-element :upload-image-files)
         files (toArray (.-files file-selector))]
     (doseq [file files]
       (let [file-reader (js/FileReader.)]
@@ -21,5 +21,5 @@
 (defn init!
   "Initializes the handlers"
   []
-  (util/on-click-0 (util/get-element :upload-image-button) (fn [] (.click (util/get-element :upload-image-files))))
-  (util/on-change (util/get-element :upload-image-files) upload-images))
+  (util/on-click :upload-image-button #(.click (util/ensure-element :upload-image-files)))
+  (util/on-change :upload-image-files upload-images))
