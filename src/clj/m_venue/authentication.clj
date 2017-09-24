@@ -3,17 +3,16 @@
             [compojure.core :refer [defroutes GET POST]]
             [m-venue.page-templates :as page-templates]
             [m-venue.templates :as templates]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]))
+            [ring.util.anti-forgery :refer [anti-forgery-field]])
+  (:import (sun.security.util Password)))
 
 (defonce guest-counter (atom 0))
 
 (defn get-user [req]
   (if-let [logged-in-user (-> req :session :uid)]
     [logged-in-user false]
-    (do
-      (swap! guest-counter inc)
-      [(str "guest-" @guest-counter) true])
-    ))
+    (let [gc (swap! guest-counter inc)]
+      [(str "guest-" gc) true])))
 
 (defn is-editor
   "For now only admin is an editor, should come from some data"
@@ -29,21 +28,20 @@
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
              (handle-login uid pass session))
-           (GET "/login" []
-             (page-templates/page
-               "login page"
-               (templates/nav-bar :login)
-               [:div.container
-                [:div.panel.panel-primary
-                 [:div.panel-heading [:h3.panel-title "Login Form"]]
-                 [:div.input-group.panel-body
-                  [:form.form-signin {:action "/login" :method "POST"}
-                   [:h2.form-signin-heading "Please sign in"]
-                   (anti-forgery-field)
-                   [:input#user-id.form-control {:type :text :name :uid :placeholder "User ID"}]
-                   [:input#user-pass.form-control {:type :password :name :pass :placeholder "Password"}]
-                   [:p]
-                   [:input#submit-btn.btn.btn-primary.btn-block {:type "submit" :value "Login!"}]
-                   ]]
-                 [:div.panel-footer]]]
-               false)))
+           (GET "/login" [:as req]
+             (page-templates/login-page
+               [:div#main-content.tile.is-9.is-vertical
+                [:div.tile.is-parent
+                 [:div.content.notification.tile.is-child.is-primary
+                  [:p.title "Log in om content aan te passen"]
+                  [:div.input-group.panel-body
+                   [:form.form-signin {:action "/login" :method "POST"}
+                    (anti-forgery-field)
+                    [:div.field [:p.control.has-icons-left
+                                 [:input.input {:placeholder "User ID" :type :text :name :uid}]
+                                 [:span.icon.is-small.is-left [:i.fa.fa-user-o]]]]
+                    [:div.field [:p.control.has-icons-left
+                                 [:input.input {:placeholder "Password" :type :password :name :pass}]
+                                 [:span.icon.is-small.is-left [:i.fa.fa-lock]]]]
+                    [:div.field [:p.control [:button.button {:type "submit"} "Login!"]]]
+                    ]]]]] req)))

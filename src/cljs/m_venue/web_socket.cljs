@@ -40,28 +40,37 @@
                         (if (< @wait-time max-wait-time) (swap! wait-time (fn [old-value] (* old-value 2))))
                         (reset! reconnecting false)) @wait-time)))
 
+(defn send-msg!
+  ([]
+   (when (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
+     (doseq [msg-from-q @msg-queue] (.send @ws-chan msg-from-q))
+     (reset! msg-queue [])))
+  ([msg]
+   (if (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
+     (if
+       (= 0 (count @msg-queue))
+       (.send @ws-chan msg)
+       (do
+         (doseq [msg-from-q @msg-queue] (.send @ws-chan msg-from-q))
+         (reset! msg-queue [])
+         (.send @ws-chan msg)))
+     (swap! msg-queue #(conj % msg)))))
+
+(defn send-buffer!
+  [url]
+  (println "opening connection to " url)
+  (js/setTimeout #(send-msg!) 100))
+
 (defn make-web-socket! []
   (let [url (str "ws://" (-> js/window .-location .-host) @ws-location)]
     (if-let [chan (js/WebSocket. url)]
       (do
-        (set! (.-onopen chan) (fn [] (println "opening connection to " url)))
+        (set! (.-onopen chan) (send-buffer! url))
         (set! (.-onmessage chan) receive-msg!)
         (set! (.-onerror chan) delayed-reconnect!)
         (set! (.-onclose chan) delayed-reconnect!)
         (reset! ws-chan chan))
       (throw (js/Error. "Websocket connection failed!")))))
-
-(defn send-msg!
-  [msg]
-  (if (and (not (nil? @ws-chan)) (= (.-readyState @ws-chan) 1))
-    (if
-      (= 0 (count @msg-queue))
-      (.send @ws-chan msg)
-      (do
-        (doseq [msg-from-q @msg-queue] (.send @ws-chan msg))
-        (reset! msg-queue [])
-        (.send @ws-chan msg)))
-    (swap! msg-queue #(conj % msg))))
 
 (defn init!
   "Initializes the websocket"

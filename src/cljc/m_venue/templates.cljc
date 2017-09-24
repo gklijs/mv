@@ -53,18 +53,22 @@
     [:a#selected-image]]
    [:div#image-edit.column.is-half {:style "display: none;"}
     [:div.field
-     [:label.label "Title 🇳🇱"]
-     [:div.control [:input#title-nl.input {:type "text"}]]]
+     [:label.label "Title"]
+     [:div.control.has-icons-left [:input#title-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
     [:div.field
-     [:label.label "Alt 🇳🇱"]
-     [:div.control [:input#alt-nl.input {:type "text"}]]]
+     [:label.label "Alt"]
+     [:div.control.has-icons-left [:input#alt-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
     [:div.field
      [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
    [:div.column [:div#all-images]]])
 
+[:div.field [:p.control.has-icons-left
+             [:input.input {:placeholder "Password" :type :password :name :pass}]
+             [:span.icon.is-small.is-left [:i.fa.fa-lock]]]]
+
 (defn edit-bars
   []
-  [:section#edit-selection.section
+  [:div.container
    (edit-buttons)
    (image-selection-columns)
    [:div#main-content-edit.box {:style "display: none;"}

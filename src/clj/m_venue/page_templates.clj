@@ -44,3 +44,11 @@
     (nav-bar (:uri req))
     (main (gd-content gd-map) (side-content))
     editable))
+
+(defn login-page
+  [login-structure req]
+  (page
+    "login"
+    (nav-bar (:uri req))
+    (main login-structure (side-content))
+    false))
