@@ -36,7 +36,8 @@
     (from-string val)))
 
 (defn execute-with-map
-  "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"
+  "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote
+  use goog.async.Delay instead of js/timeout"
   ([key function] (execute-with-map key function false))
   ([key function get-called] (execute-with-map key function get-called 0))
   ([key function get-called loops]

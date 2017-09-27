@@ -14,7 +14,7 @@
                  [org.clojure/tools.logging "0.4.0"]
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-anti-forgery "1.1.0"]
-                 [org.clojure/tools.reader "1.0.6"]]
+                 [org.clojure/tools.reader "1.1.0"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "env/test/clj"]
   :target-path "target/%s"

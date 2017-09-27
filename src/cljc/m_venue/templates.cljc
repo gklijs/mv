@@ -72,10 +72,23 @@
    (edit-buttons)
    (image-selection-columns)
    [:div#main-content-edit.box {:style "display: none;"}
-    [:article.media
-     [:div.media-left {:style "width: 6rem;"}
-      [:p "test"]]
-     [:div [:p "will come in time"]]]]])
+    [:p
+     "This is a demonstration of a editable field, with installed plugins, hooked up to a toolbar."]
+    [:div#toolbar {:style "width:602px"}]
+    [:div#editMe]
+    [:hr]
+    [:p
+     [:b "Current field contents"]
+     "(updates as contents of the editable field above change):"
+     [:br]
+     [:textarea#fieldContents {:style "height:100px;width:400px;"}]
+     [:br]
+     [:input
+      {:onclick
+              "myField.setHtml(false, goog.dom.getElement('fieldContents').value);",
+       :value "Set Field Contents",
+       :type "button"}]
+     "(Use to set contents of the editable field to the contents of this textarea)"]]])
 
 (defn nav-bar
   [path]

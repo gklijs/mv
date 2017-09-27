@@ -14,7 +14,7 @@
         files (toArray (.-files file-selector))]
     (doseq [file files]
       (let [file-reader (js/FileReader.)]
-        (set! (.-onloadend file-reader) (fn [] (send-msg! (.-result file-reader))))
+        (set! (.-onloadend file-reader) #(send-msg! (.-result file-reader)))
         (.readAsArrayBuffer file-reader file)
         ))))
 

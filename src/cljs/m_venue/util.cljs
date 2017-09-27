@@ -1,12 +1,14 @@
 (ns m-venue.util
   (:import [goog.dom query]
+           [goog.editor.Command]
+           [goog.editor.Field]
            [goog.events.EventType])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [goog.events :as gevents]
             [goog.dom :as gdom]
+            [goog.dom.classlist :as classlist]
             [goog.html.legacyconversions :as legacy]
-            [hiccups.runtime :as hiccupsrt]
-            [clojure.browser.dom :as dom]))
+            [hiccups.runtime :as hiccupsrt]))
 
 (defn log [x] (js/console.log x))
 
@@ -44,12 +46,9 @@
   [id f]
   (on-keydown (ensure-element id) (partial enter-filter f)))
 
-(defn toggle-class [id toggled-class]
-  (let [element (ensure-element (ensure-element id))
-        el-classList (.-classList element)]
-    (if (.contains el-classList toggled-class)
-      (.remove el-classList toggled-class)
-      (.add el-classList toggled-class))))
+(defn toggle-class [id class]
+  (if-let [element (ensure-element (ensure-element id))]
+    (classlist/toggle element class)))
 
 (defn toggle-visibility [id]
   (let [element (ensure-element id)
