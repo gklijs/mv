@@ -62,10 +62,6 @@
      [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
    [:div.column [:div#all-images]]])
 
-[:div.field [:p.control.has-icons-left
-             [:input.input {:placeholder "Password" :type :password :name :pass}]
-             [:span.icon.is-small.is-left [:i.fa.fa-lock]]]]
-
 (defn edit-bars
   []
   [:div.container
@@ -75,8 +71,8 @@
     [:div#toolbar.is-pulled-left]
     [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
      [:div#html-paste-button.control {:style "display: none;"}
-      [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.fa-class.mdi-content-paste]]]]
-     [:div.control [:div#edit-html-button.button.is-info.is-outlined [:span.icon [:i.mdi.mdi-24px.fa-class.mdi-pencil]]]]]
+      [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.mdi-content-paste]]]]
+     [:div.control [:div#edit-html-button.button.is-info.is-outlined [:span.icon [:i.mdi.mdi-24px.mdi-pencil]]]]]
     [:div#edit-me {:style "height:100px;width:100%;"}
      [:p "stays visible?"]]
     [:div#html-paste {:style "display: none;"}
@@ -95,10 +91,10 @@
       [:span.is-large "Martha's Venue"]]
      [:a.navbar-item.is-hidden-desktop
       {:target "_blank", :href "https://github.com/jgthms/bulma"}
-      [:span.icon {:style "color: #333;"} [:i.fa.fa-github]]]
+      [:span.icon {:style "color: #333;"} [:i.mdi.mdi-24px.mdi-github-circle]]]
      [:a.navbar-item.is-hidden-desktop
       {:target "_blank", :href "https://twitter.com/jgthms"}
-      [:span.icon {:style "color: #55acee;"} [:i.fa.fa-twitter]]]
+      [:span.icon {:style "color: #55acee;"} [:i.mdi.mdi-24px.mdi-twitter]]]
      [:div.navbar-burger.burger
       {:data-target "navMenubd-example"}
       [:span]
@@ -142,14 +138,14 @@
             "View all versions"]]]]]]
       [:a.navbar-item.is-tab
        {:href "http://bulma.io/expo/"}
-       [:span.icon [:i.fa.fa-paw]] [:span "Cats"]]
+       [:span.icon [:i.mdi.mdi-24px.mdi-cat]] [:span "Cats"]]
       [:a.navbar-item.is-tab
        {:href "/info" :class (if (= "/info" path) "is-active" "")}
-       [:span.icon [:i.fa.fa-info]] [:span "Info"]]]
+       [:span.icon [:i.mdi.mdi-24px.mdi-information-outline]] [:span "Info"]]]
      [:div.navbar-end
-      [:a.navbar-item.is-hidden-desktop-only
+      [:a.navbar-item
        {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-       [:span.icon {:style "color: #4267b2;"} [:i.fa.fa-facebook]]]]]]])
+       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]]])
 
 (defn footer
   "renders a footer"
@@ -173,17 +169,18 @@
      [:p
       [:a.icon
        {:href "https://github.com/jgthms/bulma"}
-       [:i.fa.fa-github]]]]]])
+       [:i.mdi.mdi-message]]]]]])
 
 (defn side-content
   "renders the tiles on the right side"
   []
   [:div#side-content.tile.is-vertical.is-parent
    [:div.content.notification.tile.is-child
-    [:div.control.field [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]]
+    [:div.control.field.has-icons-left
+     [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
+     [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message]]]
     [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
-    [:p#board.tile.is-vertical]
-    ]
+    [:p#board.tile.is-vertical]]
    [:a.content.notification.tile.is-child {:href "/login"}
     [:p.title "Login"]
     [:div.image.is-3by4
@@ -192,9 +189,7 @@
     [:div.image.is-128x128
      [:img {:src "/img/11/256.jpg"}]]
     [:div.image.is-64x64
-     [:img {:src (str "/img/11/64.jpg")}]]]
-   ]
-  )
+     [:img {:src (str "/img/11/64.jpg")}]]]])
 
 (defn tile
   "renders a tile"

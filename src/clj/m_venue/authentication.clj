@@ -39,9 +39,9 @@
                     (anti-forgery-field)
                     [:div.field [:p.control.has-icons-left
                                  [:input.input {:placeholder "User ID" :type :text :name :uid}]
-                                 [:span.icon.is-small.is-left [:i.fa.fa-user-o]]]]
+                                 [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-account-circle]]]]
                     [:div.field [:p.control.has-icons-left
                                  [:input.input {:placeholder "Password" :type :password :name :pass}]
-                                 [:span.icon.is-small.is-left [:i.fa.fa-lock]]]]
+                                 [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-lock]]]]
                     [:div.field [:p.control [:button.button {:type "submit"} "Login!"]]]
                     ]]]]] req)))

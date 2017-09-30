@@ -13,8 +13,7 @@
                 (string/ends-with? msg "[enter!]") "is-warning"
                 (string/ends-with? msg "[left!]") "is-danger"
                 :else "is-info")
-        li-item (. js/document createElement "p")
-        ]
+        li-item (. js/document createElement "p")]
     (set! (.-className li-item) (str "notification tile chat-tile " color))
     (set! (.-id li-item) (str "chat-message-" @message-counter))
     (dom/set-text li-item msg)
@@ -22,8 +21,7 @@
     (if
       (> @message-counter 4)
       (gdom/removeNode (dom/get-element (str "chat-message-" (- @message-counter 5)))))
-    (swap! message-counter inc)
-    ))
+    (swap! message-counter inc)))
 
 (defn send-chat-message
   []

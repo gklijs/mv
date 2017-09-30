@@ -53,8 +53,7 @@
   (if-let [new-map (reduce-kv add-if-not-empty @selected-image update-map)]
     (do
       (repo/set-map! @selected-image-key :m-venue.spec/img-reference new-map)
-      (reset! selected-image new-map)
-      )))
+      (reset! selected-image new-map))))
 
 (defn init!
   "Initializes html and the handlers"

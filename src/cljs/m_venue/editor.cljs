@@ -50,8 +50,8 @@
 
 (defn button-array
   [dom-helper]
-  (mapv (fn [[id b-class fa-class queryable factory]]
-          (let [button ((factory factory-map) id nil (get-icon-span fa-class) (str "button " b-class) nil dom-helper)]
+  (mapv (fn [[id b-class mdi-class queryable factory]]
+          (let [button ((factory factory-map) id nil (get-icon-span mdi-class) (str "button " b-class) nil dom-helper)]
             (if queryable (set! (.-queryable button) true))
             (.setSupportedState button gstate/FOCUSED false)
             (.setRightToLeft button false)
