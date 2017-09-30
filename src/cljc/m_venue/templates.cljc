@@ -35,16 +35,16 @@
   [:div#edit-buttons.field.is-grouped.is-grouped-multiline
    [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple "" :style "display: none;"}]
    [:p.control [:button#upload-image-button.button.is-primary
-                [:span.icon [:i.fa.fa-upload]]]]
+                [:span.icon [:i.mdi.mdi-24px.mdi-upload]]]]
    [:p.control [:button#image-selection-button.button.is-black.is-outlined
-                [:span.icon [:i.fa.fa-picture-o]]]]
+                [:span.icon [:i.mdi.mdi-24px.mdi-camera]]]]
    [:p.control [:img#small-selected-image]]
    [:p.control [:button#edit-main-button.button.is-success.is-outlined
-                [:span.icon [:i.fa.fa-pencil-square-o]]]]
+                [:span.icon [:i.mdi.mdi-24px.mdi-pen]]]]
    [:p.control [:button#add-page-button.button.is-primary.is-outlined
-                [:span.icon [:i.fa.fa-plus-circle]]]]
+                [:span.icon [:i.mdi.mdi-24px.mdi-plus]]]]
    [:p.control [:button#clear-storage-button.button.is-danger
-                [:span.icon [:i.fa.fa-trash-o]]]]])
+                [:span.icon [:i.mdi.mdi-24px.mdi-delete]]]]])
 
 (defn image-selection-columns
   []
@@ -72,23 +72,18 @@
    (edit-buttons)
    (image-selection-columns)
    [:div#main-content-edit.box {:style "display: none;"}
-    [:p
-     "This is a demonstration of a editable field, with installed plugins, hooked up to a toolbar."]
-    [:div#toolbar]
-    [:div#editMe]
-    [:hr]
-    [:p
-     [:b "Current field contents"]
-     "(updates as contents of the editable field above change):"
+    [:div#toolbar.is-pulled-left]
+    [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
+     [:div#html-paste-button.control {:style "display: none;"}
+      [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.fa-class.mdi-content-paste]]]]
+     [:div.control [:div#edit-html-button.button.is-info.is-outlined [:span.icon [:i.mdi.mdi-24px.fa-class.mdi-pencil]]]]]
+    [:div#edit-me {:style "height:100px;width:100%;"}
+     [:p "stays visible?"]]
+    [:div#html-paste {:style "display: none;"}
+     [:strong.is-pulled-left "Current field contents"]
+     [:div.control.is-pulled-right [:button#set-field-contents.button.is-primary "Set Field Contents"]]
      [:br]
-     [:textarea#fieldContents {:style "height:100px;width:400px;"}]
-     [:br]
-     [:input
-      {:onclick
-              "myField.setHtml(false, goog.dom.getElement('fieldContents').value);",
-       :value "Set Field Contents",
-       :type "button"}]
-     "(Use to set contents of the editable field to the contents of this textarea)"]]])
+     [:textarea#field-contents {:style "height:100px;width:100%;"}]]]])
 
 (defn nav-bar
   [path]

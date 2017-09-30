@@ -12,6 +12,7 @@
            goog.ui.Toolbar)
   (:require [goog.dom :as gdom]
             [goog.editor.Command :as Command]
+            [goog.html.legacyconversions :as legacy]
             [goog.ui.Component.State :as gstate]
             [goog.ui.Container.Orientation :as gorientation]
             [goog.ui.ContainerRenderer :as container-renderer]
@@ -26,27 +27,26 @@
    :4 #(default-toolbar/backgroundColorFactory_ %1 %2 %3 %4 %5 %6)
    :5 #(toolbar-factory/makeButton %1 %2 %3 %4 %5 %6)})
 
-(def button-list [[Command/BOLD "is-primary" "fa-bold" true :1]
-                  [Command/ITALIC "is-primary" "fa-italic" true :1]
-                  [Command/UNDERLINE "is-primary" "fa-underline" true :1]
-                  [Command/FONT_COLOR "is-primary is-inverted" "fa-font" true :3]
-                  [Command/BACKGROUND_COLOR "is-primary" "fa-font" true :4]
-                  [Command/LINK "is-primary" "fa-link" true :1]
-                  [Command/UNDO "is-primary" "fa-undo" true :2]
-                  [Command/REDO "is-primary" "fa-repeat" true :2]
-                  [Command/UNORDERED_LIST "is-primary" "fa-list-ul" true :1]
-                  [Command/ORDERED_LIST "is-primary" "fa-list-ol" true :1]
-                  [Command/INDENT "is-primary" "fa-indent" false :5]
-                  [Command/OUTDENT "is-primary" "fa-outdent" false :5]
-                  [Command/JUSTIFY_LEFT "is-primary" "fa-align-left" true :1]
-                  [Command/JUSTIFY_CENTER "is-primary" "fa-align-center" true :1]
-                  [Command/JUSTIFY_RIGHT "is-primary" "fa-align-right" true :1]
-                  [Command/REMOVE_FORMAT "is-danger" "fa-times" false :5]])
+(def button-list [[Command/BOLD "is-primary" "mdi-format-bold" true :1]
+                  [Command/ITALIC "is-primary" "mdi-format-italic" true :1]
+                  [Command/UNDERLINE "is-primary" "mdi-format-underline" true :1]
+                  [Command/FONT_COLOR "is-primary" "mdi-format-color-text" true :3]
+                  [Command/BACKGROUND_COLOR "is-primary" "mdi-format-color-fill" true :4]
+                  [Command/LINK "is-primary" "mdi-link-variant" true :1]
+                  [Command/UNDO "is-primary" "mdi-undo" true :2]
+                  [Command/REDO "is-primary" "mdi-redo" true :2]
+                  [Command/UNORDERED_LIST "is-primary" "mdi-format-list-bulleted" true :1]
+                  [Command/ORDERED_LIST "is-primary" "mdi-format-list-numbers" true :1]
+                  [Command/INDENT "is-primary" "mdi-format-indent-increase" false :5]
+                  [Command/OUTDENT "is-primary" "mdi-format-indent-decrease" false :5]
+                  [Command/JUSTIFY_LEFT "is-primary" "mdi-format-align-left" true :1]
+                  [Command/JUSTIFY_CENTER "is-primary" "mdi-format-align-center" true :1]
+                  [Command/JUSTIFY_RIGHT "is-primary" "mdi-format-align-right" true :1]
+                  [Command/REMOVE_FORMAT "is-danger" "mdi-format-clear" false :5]])
 
 (defn get-icon-span
-  [fa-class]
-  (util/node-from-data [:span.icon [:i {:class (str "fa " fa-class)}]])
-  )
+  [mdi-class]
+  (util/node-from-data [:span.icon [:i {:class (str "mdi mdi-24px " mdi-class)}]]))
 
 (defn button-array
   [dom-helper]
@@ -60,7 +60,7 @@
 
 (defn make-toolbar
   [button-array toolbar-element dom-helper]
-  (let [toolbar-r (container-renderer/getCustomRenderer goog.ui.ToolbarRenderer. "field is-grouped is-grouped-multiline")
+  (let [toolbar-r (container-renderer/getCustomRenderer goog.ui.ToolbarRenderer. "field is-grouped is-grouped-multiline is-pulled-left")
         toolbar (Toolbar. toolbar-r gorientation/HORIZONTAL dom-helper)]
     (set! (.-rightToLeft_ toolbar) false)
     (.setRightToLeft toolbar false)
@@ -70,13 +70,23 @@
     (.render toolbar toolbar-element)
     toolbar))
 
-(defn init! [field bar]
+(defn editable-switch
+  [edit-html-button editField bar html-paste-button]
+  (util/toggle-visibility html-paste-button)
+  (util/toggle-visibility bar)
+  (util/toggle-class edit-html-button "is-outlined")
+  (if (.isUneditable editField)
+    (.makeEditable editField)
+    (.makeUneditable editField)))
+
+(defn init! [field bar field-contents set-field-contents edit-html-button html-paste-button]
   (let [editField (Field. field)
         toolbar-element (util/ensure-element bar)
         dom-helper (gdom/getDomHelper toolbar-element)
         button-array (button-array dom-helper)
         toolbar (make-toolbar button-array toolbar-element dom-helper)
-        myToolbarController (ToolbarController. editField toolbar)]
+        myToolbarController (ToolbarController. editField toolbar)
+        update-function #(set! (.-value (util/ensure-element field-contents)) (.getCleanContents editField))]
     (.registerPlugin editField (BasicTextFormatter.))
     (.registerPlugin editField (EnterHandler.))
     (.registerPlugin editField (LinkBubble.))
@@ -85,4 +95,10 @@
     (.registerPlugin editField (RemoveFormatting.))
     (.registerPlugin editField (SpacesTabHandler.))
     (.registerPlugin editField (UndoRedo.))
-    (.makeEditable editField)))
+    (util/on-delayed-change editField update-function)
+    (util/on-click set-field-contents #(.setSafeHtml editField false (legacy/safeHtmlFromString(.-value (util/ensure-element field-contents))) false))
+    (.makeEditable editField)
+    (update-function)
+    (util/toggle-visibility html-paste-button)
+    (util/toggle-class edit-html-button "is-outlined")
+    (util/on-click edit-html-button #(editable-switch edit-html-button editField bar html-paste-button))))

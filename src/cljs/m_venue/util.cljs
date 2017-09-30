@@ -1,10 +1,10 @@
 (ns m-venue.util
   (:import [goog.dom query]
-           [goog.editor.Command]
-           [goog.editor.Field]
-           [goog.events.EventType])
+           [goog.editor.Command])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
-  (:require [goog.events :as gevents]
+  (:require [goog.editor.Field.EventType :as FieldEventType]
+            [goog.events :as gevents]
+            [goog.events.EventType :as EventType]
             [goog.dom :as gdom]
             [goog.dom.classlist :as classlist]
             [goog.html.legacyconversions :as legacy]
@@ -20,18 +20,24 @@
     (gdom/isNodeLike x) (gdom/getElement x)
     :else (do (log (str "could not convert to element: " x)) nil)))
 
-(defn on-click [id f] (gevents/listen (ensure-element id) goog.events.EventType.CLICK f))
+(defn on-click [id f] (gevents/listen (ensure-element id) EventType/CLICK f))
 
 (defn on-click-target
   [id f]
-  (gevents/listen (ensure-element id) goog.events.EventType.CLICK
+  (gevents/listen (ensure-element id) EventType/CLICK
                   (fn [evt]
                     (let [target (.-target evt)]
                       (f target)))))
 
+(defn on-click-once [id f] (gevents/listenOnce (ensure-element id) EventType/CLICK f))
+
 (defn on-change
   [id f]
-  (gevents/listen (ensure-element id) goog.events.EventType.CHANGE f))
+  (gevents/listen (ensure-element id) EventType/CHANGE f))
+
+(defn on-delayed-change
+  [field f]
+  (gevents/listen field FieldEventType/DELAYEDCHANGE f))
 
 (defn enter-filter
   [f event]
@@ -40,7 +46,7 @@
 
 (defn on-keydown
   [id f]
-  (gevents/listen (ensure-element id) goog.events.EventType.KEYDOWN (fn [evt] (f evt))))
+  (gevents/listen (ensure-element id) EventType/KEYDOWN (fn [evt] (f evt))))
 
 (defn on-enter
   [id f]
