@@ -74,7 +74,7 @@
    [:div#main-content-edit.box {:style "display: none;"}
     [:p
      "This is a demonstration of a editable field, with installed plugins, hooked up to a toolbar."]
-    [:div#toolbar {:style "width:602px"}]
+    [:div#toolbar]
     [:div#editMe]
     [:hr]
     [:p

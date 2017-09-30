@@ -1,7 +1,5 @@
 (ns m-venue.main-content-edit
-  (:require [clojure.browser.dom :as dom]
-            [clojure.browser.event :as event]
-            [m-venue.editor :as editor]
+  (:require [m-venue.editor :as editor]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
             [m-venue.templates :as templates]
