@@ -79,14 +79,16 @@
     (.makeEditable editField)
     (.makeUneditable editField)))
 
-(defn init! [field bar field-contents set-field-contents edit-html-button html-paste-button]
-  (let [editField (Field. field)
-        toolbar-element (util/ensure-element bar)
+(defn init! [id]
+  (let [editField (Field. (str "edit-me-" id))
+        toolbar-element (util/ensure-element (str "toolbar-" id))
         dom-helper (gdom/getDomHelper toolbar-element)
         button-array (button-array dom-helper)
         toolbar (make-toolbar button-array toolbar-element dom-helper)
         myToolbarController (ToolbarController. editField toolbar)
-        update-function #(set! (.-value (util/ensure-element field-contents)) (.getCleanContents editField))]
+        update-function #(set! (.-value (util/ensure-element (str "field-contents-" id))) (.getCleanContents editField))
+        edit-html-button (util/ensure-element (str "edit-html-button-" id))
+        html-paste-button (util/ensure-element (str "html-paste-button-" id))]
     (.registerPlugin editField (BasicTextFormatter.))
     (.registerPlugin editField (EnterHandler.))
     (.registerPlugin editField (LinkBubble.))
@@ -96,9 +98,10 @@
     (.registerPlugin editField (SpacesTabHandler.))
     (.registerPlugin editField (UndoRedo.))
     (util/on-delayed-change editField update-function)
-    (util/on-click set-field-contents #(.setSafeHtml editField false (legacy/safeHtmlFromString(.-value (util/ensure-element field-contents))) false))
+    (util/on-click (str "set-field-contents-" id) #(.setSafeHtml editField false (legacy/safeHtmlFromString(.-value (util/ensure-element (str "field-contents-" id)))) false))
     (.makeEditable editField)
     (update-function)
     (util/toggle-visibility html-paste-button)
     (util/toggle-class edit-html-button "is-outlined")
-    (util/on-click edit-html-button #(editable-switch edit-html-button editField bar html-paste-button))))
+    (util/on-click edit-html-button #(editable-switch edit-html-button editField toolbar-element html-paste-button))
+    (util/on-click html-paste-button #(util/toggle-visibility (str "html-paste-" id)))))

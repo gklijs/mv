@@ -12,13 +12,13 @@
                                      {:m-venue.spec/title     {:m-venue.spec/nl-label "Hoe maak ik de tuin veilig?"}
                                       :m-venue.spec/sub-title {:m-venue.spec/nl-label "Lees verder voor tips"}
                                       :m-venue.spec/text      {:m-venue.spec/nl-text "Een mogelijk erg lange text over de mogelijkheden om de tuin af te sluiten met hekken en netten"}
-                                      :m-venue.spec/img       "uil.jpg"
+                                      :m-venue.spec/img       1
                                       :m-venue.spec/href      "https://www.facebook.com/martha.huijser"
                                       :m-venue.spec/style     :1}
                                      {:m-venue.spec/title     {:m-venue.spec/nl-label "van Morren bestrating"}
                                       :m-venue.spec/sub-title {:m-venue.spec/nl-label "Ondertitel en link"}
                                       :m-venue.spec/text      {:m-venue.spec/nl-text "Ze hebben zowel als dakterras als onze tuin mooi en vakkundig afgedekt. Klik hier voor hun facebook"}
-                                      :m-venue.spec/img       "blaat.jpg"
+                                      :m-venue.spec/img       2
                                       :m-venue.spec/style     :2
                                       :m-venue.spec/href      "https://www.facebook.com/morrenbestrating"}
                                      {:m-venue.spec/title {:m-venue.spec/nl-label "Van alles is mogelijk"}
@@ -26,11 +26,11 @@
                                       :m-venue.spec/style :3}
                                      {:m-venue.spec/title {:m-venue.spec/nl-label "Dit wordt natuurlijk nog mooier"}
                                       :m-venue.spec/text  {:m-venue.spec/nl-text "Als Gerard tenminste genoeg tijd heeft"}
-                                      :m-venue.spec/img   "uil.jpg"
+                                      :m-venue.spec/img   4
                                       :m-venue.spec/style :4}
                                      {:m-venue.spec/title {:m-venue.spec/nl-label "Afbeeldingen worden ooit ook mogelijk"}
                                       :m-venue.spec/text  {:m-venue.spec/nl-text "Het systeem maakt dan zelf alle nodige varianten aan"}
-                                      :m-venue.spec/img   "blaat.jpg"
+                                      :m-venue.spec/img   5
                                       :m-venue.spec/style :5}
                                      ]})
 (def info-page {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Info over Martha's venue"}

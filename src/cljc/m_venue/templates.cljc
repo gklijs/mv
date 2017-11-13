@@ -30,57 +30,6 @@
           :title (get-in img-reference [:m-venue.spec/title :m-venue.spec/nl-label])
           :alt   (get-in img-reference [:m-venue.spec/alt :m-venue.spec/nl-label])}]])
 
-(defn edit-buttons
-  []
-  [:div#edit-buttons.field.is-grouped.is-grouped-multiline
-   [:input#upload-image-files {:name "upload-image-files" :type "file" :accept "image/jpeg" :multiple "" :style "display: none;"}]
-   [:p.control [:button#upload-image-button.button.is-primary
-                [:span.icon [:i.mdi.mdi-24px.mdi-upload]]]]
-   [:p.control [:button#image-selection-button.button.is-black.is-outlined
-                [:span.icon [:i.mdi.mdi-24px.mdi-camera]]]]
-   [:p.control [:img#small-selected-image]]
-   [:p.control [:button#edit-main-button.button.is-success.is-outlined
-                [:span.icon [:i.mdi.mdi-24px.mdi-pen]]]]
-   [:p.control [:button#add-page-button.button.is-primary.is-outlined
-                [:span.icon [:i.mdi.mdi-24px.mdi-plus]]]]
-   [:p.control [:button#clear-storage-button.button.is-danger
-                [:span.icon [:i.mdi.mdi-24px.mdi-delete]]]]])
-
-(defn image-selection-columns
-  []
-  [:div#image-selection-columns.columns {:style "display: none;"}
-   [:div.column.is-one-quarter
-    [:a#selected-image]]
-   [:div#image-edit.column.is-half {:style "display: none;"}
-    [:div.field
-     [:label.label "Title"]
-     [:div.control.has-icons-left [:input#title-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
-    [:div.field
-     [:label.label "Alt"]
-     [:div.control.has-icons-left [:input#alt-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
-    [:div.field
-     [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
-   [:div.column [:div#all-images]]])
-
-(defn edit-bars
-  []
-  [:div.container
-   (edit-buttons)
-   (image-selection-columns)
-   [:div#main-content-edit.box {:style "display: none;"}
-    [:div#toolbar.is-pulled-left]
-    [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
-     [:div#html-paste-button.control {:style "display: none;"}
-      [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.mdi-content-paste]]]]
-     [:div.control [:div#edit-html-button.button.is-info.is-outlined [:span.icon [:i.mdi.mdi-24px.mdi-pencil]]]]]
-    [:div#edit-me {:style "height:100px;width:100%;"}
-     [:p "stays visible?"]]
-    [:div#html-paste {:style "display: none;"}
-     [:strong.is-pulled-left "Current field contents"]
-     [:div.control.is-pulled-right [:button#set-field-contents.button.is-primary "Set Field Contents"]]
-     [:br]
-     [:textarea#field-contents {:style "height:100px;width:100%;"}]]]])
-
 (defn nav-bar
   [path]
   [:nav#nav-bar.navbar
@@ -178,7 +127,7 @@
    [:div.content.notification.tile.is-child
     [:div.control.field.has-icons-left
      [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
-     [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message]]]
+     [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
     [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
     [:p#board.tile.is-vertical]]
    [:a.content.notification.tile.is-child {:href "/login"}

@@ -1,5 +1,6 @@
 (ns m-venue.page-templates
   (:require [hiccup.page :refer [html5]]
+            [m-venue.editor-templates :refer :all]
             [m-venue.templates :refer :all]
             [m-venue.repo :as repo]))
 (defn page

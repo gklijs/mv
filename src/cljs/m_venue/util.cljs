@@ -56,6 +56,14 @@
   (if-let [element (ensure-element (ensure-element id))]
     (classlist/toggle element class)))
 
+(defn add-class! [id class]
+  (if-let [element (ensure-element (ensure-element id))]
+    (classlist/add element class)))
+
+(defn remove-class! [id class]
+  (if-let [element (ensure-element (ensure-element id))]
+    (classlist/remove element class)))
+
 (defn toggle-visibility [id]
   (let [element (ensure-element id)
         style-display (.-display (.-style element))]
