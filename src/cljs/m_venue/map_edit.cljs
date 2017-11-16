@@ -1,6 +1,7 @@
 (ns m-venue.map-edit
   (:require [cljs.spec.alpha :as s]
-            [m-venue.map-edit-primitives :refer [get-primitive]]))
+            [m-venue.map-edit-primitives :refer [get-primitive]]
+            [m-venue.util :as util]))
 
 (defonce counter (atom 0))
 
@@ -26,9 +27,7 @@
     :else
     (mapv inc coll)))
 
-(declare ser-map)
-
-(defmulti add-edit
+(defmulti get-edit-map
           "Gets the edit functions and html needed to change the value"
           (fn [spec data]
             (if
@@ -37,6 +36,7 @@
                 (cond
                   (symbol? spec-form) :keyword
                   (= (first spec-form) `s/keys) :keys
+                  (= (first spec-form) `s/merge) :merge
                   (and (= (first spec-form) `s/and)
                        (coll? (second spec-form))
                        (> (count (second spec-form)) 1)
@@ -44,48 +44,70 @@
                   :else :keyword))
               :or)))
 
-(defmethod add-edit :keyword
+(defmethod get-edit-map :keyword
   [spec data]
-  (get-primitive (swap! counter inc) (s/form spec) (get data spec)))
+  (get-primitive (swap! counter inc) spec data))
 
-(defmethod add-edit :keys
-  [spec data]
-    (ser-map spec data))
+(defn- map-reducer
+  [[path function-map] result-map]
+  (if-let [value ((:get-value-f function-map))]
+    (assoc result-map path value)
+    result-map))
 
-(defmethod add-edit :vector
-  [spec data]
-  (if-let [vector-data (get data spec)]
-    (let [spec-form (s/form spec)
-          spec-type (second (nth spec-form 2))
-          element-maps(mapv #(ser-map spec-type %) vector-data)]
-      {:html [:div (mapv #(:html %) element-maps)]
-       :init-f (reduce (fn [k m] ) [] element-maps)})
-    nil))
-
-(defmethod add-edit :or
-  [spec data]
-  (let [reduce-result (reduce (partial ser-key-part-or-reducer data) [0] (rest spec))]
-    (if (> (count reduce-result) 1) reduce-result [0])))
-
-(defn- add-edit-keys
+(defn- get-edit-keys
   [[& {:keys [req opt]}] data]
-  (let [req-values (mapv #(add-edit % data) req)
-        opt-values (mapv #(add-edit % data) opt)]
-    (into req-values opt-values)))
+  (let [req-elements (mapv #(vector % (get-edit-map % (get data %))) req)
+        opt-elements (mapv #(vector % (get-edit-map % (get data %))) opt)
+        id (str "keys-" (swap! counter inc))]
+    {:html   [:div {:id id}
+              (map #(:html (second %)) req-elements)
+              (map #(:html (second %)) opt-elements)]
+     :init-f #(do (doseq [element req-elements] (if-let [el-function (:init-f  (second element))] (el-function)))
+                  (doseq [element opt-elements] (if-let [el-function (:init-f (second element))] (el-function))))
+     :validation-f #(doseq [element req-elements] ((:validation-f (second element))))
+     :get-value-f #(reduce map-reducer (into req-elements opt-elements))
+     }))
+
+(defmethod get-edit-map :keys
+  [spec data]
+  (get-edit-keys (rest (s/form spec)) data))
 
 (defn- ser-merge-part
   [merge-part data]
   (if
     (keyword? merge-part)
-    (add-edit-keys (rest (s/form merge-part)) data)
-    (add-edit-keys (rest merge-part) data)))
+    (get-edit-keys (rest (s/form merge-part)) data)
+    (get-edit-keys (rest merge-part) data)))
 
-(defn ser-map
-  "Returns data needed to edit and safe a map, splitting it into separate parts witch can be combined to one map"
-  [spec data ]
-   (let [spec-form (s/form spec)
-         spec-type (first spec-form)]
-     (cond
-       (= spec-type `s/keys) (add-edit-keys (rest spec-form) data)
-       (= spec-type `s/merge) (mapv #(ser-merge-part % data) (rest spec-form))
-       :else nil)))
+(defn- merge-reducer
+  [function-map result-map]
+  (if-let [value ((:get-value-f function-map))]
+    (merge result-map value)
+    result-map))
+
+(defmethod get-edit-map :merge
+  [spec data]
+  (let [parts (mapv #(ser-merge-part % data) (rest (s/form spec)))
+        id (str "merge-" (swap! counter inc))]
+    {:html [:div {:id id} (map #(:html %) parts)]
+     :init-f #(doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
+     :validation-f #(doseq [part parts] ((:validation-f part)))
+     :get-value-f #(reduce merge-reducer parts)
+     }))
+
+(defmethod get-edit-map :vector
+  [spec data]
+    (let [spec-form (s/form spec)
+          spec-type (second (nth spec-form 2))
+          parts (mapv #(get-edit-map spec-type %) data)
+          id (str "vector-" (swap! counter inc))]
+      {:html   [:div {:id id} (map #(:html %) parts)]
+       :init-f #(doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
+       :validation-f #(doseq [part parts] ((:validation-f part)))
+       :get-value-f #(mapv (fn [part] ((:get-value-f part))) parts)
+       }))
+
+(defmethod get-edit-map :or
+  [spec data]
+  (let [reduce-result (reduce (partial ser-key-part-or-reducer data) [0] (rest spec))]
+    (if (> (count reduce-result) 1) reduce-result [0])))

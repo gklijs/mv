@@ -94,3 +94,13 @@
            (if remove-childs (gdom/removeChildren parent))
            (gdom/append parent new-node))
          (log (str "could not place html: " data " on parent: " parent-id)))))))
+
+(defn enable
+  [id]
+  (let [element (ensure-element id)]
+    (set! (.-disabled element) false)))
+
+(defn disable
+  [id]
+  (let [element (ensure-element id)]
+    (set! (.-disabled element) true)))

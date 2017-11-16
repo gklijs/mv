@@ -48,10 +48,24 @@
     [:br]
     [:textarea {:style "height:100px;width:100%;" :id (str "field-contents-" id)}]]])
 
+(defn content-edit
+  []
+  [:div#main-content-edit.field.is-grouped.is-grouped-multiline {:style "display: none;"}
+   [:p.control [:button#start-edit-button.button.is-primary {:disabled false}
+                [:span.icon [:i.mdi.mdi-24px.mdi-pen]]]]
+   [:p.control [:button#stop-edit-button.button.is-primary {:disabled true}
+                [:span.icon [:i.mdi.mdi-24px.mdi-stop]]]]
+   [:p.control [:button#verify-edit-button.button.is-primary {:disabled true}
+                [:span.icon [:i.mdi.mdi-24px.mdi-verified]]]]
+   [:p.control [:button#play-edit-button.button.is-primary {:disabled true}
+                [:span.icon [:i.mdi.mdi-24px.mdi-play]]]]
+   [:p.control [:button#save-edit-button.button.is-primary {:disabled true}
+                [:span.icon [:i.mdi.mdi-24px.mdi-content-save]]]]])
+
 (defn edit-bars
   []
   [:div.container
    (edit-buttons)
    (image-selection-columns)
-   [:div#main-content-edit.box {:style "display: none;"}
-    (html-edit 1 [:p "stays visible?"])]])
+   (content-edit)
+   [:div#edit-box]])
