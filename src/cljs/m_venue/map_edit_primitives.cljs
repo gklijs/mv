@@ -6,42 +6,61 @@
             [m-venue.editor-templates :as et]))
 
 (defn get-if-valid
-  [spec value]
+  [spec get-function]
+  (if-let
+    [value (get-function)]
+    (if
+      (s/valid? spec value)
+      value)))
+
+(defn validate
+  [spec get-function id]
   (if
-    (s/valid? spec value)
-    value
-    nil))
+    (s/valid? spec (get-function))
+    (util/remove-class! id "is-warning")
+    (util/add-class! id "is-warning")))
 
 (defmulti get-primitive
           "Handles serialize on or-ed key part"
-          (fn [id type initial-value]
+          (fn [id spec initial-value]
             (cond
-              (= type spec/label) :label
-              (= type spec/html) :html
+              (= spec spec/label) :label
+              (= spec spec/html) :html
+              (= ::spec/style spec) :style
               :else :label
               )))
 
 (defmethod get-primitive :label
-  [id type initial-value]
-  (let [main-id (str "edit-label-" id)]
-    {:html         [:div.control [:input.input {:type "text" :id main-id :value initial-value}]]
-     :validation-f #(do (util/log (str "type: " type ", id: " main-id))
-                        (if
-                          (s/valid? type (.-value (util/ensure-element main-id)))
-                          (util/remove-class! main-id "is-warning")
-                          (util/add-class! main-id "is-warning")))
-     :get-value-f  #(get-if-valid type (.-value (util/ensure-element main-id)))}
+  [id spec initial-value]
+  (let [value-id (str "edit-label-" id)
+        get-function (fn [] (.-value (util/ensure-element value-id)))]
+    {:html         [:div.control [:input.input {:type "text" :id value-id :value initial-value}]]
+     :validation-f #(validate spec get-function value-id)
+     :get-value-f  #(get-if-valid spec get-function)}
     ))
 
 (defmethod get-primitive :html
-  [id type initial-value]
-  (let [value-id (str "edit-me-" id)]
+  [id spec initial-value]
+  (let [value-id (str "edit-me-" id)
+        get-function (fn [] (.-value (util/ensure-element value-id)))]
     {:html         (et/html-edit id initial-value)
      :init-f       #(util/on-click-once (str "edit-html-button-" id) (fn [] (editor/init! id)))
-     :validation-f #(do (util/log (str "type: " type ", id: " value-id))
-                        (if
-                          (s/valid? type (.-value (util/ensure-element value-id)))
-                          (util/remove-class! value-id "is-warning")
-                          (util/add-class! value-id "is-warning")))
-     :get-value-f  #(get-if-valid type (.-value (util/ensure-element value-id)))}
+     :validation-f #(validate spec get-function value-id)
+     :get-value-f  #(get-if-valid spec get-function)}
+    ))
+
+(defmethod get-primitive :style
+  [id spec initial-value]
+  (let [value-id (str "edit-style-" id)
+        warning-id (str "edit-style-span" id)
+        get-function (fn []  (keyword (.-value (util/ensure-element value-id))))]
+    {:html         [:div.control [:span.select {:id warning-id}[:select {:id value-id}
+                                                [:option (if (= :0 initial-value) {:selected "selected"}) 0]
+                                                [:option (if (= :1 initial-value) {:selected "selected"}) 1]
+                                                [:option (if (= :2 initial-value) {:selected "selected"}) 2]
+                                                [:option (if (= :3 initial-value) {:selected "selected"}) 3]
+                                                [:option (if (= :4 initial-value) {:selected "selected"}) 4]
+                                                [:option (if (= :5 initial-value) {:selected "selected"}) 5]]]]
+     :validation-f #(validate spec get-function warning-id)
+     :get-value-f  #(get-if-valid spec get-function)}
     ))
