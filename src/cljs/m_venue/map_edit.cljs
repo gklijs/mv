@@ -100,14 +100,24 @@
      :get-value-f #(reduce merge-reducer parts)
      }))
 
+(defn remove-vector-part
+  [id range-id]
+  (do
+    (util/remove-node (str id "-" range-id))
+    (util/log (str "still need to remove validation and get for: " range-id))))
+
 (defmethod get-edit-map :vector
   [spec data]
     (let [spec-form (s/form spec)
           spec-type (second (nth spec-form 2))
           parts (mapv #(get-edit-map spec-type %) data)
           id (str "vector-" (swap! counter inc))]
-      {:html   [:div {:id id} (map #(vector :div.notification [:div.is-pulled-right [:button.delete]] (:html %)) parts)]
-       :init-f #(doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
+      {:html   [:div {:id id} (map-indexed #(vector :div.notification {:id (str id "-" %1)}
+                                                    [:div [:button.delete {:id (str id "-button-" %1)}]] (:html %2)) parts)]
+       :init-f #(do
+                  (doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
+                  (doseq [range-id (range (count parts))]
+                    (util/on-click-once (str id "-button-" range-id) (fn [] (remove-vector-part id range-id)))))
        :validation-f #(doseq [part parts] ((:validation-f part)))
        :get-value-f #(mapv (fn [part] ((:get-value-f part))) parts)
        }))

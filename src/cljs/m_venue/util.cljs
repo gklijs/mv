@@ -104,3 +104,8 @@
   [id]
   (let [element (ensure-element id)]
     (set! (.-disabled element) true)))
+
+(defn remove-node
+  [id]
+  (if-let [element (ensure-element id)]
+    (gdom/removeNode element)))
