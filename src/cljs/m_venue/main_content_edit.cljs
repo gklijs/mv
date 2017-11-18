@@ -1,6 +1,6 @@
 (ns m-venue.main-content-edit
   (:require [m-venue.editor :as editor]
-            [m-venue.map-edit :refer [get-edit-map]]
+            [m-venue.map-edit :refer [get-edit-map reset-map-edit-data]]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
             [m-venue.templates :as templates]
@@ -19,7 +19,8 @@
   (util/disable :stop-edit-button)
   (util/disable :verify-edit-button)
   (util/disable :play-edit-button)
-  (util/disable :save-edit-button))
+  (util/disable :save-edit-button)
+  (reset-map-edit-data))
 
 (defn start-edit
   [main-data]

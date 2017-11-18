@@ -4,6 +4,11 @@
             [m-venue.util :as util]))
 
 (defonce counter (atom 0))
+(defonce map-edit-data (atom {}))
+
+(defn reset-map-edit-data
+  []
+  (reset! map-edit-data {}))
 
 (defmulti ser-key-part-or-reducer
           "Handles serialize on or-ed key part"
@@ -101,7 +106,7 @@
           spec-type (second (nth spec-form 2))
           parts (mapv #(get-edit-map spec-type %) data)
           id (str "vector-" (swap! counter inc))]
-      {:html   [:div {:id id} (map #(:html %) parts)]
+      {:html   [:div {:id id} (map #(vector :div.notification [:div.is-pulled-right [:button.delete]] (:html %)) parts)]
        :init-f #(doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
        :validation-f #(doseq [part parts] ((:validation-f part)))
        :get-value-f #(mapv (fn [part] ((:get-value-f part))) parts)
