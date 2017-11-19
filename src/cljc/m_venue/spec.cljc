@@ -1,7 +1,5 @@
 (ns m-venue.spec
-  (:require [#?(:clj     clojure.spec.alpha
-                :cljs    cljs.spec.alpha
-                :default clojure.spec.alpha) :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 (def html (s/and (s/spec string?) #(> (count %) 20)))
 (def label (s/and (s/spec string?) #(> (count %) 3) #(< (count %) 40)))

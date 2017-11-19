@@ -39,11 +39,11 @@
     ))
 
 (defn gd-page
-  [gd-map req editable]
+  [id gd-map req editable]
   (page
     (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar (:uri req))
-    (main (gd-content gd-map) (side-content))
+    (main (gd-content id gd-map) (side-content))
     editable))
 
 (defn login-page

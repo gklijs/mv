@@ -54,10 +54,14 @@
   (get-primitive (swap! counter inc) spec data))
 
 (defn- map-reducer
-  [[path function-map] result-map]
-  (if-let [value ((:get-value-f function-map))]
-    (assoc result-map path value)
-    result-map))
+  [required result-map [path function-map]]
+  (if result-map
+    (if-let [value ((:get-value-f function-map))]
+      (assoc result-map path value)
+      (if required
+        nil
+        result-map))
+    ))
 
 (defn- get-edit-keys
   [[& {:keys [req opt]}] data]
@@ -70,7 +74,7 @@
      :init-f       #(do (doseq [element req-elements] (if-let [el-function (:init-f (second element))] (el-function)))
                         (doseq [element opt-elements] (if-let [el-function (:init-f (second element))] (el-function))))
      :validation-f #(doseq [element req-elements] ((:validation-f (second element))))
-     :get-value-f  #(reduce map-reducer (into req-elements opt-elements))
+     :get-value-f  #(reduce (partial map-reducer false)  (reduce (partial map-reducer true) {} req-elements) opt-elements)
      }))
 
 (defmethod get-edit-map :keys
@@ -85,7 +89,7 @@
     (get-edit-keys (rest merge-part) data)))
 
 (defn- merge-reducer
-  [function-map result-map]
+  [result-map function-map ]
   (if-let [value ((:get-value-f function-map))]
     (merge result-map value)
     result-map))
@@ -97,16 +101,14 @@
     {:html         [:div {:id id} (map #(:html %) parts)]
      :init-f       #(doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
      :validation-f #(doseq [part parts] ((:validation-f part)))
-     :get-value-f  #(reduce merge-reducer parts)
+     :get-value-f  #(reduce merge-reducer {} parts)
      }))
 
 (defn remove-vector-part
   [id range-id]
   (do
     (util/remove-node (str id "-" range-id))
-    (util/log (str @map-edit-data))
-    (swap! map-edit-data #(update % id dissoc range-id))
-    (util/log (str @map-edit-data))))
+    (swap! map-edit-data #(update % id dissoc range-id))))
 
 (defn vector-map-reducer
   [map range-id part]

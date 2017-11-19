@@ -22,8 +22,21 @@
   (util/disable :save-edit-button)
   (reset-map-edit-data))
 
+(defn play
+  [id get-value-f]
+  (if-let [value (get-value-f)]
+      (util/set-html (templates/gd-content id value))))
+
+(defn save
+  [id spec get-value-f]
+  (if-let [value (get-value-f)]
+    (do
+      (util/set-html (templates/gd-content id value))
+      (repo/set-map! id spec value)
+      (stop-edit))))
+
 (defn start-edit
-  [main-data]
+  [id main-data]
   (let [edit-map (get-edit-map (first main-data) (second main-data))]
     (util/disable :start-edit-button)
     (util/enable :stop-edit-button)
@@ -31,7 +44,9 @@
     (util/enable :verify-edit-button)
     (util/on-click :verify-edit-button (:validation-f edit-map))
     (util/enable :play-edit-button)
+    (util/on-click :play-edit-button #(play id (:get-value-f edit-map)))
     (util/enable :save-edit-button)
+    (util/on-click :save-edit-button #(save id (first main-data) (:get-value-f edit-map)))
     (util/set-html (:html edit-map) :edit-box)
     ((:init-f edit-map))))
 
@@ -39,4 +54,5 @@
   "Initializes html and the handlers"
   []
   (util/on-click :edit-main-button view-edit-switch)
-  (util/on-click :start-edit-button #(repo/execute-with-map "p-home" start-edit)))
+  (let [id (util/get-data "main-content" "document")]
+    (util/on-click :start-edit-button #(repo/execute-with-map id (partial start-edit id)))))

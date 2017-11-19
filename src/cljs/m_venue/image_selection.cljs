@@ -34,8 +34,8 @@
                                       (util/set-html (templates/responsive-image map "m") :selected-image)
                                       (set!  (.-src (util/ensure-element :small-selected-image))
                                             (str (:m-venue.spec/base-path map) "36.jpg"))
-                                      (reset! selected-image map)
-                                      ))))))
+                                      (reset! selected-image map)))))))
+
 (def update-map
   {[:title-nl :m-venue.spec/nl-label] #(assoc-in %1 [:m-venue.spec/title :m-venue.spec/nl-label] %2)
    [:alt-nl :m-venue.spec/nl-label]   #(assoc-in %1 [:m-venue.spec/alt :m-venue.spec/nl-label] %2)})

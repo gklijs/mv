@@ -1,4 +1,11 @@
-(ns m-venue.editor-templates)
+(ns m-venue.editor-templates
+  (:require [m-venue.constants :refer [style-map]]))
+
+(defn button
+  ([id style icon] (button id style icon false))
+  ([id style icon disabled]
+   [:p.control [:button {:id id :class (str "button "(style style-map)) :disabled disabled}
+                [:span.icon [:i.mdi.mdi-24px {:class (str "mdi-" icon)}]]]]))
 
 (defn edit-buttons
   []
@@ -50,16 +57,11 @@
 (defn content-edit
   []
   [:div#main-content-edit.field.is-grouped.is-grouped-multiline {:style "display: none;"}
-   [:p.control [:button#start-edit-button.button.is-primary {:disabled false}
-                [:span.icon [:i.mdi.mdi-24px.mdi-pen]]]]
-   [:p.control [:button#stop-edit-button.button.is-primary {:disabled true}
-                [:span.icon [:i.mdi.mdi-24px.mdi-stop]]]]
-   [:p.control [:button#verify-edit-button.button.is-primary {:disabled true}
-                [:span.icon [:i.mdi.mdi-24px.mdi-verified]]]]
-   [:p.control [:button#play-edit-button.button.is-primary {:disabled true}
-                [:span.icon [:i.mdi.mdi-24px.mdi-play]]]]
-   [:p.control [:button#save-edit-button.button.is-primary {:disabled true}
-                [:span.icon [:i.mdi.mdi-24px.mdi-content-save]]]]])
+   (button "start-edit-button" :1 "pen" false)
+   (button "stop-edit-button" :1 "stop" true)
+   (button "verify-edit-button" :1 "verified" true)
+   (button "play-edit-button" :1 "play" true)
+   (button "save-edit-button" :1 "content-save" true)])
 
 (defn edit-bars
   []

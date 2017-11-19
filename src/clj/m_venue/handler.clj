@@ -30,7 +30,7 @@
            (GET "/" [:as req]
              (if-let [home-gd (repo/get-map "p-home")]
                (let [[uid new] (get-user req)
-                     body (page-templates/gd-page (second home-gd) req (is-editor uid))]
+                     body (page-templates/gd-page "p-home" (second home-gd) req (is-editor uid))]
                  (if new
                    {:status  200
                     :headers {"Content-Type" "text/html; charset=utf-8"}
@@ -43,7 +43,7 @@
            (GET "/:id" [id :as req]
              (if-let [some-gd (repo/get-map (str "p-" id))]
                (let [[uid new] (get-user req)
-                     body (page-templates/gd-page (second some-gd) req (is-editor uid))]
+                     body (page-templates/gd-page (str "p-" id)  (second some-gd) req (is-editor uid))]
                  (if new
                    {:status  200
                     :headers {"Content-Type" "text/html; charset=utf-8"}

@@ -7,6 +7,7 @@
             [goog.events.EventType :as EventType]
             [goog.dom :as gdom]
             [goog.dom.classlist :as classlist]
+            [goog.dom.dataset :as dataset]
             [goog.html.legacyconversions :as legacy]
             [hiccups.runtime :as hiccupsrt]))
 
@@ -109,3 +110,8 @@
   [id]
   (if-let [element (ensure-element id)]
     (gdom/removeNode element)))
+
+(defn get-data
+  [id key]
+  (if-let [element (ensure-element id)]
+    (dataset/get element key)))

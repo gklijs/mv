@@ -1,13 +1,5 @@
 (ns m-venue.templates
-  (:require [m-venue.constants :refer [image-sizes]]))
-
-(def style-map
-  {:0 ""
-   :1 "is-primary"
-   :2 "is-info"
-   :3 "is-success"
-   :4 "is-warning"
-   :5 "is-danger"})
+  (:require [m-venue.constants :refer [image-sizes style-map]]))
 
 (defn get-correct-image
   [size x-size]
@@ -175,8 +167,8 @@
 
 (defn gd-content
   "renders content based on a general document"
-  [gd-map]
-  [:div#main-content.tile.is-9.is-vertical
+  [id gd-map]
+  [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
     (tile (get gd-map :m-venue.spec/tile) (str "gd-" 1))]
    (let [all-tiles (get gd-map :m-venue.spec/tiles)
