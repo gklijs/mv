@@ -42,11 +42,10 @@
 
 (defmethod get-primitive :html
   [id spec initial-value]
-  (let [value-id (str "edit-me-" id)
-        get-function (fn [] (.-value (util/ensure-element value-id)))]
+  (let [get-function (fn [] (.-innerHTML (util/ensure-element (str "edit-me-" id))))]
     {:html         (et/html-edit id initial-value)
      :init-f       #(util/on-click-once (str "edit-html-button-" id) (fn [] (editor/init! id)))
-     :validation-f #(validate spec get-function value-id)
+     :validation-f #(validate spec get-function (str "html-edit-" id))
      :get-value-f  #(get-if-valid spec get-function)}
     ))
 

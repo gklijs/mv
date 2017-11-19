@@ -15,7 +15,7 @@
                  [org.clojure/tools.logging "0.4.0"]
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-anti-forgery "1.1.0"]
-                 [org.clojure/tools.reader "1.1.0"]]
+                 [org.clojure/tools.reader "1.1.1"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "env/test/clj"]
   :target-path "target/%s"
@@ -29,7 +29,7 @@
                                        [ring-mock "0.1.5"]]}
              :embed    {:dependencies
                                       [[nginx-clojure/nginx-clojure-embed "0.4.5"]
-                                       [ring/ring-devel "1.6.2"]]
+                                       [ring/ring-devel "1.6.3"]]
                         :aot          [m-venue.embed-server]
                         :main         m-venue.embed-server
                         :uberjar-name "m-venue-embed.jar"
