@@ -22,7 +22,7 @@
 
 (deftest repo-test
   (testing "set"
-    (is (map? (repo/set-map! "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
+    (is (nil? (repo/set-map! "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
     (let [result (repo/set-map! "mvp-xxxx" :m-venue.spec/label correct-gen-doc)]
       (is (map? result))
       (is (seq? (::s/problems result)))
@@ -52,8 +52,6 @@
         (is (= 2 (.size mvmap)))
         (is (= "456" (.get mvmap "123-")))
         (is (= "🇹🇬✜" (.get mvmap "🇲🇼-")))
-        (.commit mvstore)
-        ))
-))
+        (.commit mvstore)))))
 
 

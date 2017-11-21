@@ -53,7 +53,7 @@
   (.removeItem (.-localStorage js/window) key))
 
 (defn clear-local-storage!
-  "Remove the browser's localStorage value for the given `key`"
+  "Remove all the browser's localStorage"
   []
   (.clear (.-localStorage js/window)))
 

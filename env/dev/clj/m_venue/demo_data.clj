@@ -79,14 +79,3 @@
 
 (def initial-img-info {:m-venue.spec/img-path   "resources/public/img/"
                        :m-venue.spec/latest-img 7})
-
-(repo/set-map! "p-home" :m-venue.spec/gen-doc home-page)
-(repo/set-map! "p-info" :m-venue.spec/gen-doc info-page)
-(repo/set-map! "i-info" :m-venue.spec/img-info initial-img-info)
-(repo/set-map! "i-1" :m-venue.spec/img-reference img-1)
-(repo/set-map! "i-2" :m-venue.spec/img-reference img-2)
-(repo/set-map! "i-3" :m-venue.spec/img-reference img-3)
-(repo/set-map! "i-4" :m-venue.spec/img-reference img-4)
-(repo/set-map! "i-5" :m-venue.spec/img-reference img-5)
-(repo/set-map! "i-6" :m-venue.spec/img-reference img-6)
-(repo/set-map! "i-7" :m-venue.spec/img-reference img-7)
