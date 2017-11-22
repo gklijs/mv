@@ -5,7 +5,9 @@
             [clojure.tools.logging :as log]
             [m-venue.demo-data :as demo-data]
             [m-venue.chat :refer [jvm-init-handler]]
-            [ring.middleware.reload :refer [wrap-reload]]))
+            [ring.middleware.reload :refer [wrap-reload]])
+  (:import (java.awt HeadlessException Desktop)
+           (java.net URI)))
 
 (defn start-server
   "Run an emebed nginx-clojure for debug/test usage."
@@ -37,7 +39,7 @@
         port (start-server dev? port)]
     (when-not (System/getProperty "java.awt.headless")
       (try
-        (.browse (java.awt.Desktop/getDesktop) (java.net.URI. (str "http://localhost:" port "/")))
-        (catch java.awt.HeadlessException _)))))
+        (.browse (Desktop/getDesktop) (URI. (str "http://localhost:" port "/")))
+        (catch HeadlessException _)))))
 
 

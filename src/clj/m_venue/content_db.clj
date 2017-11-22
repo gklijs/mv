@@ -4,15 +4,10 @@
   (:import (org.h2.mvstore MVStore)))
 
 (defonce content-store (MVStore/open "content.db"))
-(defonce content-maps (atom {}))
 
 (defn get-content-map
   [type]
-  (if-let [content-map (get @content-maps type)]
-    content-map
-    (let [content-map (.openMap content-store type)
-          update-content-maps (swap! content-maps #(assoc % type content-map))]
-      content-map)))
+  (.openMap content-store type))
 
 (defn set-content
   [key data]
