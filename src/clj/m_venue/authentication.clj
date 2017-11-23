@@ -30,8 +30,8 @@
   (if-let [profile (users-db/get-profile uid)]
     (if (= pass (::admin-spec/password profile))
       {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}
-      {:status 303 :headers {"Location" "/"}})
-    {:status 303 :headers {"Location" "/"}}))
+      {:status 303 :headers {"Location" "/login"}})
+    {:status 303 :headers {"Location" "/login"}}))
 
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
