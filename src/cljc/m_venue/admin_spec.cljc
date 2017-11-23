@@ -2,6 +2,12 @@
   (:require [clojure.spec.alpha :as s]
             [m-venue.spec :refer [label]]))
 
+(def editor #{"editor" "admin"})
+
+(defn is-editor
+  [profile]
+  (contains? editor (::role profile)))
+
 (s/def ::username label)
 (s/def ::password label)
 (s/def ::email label)
