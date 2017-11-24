@@ -28,6 +28,7 @@
                 (= spec-form (s/form spec/label)) :label
                 (= spec-form (s/form spec/html)) :html
                 (= ::spec/style spec) :style
+                (= ::spec/img spec) :img
                 :else :label
                 ))))
 
@@ -62,5 +63,13 @@
                                                 [:option (if (= :4 initial-value) {:selected "selected"}) 4]
                                                 [:option (if (= :5 initial-value) {:selected "selected"}) 5]]]]
      :validation-f #(validate spec get-function warning-id)
+     :get-value-f  #(get-if-valid spec get-function)}))
+
+(defmethod get-primitive :img
+  [id spec initial-value]
+  (let [value-id (str "edit-img-" id)
+        get-function (fn [] (.-value (util/ensure-element value-id)))]
+    {:html         [:div.control [:input.input {:type "text" :id value-id :value initial-value}]]
+     :validation-f #(validate spec get-function value-id)
      :get-value-f  #(get-if-valid spec get-function)}
     ))
