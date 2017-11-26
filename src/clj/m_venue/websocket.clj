@@ -28,7 +28,6 @@
 
 (defn on-message-handler
   [[handled? ch uid msg] id [open-f message-f close-f]]
-  (log/debug "checked for id" id "with msg of" (count msg))
   (if (and (false? handled?) (string/starts-with? msg id))
     [true (message-f ch uid (subs msg 3))]
     [handled? ch uid msg]))
@@ -71,7 +70,7 @@
                                                 :on-close   (fn [ch reason] (on-close! ch uid reason false))
                                                 :on-error   (fn [ch status] (log/warn "error on public web socket with status" status))})
                  {:status 200 :body ch})))
-           ;; edit Webs ocket server endpoint
+           ;; edit Websocket server endpoint
            (GET "/editable" [:as req]
              (let [ch (ncc/hijack! req true)
                    uid (first (get-user req))]
@@ -85,5 +84,4 @@
                    {:status 200 :body ch})
                  (do
                    (log/debug "user with uid" uid "tried to connect to the editable web socket, but doesn't have the rights")
-                   (ncc/send-response! ch {:status 403}))
-                 ))))
+                   (ncc/send-response! ch {:status 403}))))))

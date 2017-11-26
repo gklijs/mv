@@ -3,9 +3,7 @@
             [m-venue.content-db :as content-db]
             [m-venue.spec]
             [spec-serialize.core :refer [de-ser-vector]]
-            [spec-serialize.impl :refer [from-string to-string]]
-            [clojure.string :as string]
-            [clojure.tools.logging :as log]))
+            [spec-serialize.impl :refer [from-string to-string]]))
 
 (defn set-string!
   "validate and add/overwrite item in repo"
@@ -32,3 +30,7 @@
   [key]
   (if-let [string-value (get-string key)]
     (from-string string-value)))
+
+(defn for-all
+  [f-for-each]
+  (content-db/for-all #(f-for-each (str %1 "-" %2) %3)))

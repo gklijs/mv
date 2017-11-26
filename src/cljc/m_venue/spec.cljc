@@ -14,7 +14,7 @@
 (s/def ::img (s/spec number?))
 
 (s/def ::date inst?)
-(s/def ::href (s/spec string?))
+(s/def ::href (s/spec (s/and (s/spec string?) #(> (count %) 10))))
 (s/def ::style #{:0 :1 :2 :3 :4 :5})
 
 (s/def ::tile (s/keys :req [::title ::text ::style] :opt [::sub-title ::img ::href]))

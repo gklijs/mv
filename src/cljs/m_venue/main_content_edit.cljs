@@ -3,9 +3,7 @@
             [m-venue.map-edit :refer [get-edit-map reset-map-edit-data]]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
-            [m-venue.templates :as templates]
-            [m-venue.web-socket :refer [send-msg!]])
-  (:import (goog.events EventTarget EventType)))
+            [m-venue.templates :as templates]))
 
 (defn view-edit-switch
   []

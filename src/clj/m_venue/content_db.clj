@@ -4,6 +4,7 @@
   (:import (org.h2.mvstore MVStore)))
 
 (defonce content-store (MVStore/open "content.db"))
+(defonce types ["i" "p"])
 
 (defn get-content-map
   [type]
@@ -22,3 +23,10 @@
     (let [content-map (get-content-map type)]
       (.get content-map specifier))
     (log/debug "could not get data because invalid key: " key)))
+
+(defn for-all
+  [f-for-all]
+  (doseq [type types]
+    (doseq [[key data] (get-content-map type)]
+      (log/debug type key data)
+      (f-for-all type key data))))

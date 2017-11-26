@@ -1,5 +1,6 @@
 (ns m-venue.templates
-  (:require [m-venue.constants :refer [image-sizes style-map]]))
+  (:require [m-venue.constants :refer [image-sizes style-map]]
+            [m-venue.repo :as repo]))
 
 (defn get-correct-image
   [size x-size]
@@ -134,28 +135,25 @@
 
 (defn tile
   "renders a tile"
-  [tile id]
+  [tile id size]
   (let [type-class (str "content notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
-        href (get tile :m-venue.spec/href)
+        href (:m-venue.spec/href tile)
         id (str "tile-" id)]
     (if href
       [:a {:class type-class :href href :id id}
-       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
-       (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
+       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/sub-tile tile))]
+       (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
          [:p.subtitle sub-title])
-       [:div.image.is-3by4
-        [:img {:src "/img/11/l.jpg"}]]
-       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
-       ]
+       (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]
+         (responsive-image (second img-reference-data) size))
+       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]
       [:div {:class type-class :id id}
-       [:p.title (get-in tile [:m-venue.spec/title :m-venue.spec/nl-label])]
-       (if-let [sub-title (get-in tile [:m-venue.spec/sub-title :m-venue.spec/nl-label])]
+       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/sub-tile tile))]
+       (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
          [:p.subtitle sub-title])
-       [:div.image.is-3by4
-        [:img {:src "/img/11/l.jpg"}]]
-       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]
-       ])
-    ))
+       (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]
+         (responsive-image (second img-reference-data) size))
+       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]])))
 
 (defn main
   "renders content based on a general document"
@@ -170,9 +168,9 @@
   [id gd-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (get gd-map :m-venue.spec/tile) (str "gd-" 1))]
-   (let [all-tiles (get gd-map :m-venue.spec/tiles)
+    (tile (:m-venue.spec/tile gd-map) (str "gd-" 1) "l")]
+   (let [all-tiles (:m-venue.spec/tiles gd-map)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))]
-      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1))) (second split-tiles))]])])
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m" ) (first split-tiles))]
+      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) "m") (second split-tiles))]])])

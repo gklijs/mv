@@ -68,7 +68,7 @@
 (defmethod get-primitive :img
   [id spec initial-value]
   (let [value-id (str "edit-img-" id)
-        get-function (fn [] (.-value (util/ensure-element value-id)))]
+        get-function (fn [] (int (.-value (util/ensure-element value-id))))]
     {:html         [:div.control [:input.input {:type "text" :id value-id :value initial-value}]]
      :validation-f #(validate spec get-function value-id)
      :get-value-f  #(get-if-valid spec get-function)}
