@@ -136,7 +136,7 @@
 (defn tile
   "renders a tile"
   [tile id size]
-  (let [type-class (str "content notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
+  (let [type-class (str "notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
         href (:m-venue.spec/href tile)
         id (str "tile-" id)]
     (if href

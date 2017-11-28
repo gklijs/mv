@@ -70,6 +70,6 @@
         (format/as-file (resize-to-width buffered-image value)
                         (str path name ".jpg")
                         :verbatim)))
-    [(str "geti-info:" (repo/get-string "i-info")) (str "get" new-img-key ":" (repo/get-string new-img-key))]
+    [(str "seti-info:" (repo/get-string "i-info")) (str "set" new-img-key ":" (repo/get-string new-img-key))]
     ))
 

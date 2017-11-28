@@ -5,7 +5,7 @@
   ([id style icon] (button id style icon false))
   ([id style icon disabled]
    [:p.control [:button {:id id :class (str "button "(style style-map)) :disabled disabled}
-                [:span.icon [:i.mdi.mdi-24px {:class (str "mdi-" icon)}]]]]))
+                [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon)}]]]]))
 
 (defn edit-buttons
   []
