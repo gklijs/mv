@@ -20,19 +20,55 @@
                                             :m-venue.spec/style :3}
                                            ]})
 
+(def nav-items {::spec/n-title "parent"
+                ::spec/p-reference "p-home"
+                ::spec/nav-children
+                [
+                 {::spec/n-title "Home"
+                  ::spec/p-reference "p-home"}
+                 {::spec/n-title "Info"
+                  ::spec/p-reference "p-info"}
+                 {::spec/n-title "Cats"
+                  ::spec/p-reference "p-cats"
+                  ::spec/nav-children
+                  [
+                   {::spec/n-title "Sjors"
+                    ::spec/p-reference "p-sjors"}
+                   {::spec/n-title "Saar"
+                    ::spec/p-reference "p-saar"}
+                   {::spec/n-title "Amber"
+                    ::spec/p-reference "p-amber"}
+                   ]}
+                 {::spec/n-title "Google"
+                  ::spec/href "http://www.google.com"}
+                 ]})
+
 (deftest repo-test
-  (testing "set"
-    (is (nil? (repo/set-map! "mvp-home" :m-venue.spec/gen-doc correct-gen-doc)))
+  (testing "set-gen-doc"
+    (is (nil? (repo/set-map! "p-test-home" :m-venue.spec/gen-doc correct-gen-doc)))
     (let [result (repo/set-map! "mvp-xxxx" :m-venue.spec/label correct-gen-doc)]
       (is (map? result))
-      (is (seq? (::s/problems result)))
-      ))
-  (testing "get"
+      (is (seq? (::s/problems result)))))
+  (testing "get-gen-doc"
     (s/explain :m-venue.spec/gen-doc correct-gen-doc)
-    (println (str "result from repo: " (repo/get-map "mvp-home")))
-    (is (= :m-venue.spec/gen-doc (first (repo/get-map "mvp-home"))))
-    (is (= correct-gen-doc (second (repo/get-map "mvp-home"))))
-    (is (nil? (repo/get-map "mvp-xxxx")))))
+    (println (str "result from repo: " (repo/get-map "p-test-home")))
+    (is (= :m-venue.spec/gen-doc (first (repo/get-map "p-test-home"))))
+    (is (= correct-gen-doc (second (repo/get-map "p-test-home"))))
+    (is (nil? (repo/get-map "mvp-xxxx")))
+    (repo/remove-key "p-test-home")
+    (is (nil? (repo/get-map "p-test-home")))
+    (repo/commit))
+  (testing "set-nav"
+    (is (nil? (repo/set-map! "n-test" ::spec/nav-item nav-items))))
+  (testing "get-nav"
+    (s/explain ::spec/nav-item nav-items)
+    (println (str "result from repo: " (repo/get-map "n-test")))
+    (println (repo/get-string "n-test"))
+    (is (= ::spec/nav-item (first (repo/get-map "n-test"))))
+    (is (= nav-items (second (repo/get-map "n-test"))))
+    (repo/remove-key "n-test")
+    (is (nil? (repo/get-map "n-test")))
+    (repo/commit)))
 
 (deftest test-mvstore
   (testing "something"

@@ -25,8 +25,7 @@
 
 (defn nav-bar
   [path]
-  [:nav#nav-bar.navbar
-   [:div.container
+  [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
     [:div.navbar-brand
      [:a.navbar-item.is-tab
       {:href "/" :class (if (or (= "/" path) (= "/home" path)) "is-active" "")}
@@ -37,12 +36,12 @@
      [:a.navbar-item.is-hidden-desktop
       {:target "_blank", :href "https://twitter.com/jgthms"}
       [:span.icon {:style "color: #55acee;"} [:i.mdi.mdi-24px.mdi-twitter]]]
-     [:div.navbar-burger.burger
+     [:button#burger-menu.button.navbar-burger
       {:data-target "navMenubd-example"}
       [:span]
       [:span]
       [:span]]]
-    [:div#navMenubd-example.navbar-menu
+    [:div#main-menu.navbar-menu
      [:div.navbar-start
       [:div.navbar-item.has-dropdown.is-hoverable
        [:a.navbar-link
@@ -87,7 +86,7 @@
      [:div.navbar-end
       [:a.navbar-item
        {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]]])
+       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
 
 (defn footer
   "renders a footer"
@@ -126,12 +125,12 @@
    [:a.content.notification.tile.is-child {:href "/login"}
     [:p.title "Login"]
     [:div.image.is-3by4
-     [:img {:src "/img/11/s.jpg"}]]
+     [:img {:src "/img/3/s.jpg"}]]
     [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
     [:div.image.is-128x128
-     [:img {:src "/img/11/256.jpg"}]]
+     [:img {:src "/img/4/256.jpg"}]]
     [:div.image.is-64x64
-     [:img {:src (str "/img/11/64.jpg")}]]]])
+     [:img {:src (str "/img/5/64.jpg")}]]]])
 
 (defn tile
   "renders a tile"
@@ -141,14 +140,14 @@
         id (str "tile-" id)]
     (if href
       [:a {:class type-class :href href :id id}
-       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/sub-tile tile))]
+       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/title tile))]
        (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
          [:p.subtitle sub-title])
        (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]
          (responsive-image (second img-reference-data) size))
        [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]
       [:div {:class type-class :id id}
-       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/sub-tile tile))]
+       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/title tile))]
        (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
          [:p.subtitle sub-title])
        (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]

@@ -18,6 +18,15 @@ $success-invert: findColorInvert($success) !default
 $warning-invert: findColorInvert($warning) !default
 $danger-invert: findColorInvert($danger) !default
 
+$navbar-item-color: $primary
+$navbar-item-hover-color: $success
+$navbar-item-active-color: $success
+$navbar-tab-hover-border-bottom-color: $success
+$navbar-tab-active-color: $success
+$navbar-tab-active-border-bottom-color: $success
+$navbar-dropdown-item-active-color: $success
+$navbar-dropdown-item-hover-color: $success
+
 // Use the new serif family
 $family-primary: $family-serif
 
@@ -33,5 +42,10 @@ $notification-padding: 1.25rem
 
 a
   cursor: url("/img/cat.cur"), pointer !important
+a.notification
+  color: currentColor
+a.notification:hover
+  text-decoration: underline
+
 
 @import "../sass/animation"

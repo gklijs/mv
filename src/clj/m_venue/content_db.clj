@@ -4,11 +4,17 @@
   (:import (org.h2.mvstore MVStore)))
 
 (defonce content-store (MVStore/open "content.db"))
-(defonce types ["i" "p"])
+(defonce types ["i" "p" "n"])
+(defonce nav-map (atom nil))
+(defonce nav-parents (atom nil))
 
 (defn get-content-map
   [type]
   (.openMap content-store type))
+
+(defn create-nav-items
+  []
+  (let [n-content (get-content-map "n")]))
 
 (defn set-content
   [key data]
@@ -23,6 +29,17 @@
     (let [content-map (get-content-map type)]
       (.get content-map specifier))
     (log/debug "could not get data because invalid key: " key)))
+
+(defn remove-key
+  [key]
+  (if-let [[type specifier] (string/split key #"-" 2)]
+    (let [content-map (get-content-map type)]
+      (.remove content-map specifier))
+    (log/debug "could not get data because invalid key: " key)))
+
+(defn commit
+  []
+  (.commit content-store))
 
 (defn for-all
   [f-for-all]

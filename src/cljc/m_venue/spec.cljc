@@ -10,13 +10,9 @@
 (s/def ::text (s/keys :req [::nl-text]))
 (s/def ::title (s/spec ::label))
 (s/def ::sub-title (s/spec ::label))
-
 (s/def ::img (s/spec number?))
-
-(s/def ::date inst?)
 (s/def ::href (s/spec (s/and (s/spec string?) #(> (count %) 10))))
 (s/def ::style #{:0 :1 :2 :3 :4 :5})
-
 (s/def ::tile (s/keys :req [::title ::text ::style] :opt [::sub-title ::img ::href]))
 (s/def ::tiles (s/and (s/spec vector?) (s/every ::tile)))
 
@@ -32,3 +28,10 @@
 (s/def ::base-path (s/spec string?))
 (s/def ::alt (s/spec ::label))
 (s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path] :opt [::title ::alt]))
+
+(s/def ::n-title label)
+(s/def ::p-reference label)
+(s/def ::mdi-reference label)
+(s/def ::nav-children (s/and (s/spec vector?) (s/every ::nav-item)))
+(s/def ::nav-item (s/keys :req [::n-title (or ::p-reference ::href)] :opt [::mdi-reference ::nav-children]))
+

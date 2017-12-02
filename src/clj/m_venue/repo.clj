@@ -31,6 +31,14 @@
   (if-let [string-value (get-string key)]
     (from-string string-value)))
 
+(defn remove-key
+  [key]
+  (content-db/remove-key key))
+
+(defn commit
+  []
+  content-db/commit)
+
 (defn for-all
   [f-for-each]
   (content-db/for-all #(f-for-each (str %1 "-" %2) %3)))

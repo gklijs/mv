@@ -5,7 +5,7 @@
             [m-venue.repo :as repo]))
 (defn page
   [title app-bar content editable]
-  (html5
+  (html5 {:class "has-navbar-fixed-top"}
     [:meta {:charset "utf-8"}]
     [:meta {:content "width=device-width, initial-scale=1", :name "viewport"}]
     [:title title]
