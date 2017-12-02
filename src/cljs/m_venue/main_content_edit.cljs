@@ -5,6 +5,8 @@
             [m-venue.util :as util]
             [m-venue.templates :as templates]))
 
+(defonce remove-keys (atom nil))
+
 (defn view-edit-switch
   []
   (util/toggle-class :edit-main-button "is-outlined")
@@ -18,6 +20,7 @@
   (util/disable :verify-edit-button)
   (util/disable :play-edit-button)
   (util/disable :save-edit-button)
+  (doseq [key @remove-keys] (util/unlisten-by-key key))
   (reset-map-edit-data))
 
 (defn play
@@ -37,14 +40,16 @@
   [id main-data]
   (let [edit-map (get-edit-map (first main-data) (second main-data))]
     (util/disable :start-edit-button)
-    (util/enable :stop-edit-button)
+    (let [key1 (util/on-click :verify-edit-button (:validation-f edit-map))
+          key2 (util/on-click :play-edit-button #(play id (:get-value-f edit-map)))
+          key3 (util/on-click :save-edit-button #(save id (first main-data) (:get-value-f edit-map)))]
+      (reset! remove-keys [key1 key2 key3])
+      )
     (util/on-click-once :stop-edit-button stop-edit)
+    (util/enable :stop-edit-button)
     (util/enable :verify-edit-button)
-    (util/on-click :verify-edit-button (:validation-f edit-map))
     (util/enable :play-edit-button)
-    (util/on-click :play-edit-button #(play id (:get-value-f edit-map)))
     (util/enable :save-edit-button)
-    (util/on-click :save-edit-button #(save id (first main-data) (:get-value-f edit-map)))
     (util/set-html (:html edit-map) :edit-box)
     ((:init-f edit-map))))
 

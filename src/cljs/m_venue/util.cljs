@@ -40,6 +40,10 @@
   [field f]
   (gevents/listen field FieldEventType/DELAYEDCHANGE f))
 
+(defn unlisten-by-key
+  [key]
+  (gevents/unlistenByKey key))
+
 (defn enter-filter
   [f event]
   (let [char-code (.-key event)]
