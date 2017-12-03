@@ -1,6 +1,7 @@
 (ns m-venue.templates
   (:require [m-venue.constants :refer [image-sizes style-map]]
-            [m-venue.repo :as repo]))
+            [m-venue.repo :as repo]
+            [m-venue.spec :as spec]))
 
 (defn get-correct-image
   [size x-size]
@@ -18,73 +19,52 @@
 
 (defn responsive-image
   [img-reference size]
-  [:figure {:class (str "image " (:m-venue.spec/img-css-class img-reference))}
-   [:img {:src   (str (:m-venue.spec/base-path img-reference) (get-correct-image size (:m-venue.spec/x-size img-reference)) ".jpg")
-          :title (get-in img-reference [:m-venue.spec/title :m-venue.spec/nl-label])
-          :alt   (get-in img-reference [:m-venue.spec/alt :m-venue.spec/nl-label])}]])
+  [:figure {:class (str "image " (::spec/img-css-class img-reference))}
+   [:img {:src   (str (::spec/base-path img-reference) (get-correct-image size (::spec/x-size img-reference)) ".jpg")
+          :title (get-in img-reference [::spec/title :m-venue.spec/nl-label])
+          :alt   (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])
+
+(defn navbar-item
+  [nav-item path parent-path]
+  (let [has-children (and (nil? parent-path) (::spec/nav-children nav-item))
+        matching-part (if (nil? parent-path) (first path) (second path))
+        is-active (if (and matching-part (= matching-part (::spec/p-reference nav-item))) " is-active")
+        title [:span (::spec/n-title nav-item)]
+        icon (if-let [icon-class (::spec/mdi-reference nav-item)][:span.icon [:i {:class (str "mdi mdi-24px mdi-"icon-class)}]])
+        [href target] (if-let [url (::spec/href nav-item)]
+                        [url "_blank"]
+                        [(str parent-path "/" (::spec/p-reference nav-item)) "_self"])]
+    (if has-children
+      [:div.navbar-item.has-dropdown.is-hoverable
+       [:a {:href href :target target :class (str "navbar-link" is-active)} icon title]
+       [:div.navbar-dropdown
+        (map #(navbar-item % path href) (::spec/nav-children nav-item))]]
+      [:a {:href href :target target :class (str "navbar-item is-tab" is-active)} icon title])))
+
+(defn flex-main-menu
+  [path]
+  (if-let [navbar-items (::spec/nav-children (second (repo/get-map "n-main-nl")))]
+    [:div#flex-main-menu.navbar-start
+     (map #(navbar-item % path nil) navbar-items)]))
 
 (defn nav-bar
   [path]
   [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
     [:div.navbar-brand
      [:a.navbar-item.is-tab
-      {:href "/" :class (if (or (= "/" path) (= "/home" path)) "is-active" "")}
+      {:href "/" :class (if (or (= nil path) (= ["home"] path)) "is-active" "")}
       [:span.is-large "Martha's Venue"]]
      [:a.navbar-item.is-hidden-desktop
-      {:target "_blank", :href "https://github.com/jgthms/bulma"}
-      [:span.icon {:style "color: #333;"} [:i.mdi.mdi-24px.mdi-github-circle]]]
-     [:a.navbar-item.is-hidden-desktop
-      {:target "_blank", :href "https://twitter.com/jgthms"}
-      [:span.icon {:style "color: #55acee;"} [:i.mdi.mdi-24px.mdi-twitter]]]
+      {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
+      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
      [:button#burger-menu.button.navbar-burger
-      {:data-target "navMenubd-example"}
       [:span]
       [:span]
       [:span]]]
     [:div#main-menu.navbar-menu
-     [:div.navbar-start
-      [:div.navbar-item.has-dropdown.is-hoverable
-       [:a.navbar-link
-        {:href "/documentation/overview/start/"}
-        "\n          Docs\n        "]
-       [:div.navbar-dropdown
-        [:a.navbar-item
-         {:href "/documentation/overview/start/"}
-         "\n            Overview\n          "]
-        [:a.navbar-item
-         {:href "http://bulma.io/documentation/modifiers/syntax/"}
-         "\n            Modifiers\n          "]
-        [:a.navbar-item
-         {:href "http://bulma.io/documentation/columns/basics/"}
-         "\n            Columns\n          "]
-        [:a.navbar-item
-         {:href "http://bulma.io/documentation/layout/container/"}
-         "\n            Layout\n          "]
-        [:a.navbar-item
-         {:href "http://bulma.io/documentation/form/general/"}
-         "\n            Form\n          "]
-        [:a.navbar-item
-         {:href "http://bulma.io/documentation/elements/box/"}
-         "\n            Elements\n          "]
-        [:a.navbar-item.is-active
-         {:href "http://bulma.io/documentation/components/breadcrumb/"}
-         "\n              Components\n            "]
-        [:hr.navbar-divider]
-        [:div.navbar-item
-         [:div
-          [:p.is-size-6-desktop [:strong.has-text-info "0.5.1"]]
-          [:small
-           [:a.bd-view-all-versions
-            {:href "/versions"}
-            "View all versions"]]]]]]
-      [:a.navbar-item.is-tab
-       {:href "http://bulma.io/expo/"}
-       [:span.icon [:i.mdi.mdi-24px.mdi-cat]] [:span "Cats"]]
-      [:a.navbar-item.is-tab
-       {:href "/info" :class (if (= "/info" path) "is-active" "")}
-       [:span.icon [:i.mdi.mdi-24px.mdi-information-outline]] [:span "Info"]]]
+     (flex-main-menu path)
      [:div.navbar-end
-      [:a.navbar-item
+      [:a.navbar-item.is-hidden-touch
        {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
        [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
 
@@ -136,23 +116,23 @@
   "renders a tile"
   [tile id size]
   (let [type-class (str "notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
-        href (:m-venue.spec/href tile)
+        href (::spec/href tile)
         id (str "tile-" id)]
     (if href
       [:a {:class type-class :href href :id id}
-       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/title tile))]
-       (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
+       [:p.title (::spec/nl-label (::spec/title tile))]
+       (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
          [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]
+       (if-let [img-reference-data (repo/get-map (str "i-" (::spec/img tile)))]
          (responsive-image (second img-reference-data) size))
-       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]]
+       [:p (get-in tile [::spec/text ::spec/nl-text])]]
       [:div {:class type-class :id id}
-       [:p.title (:m-venue.spec/nl-label (:m-venue.spec/title tile))]
-       (if-let [sub-title (:m-venue.spec/nl-label (:m-venue.spec/sub-title tile))]
+       [:p.title (::spec/nl-label (::spec/title tile))]
+       (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
          [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map (str "i-" (:m-venue.spec/img tile)))]
+       (if-let [img-reference-data (repo/get-map (str "i-" (::spec/img tile)))]
          (responsive-image (second img-reference-data) size))
-       [:p (get-in tile [:m-venue.spec/text :m-venue.spec/nl-text])]])))
+       [:p (get-in tile [::spec/text :m-venue.spec/nl-text])]])))
 
 (defn main
   "renders content based on a general document"
@@ -167,8 +147,8 @@
   [id gd-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (:m-venue.spec/tile gd-map) (str "gd-" 1) "l")]
-   (let [all-tiles (:m-venue.spec/tiles gd-map)
+    (tile (::spec/tile gd-map) (str "gd-" 1) "l")]
+   (let [all-tiles (::spec/tiles gd-map)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
       [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m" ) (first split-tiles))]

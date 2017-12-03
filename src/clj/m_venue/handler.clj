@@ -25,39 +25,39 @@
   ;; use nginx shared map store
   (nginx.clojure.session/shared-map-store "mySessionStore"))
 
+(defn main-response
+  [req path]
+  (let [main-doc (if path (str "p-" (last path)) "p-home")]
+    (println (str path))
+    (if-let [home-gd (repo/get-map main-doc)]
+      (let [[uid new] (get-user req)
+            body (page-templates/gd-page main-doc (second home-gd) path (is-editor uid))]
+        (if new
+          {:status  200
+           :headers {"Content-Type" "text/html; charset=utf-8"}
+           :body    body
+           :session (assoc (:session req) :uid uid)}
+          body))
+      (route/not-found "Not Found"))))
+
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (if-let [home-gd (repo/get-map "p-home")]
-               (let [[uid new] (get-user req)
-                     body (page-templates/gd-page "p-home" (second home-gd) req (is-editor uid))]
-                 (if new
-                   {:status  200
-                    :headers {"Content-Type" "text/html; charset=utf-8"}
-                    :body    body
-                    :session (assoc (:session req) :uid uid)}
-                   body))
-               (route/not-found "Not Found")
-               ))
-           ;; Other general document pages
-           (GET "/:id" [id :as req]
-             (if-let [some-gd (repo/get-map (str "p-" id))]
-               (let [[uid new] (get-user req)
-                     body (page-templates/gd-page (str "p-" id)  (second some-gd) req (is-editor uid))]
-                 (if new
-                   {:status  200
-                    :headers {"Content-Type" "text/html; charset=utf-8"}
-                    :body    body
-                    :session (assoc (:session req) :uid uid)}
-                   body))
-               (route/not-found "Not Found")
-               ))
-           ;; Static files, e.g js/chat.js in dir `public`
-           ;; In production environments it will be overwrited by
-           ;; nginx static files service, see conf/nginx.conf
-           (route/resources "/js")
-           (route/resources "/css")
-           (route/not-found "Not Found"))
+             (main-response req nil))
+           (GET "/:p1" [p1 :as req]
+             (main-response req [p1]))
+           (GET "/:p1/:p2" [p1 p2 :as req]
+             (main-response req [p1 p2]))
+           (GET "/:p1/:p2/:p3" [p1 p2 p3 :as req]
+             (main-response req [p1 p2 p3]))
+           (GET "/:p1/:p2/:p3/:p4" [p1 p2 p3 p4 :as req]
+             (main-response req [p1 p2 p3 p4]))
+           (GET "/:p1/:p2/:p3/:p4/:p5" [p1 p2 p3 p4 p5 :as req]
+             (main-response req [p1 p2 p3 p4 p5]))
+           (GET "/:p1/:p2/:p3/:p4/:p5/:p6" [p1 p2 p3 p4 p5 p6 :as req]
+             (main-response req [p1 p2 p3 p4 p5 p6]))
+           (GET "/:p1/:p2/:p3/:p4/:p5/:p6/:p7" [p1 p2 p3 p4 p5 p6 p7 :as req]
+             (main-response req [p1 p2 p3 p4 p5 p6 p7])))
 
 (def app
   (wrap-defaults (routes auth-routes web-socket-routes app-routes)

@@ -37,9 +37,9 @@
       (.remove content-map specifier))
     (log/debug "could not get data because invalid key: " key)))
 
-(defn commit
+(defn close
   []
-  (.commit content-store))
+  (.close content-store))
 
 (defn for-all
   [f-for-all]

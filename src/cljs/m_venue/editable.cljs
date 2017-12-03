@@ -2,7 +2,7 @@
   (:require [m-venue.chat :as chat]
             [m-venue.image-sender :as image-sender]
             [m-venue.image-selection :as image-selection]
-            [m-venue.main-content-edit :as main-content-edit]
+            [m-venue.content-edit :as content-edit]
             [m-venue.repo :as repo]
             [m-venue.web-socket :as web-socket]))
 
@@ -14,4 +14,4 @@
   (chat/init!)
   (image-sender/init!)
   (image-selection/init!)
-  (main-content-edit/init!))
+  (content-edit/init!))

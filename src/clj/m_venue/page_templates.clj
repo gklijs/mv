@@ -5,7 +5,7 @@
             [m-venue.repo :as repo]))
 (defn page
   [title app-bar content editable]
-  (html5 {:class "has-navbar-fixed-top"}
+  (html5 {:class "has-navbar-fixed-top" :lang "nl"}
     [:meta {:charset "utf-8"}]
     [:meta {:content "width=device-width, initial-scale=1", :name "viewport"}]
     [:title title]
@@ -39,10 +39,10 @@
     ))
 
 (defn gd-page
-  [id gd-map req editable]
+  [id gd-map path editable]
   (page
     (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
-    (nav-bar (:uri req))
+    (nav-bar path)
     (main (gd-content id gd-map) (side-content))
     editable))
 
@@ -50,6 +50,6 @@
   [login-structure req]
   (page
     "login"
-    (nav-bar (:uri req))
+    (nav-bar ["login"])
     (main login-structure (side-content))
     false))

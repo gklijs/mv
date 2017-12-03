@@ -119,3 +119,7 @@
   [id key]
   (if-let [element (ensure-element id)]
     (dataset/get element key)))
+
+(defn get-language
+  []
+  (.-lang (.-documentElement js/document)))

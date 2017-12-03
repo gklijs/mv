@@ -20,27 +20,27 @@
                                             :m-venue.spec/style :3}
                                            ]})
 
-(def nav-items {::spec/n-title "parent"
-                ::spec/p-reference "p-home"
+(def nav-items {::spec/n-title "Nederlands menu"
+                ::spec/p-reference "wordt niet gebruikt"
                 ::spec/nav-children
                 [
-                 {::spec/n-title "Home"
-                  ::spec/p-reference "p-home"}
-                 {::spec/n-title "Info"
-                  ::spec/p-reference "p-info"}
-                 {::spec/n-title "Cats"
-                  ::spec/p-reference "p-cats"
+                 {::spec/n-title "Katten"
+                  ::spec/p-reference "cats"
+                  ::spec/mdi-reference "cat"
                   ::spec/nav-children
                   [
                    {::spec/n-title "Sjors"
-                    ::spec/p-reference "p-sjors"}
+                    ::spec/p-reference "sjors"}
                    {::spec/n-title "Saar"
-                    ::spec/p-reference "p-saar"}
+                    ::spec/p-reference "saar"}
                    {::spec/n-title "Amber"
-                    ::spec/p-reference "p-amber"}
+                    ::spec/p-reference "amber"}
                    ]}
                  {::spec/n-title "Google"
                   ::spec/href "http://www.google.com"}
+                 {::spec/n-title "Info"
+                  ::spec/p-reference "info"
+                  ::spec/mdi-reference "information-outline"}
                  ]})
 
 (deftest repo-test
@@ -57,7 +57,7 @@
     (is (nil? (repo/get-map "mvp-xxxx")))
     (repo/remove-key "p-test-home")
     (is (nil? (repo/get-map "p-test-home")))
-    (repo/commit))
+    (repo/close))
   (testing "set-nav"
     (is (nil? (repo/set-map! "n-test" ::spec/nav-item nav-items))))
   (testing "get-nav"
@@ -68,7 +68,7 @@
     (is (= nav-items (second (repo/get-map "n-test"))))
     (repo/remove-key "n-test")
     (is (nil? (repo/get-map "n-test")))
-    (repo/commit)))
+    (repo/close)))
 
 (deftest test-mvstore
   (testing "something"
@@ -90,4 +90,19 @@
         (is (= "🇹🇬✜" (.get mvmap "🇲🇼-")))
         (.commit mvstore)))))
 
+(deftest initial-menu
+  (testing "set-inital-menu"
+    (repo/set-map! "n-main-nl" ::spec/nav-item nav-items)
+    (println (repo/get-string "n-main-nl"))
+    (is (= ::spec/nav-item (first (repo/get-map "n-main-nl"))))
+    (is (= nav-items (second (repo/get-map "n-main-nl"))))
+    (repo/close)
+    (Thread/sleep 10000)))
 
+(deftest initial-cats
+  (testing "set-inital-cats"
+    (repo/set-map! "p-sjors" :m-venue.spec/gen-doc correct-gen-doc)
+    (repo/set-map! "p-saar" :m-venue.spec/gen-doc correct-gen-doc)
+    (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)
+    (repo/close)
+    (Thread/sleep 10000)))

@@ -2,7 +2,7 @@
   (:require [clojure.spec.alpha :as s]))
 
 (def html (s/and (s/spec string?) #(> (count %) 20)))
-(def label (s/and (s/spec string?) #(> (count %) 3) #(< (count %) 40)))
+(def label (s/and (s/spec string?) #(> (count %) 2) #(< (count %) 40)))
 
 (s/def ::nl-label label)
 (s/def ::label (s/keys :req [::nl-label]))

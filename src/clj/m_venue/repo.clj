@@ -35,9 +35,9 @@
   [key]
   (content-db/remove-key key))
 
-(defn commit
+(defn close
   []
-  content-db/commit)
+  content-db/close)
 
 (defn for-all
   [f-for-each]
