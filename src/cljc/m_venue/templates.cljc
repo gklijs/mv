@@ -30,7 +30,7 @@
         matching-part (if (nil? parent-path) (first path) (second path))
         is-active (if (and matching-part (= matching-part (::spec/p-reference nav-item))) " is-active")
         title [:span (::spec/n-title nav-item)]
-        icon (if-let [icon-class (::spec/mdi-reference nav-item)][:span.icon [:i {:class (str "mdi mdi-24px mdi-"icon-class)}]])
+        icon (if-let [icon-class (::spec/mdi-reference nav-item)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])
         [href target] (if-let [url (::spec/href nav-item)]
                         [url "_blank"]
                         [(str parent-path "/" (::spec/p-reference nav-item)) "_self"])]
@@ -50,23 +50,23 @@
 (defn nav-bar
   [path]
   [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
-    [:div.navbar-brand
-     [:a.navbar-item.is-tab
-      {:href "/" :class (if (or (= nil path) (= ["home"] path)) "is-active" "")}
-      [:span.is-large "Martha's Venue"]]
-     [:a.navbar-item.is-hidden-desktop
+   [:div.navbar-brand
+    [:a.navbar-item.is-tab
+     {:href "/" :class (if (or (= nil path) (= ["home"] path)) "is-active" "")}
+     [:span.is-large "Martha's Venue"]]
+    [:a.navbar-item.is-hidden-desktop
+     {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
+     [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
+    [:button#burger-menu.button.navbar-burger
+     [:span]
+     [:span]
+     [:span]]]
+   [:div#main-menu.navbar-menu
+    (flex-main-menu path)
+    [:div.navbar-end
+     [:a.navbar-item.is-hidden-touch
       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
-     [:button#burger-menu.button.navbar-burger
-      [:span]
-      [:span]
-      [:span]]]
-    [:div#main-menu.navbar-menu
-     (flex-main-menu path)
-     [:div.navbar-end
-      [:a.navbar-item.is-hidden-touch
-       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
+      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
 
 (defn footer
   "renders a footer"
@@ -151,5 +151,5 @@
    (let [all-tiles (::spec/tiles gd-map)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m" ) (first split-tiles))]
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m") (first split-tiles))]
       [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) "m") (second split-tiles))]])])

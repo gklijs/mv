@@ -98,7 +98,7 @@
     (.registerPlugin editField (SpacesTabHandler.))
     (.registerPlugin editField (UndoRedo.))
     (util/on-delayed-change editField update-function)
-    (util/on-click (str "set-field-contents-" id) #(.setSafeHtml editField false (legacy/safeHtmlFromString(.-value (util/ensure-element (str "field-contents-" id)))) false))
+    (util/on-click (str "set-field-contents-" id) #(.setSafeHtml editField false (legacy/safeHtmlFromString (.-value (util/ensure-element (str "field-contents-" id)))) false))
     (.makeEditable editField)
     (update-function)
     (util/toggle-visibility html-paste-button)

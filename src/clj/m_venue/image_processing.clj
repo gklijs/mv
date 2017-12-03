@@ -44,9 +44,9 @@
         new-img-key (str "i-" new-img-latest)
         set-img (repo/set-map! new-img-key :m-venue.spec/img-reference
                                {:m-venue.spec/x-size        x-size
-                               :m-venue.spec/y-size        y-size
-                               :m-venue.spec/img-css-class css-class
-                               :m-venue.spec/base-path     (str "/img/" new-img-latest "/")})
+                                :m-venue.spec/y-size        y-size
+                                :m-venue.spec/img-css-class css-class
+                                :m-venue.spec/base-path     (str "/img/" new-img-latest "/")})
         original-image (format/as-file
                          buffered-image
                          (str path "o.jpg")
@@ -62,9 +62,9 @@
                              (str path "64.jpg")
                              :verbatim)
         button-image (format/as-file
-                             (resize-to-width square-buffered 36)
-                             (str path "36.jpg")
-                             :verbatim)]
+                       (resize-to-width square-buffered 36)
+                       (str path "36.jpg")
+                       :verbatim)]
     (doseq [[name value] image-sizes]
       (if (> x-size value)
         (format/as-file (resize-to-width buffered-image value)

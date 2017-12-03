@@ -30,7 +30,7 @@
       (do
         (doseq [match matches] ((second match) (from-string val)))
         (reset! delayed-functions
-                (if-let[non-matches (get split-on-regex false)]
+                (if-let [non-matches (get split-on-regex false)]
                   non-matches
                   []))))))
 
@@ -53,11 +53,11 @@
 (defn execute-with-map
   "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"
   [key function]
-   (if-let [val (.getItem (.-localStorage js/window) key)]
-     (function (from-string val))
-     (do
-       (set-delayed! key function)
-       (send-msg! (str "get" key)))))
+  (if-let [val (.getItem (.-localStorage js/window) key)]
+    (function (from-string val))
+    (do
+      (set-delayed! key function)
+      (send-msg! (str "get" key)))))
 
 (defn remove-item!
   "Remove the browser's localStorage value for the given `key`"

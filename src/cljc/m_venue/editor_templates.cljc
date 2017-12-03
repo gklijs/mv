@@ -4,7 +4,7 @@
 (defn button
   ([id style icon] (button id style icon false))
   ([id style icon disabled]
-   [:p.control [:button {:id id :class (str "button "(style style-map)) :disabled disabled}
+   [:p.control [:button {:id id :class (str "button " (style style-map)) :disabled disabled}
                 [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon)}]]]]))
 
 (defn edit-buttons
@@ -31,10 +31,10 @@
    [:div#image-edit.column.is-half {:style "display: none;"}
     [:div.field
      [:label.label "Title"]
-     [:div.control.has-icons-left [:input#title-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
+     [:div.control.has-icons-left [:input#title-nl.input {:type "text"}] [:span.icon.is-small.is-left "🇳🇱"]]]
     [:div.field
      [:label.label "Alt"]
-     [:div.control.has-icons-left [:input#alt-nl.input {:type "text"}][:span.icon.is-small.is-left "🇳🇱"]]]
+     [:div.control.has-icons-left [:input#alt-nl.input {:type "text"}] [:span.icon.is-small.is-left "🇳🇱"]]]
     [:div.field
      [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
    [:div.column [:div#all-images]]])
@@ -46,7 +46,7 @@
    [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
     [:div.control {:style "display: none;" :id (str "html-paste-button-" id)}
      [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.mdi-content-paste]]]]
-    [:div.control [:div.button.is-info.is-outlined {:id (str "edit-html-button-" id)}[:span.icon [:i.mdi.mdi-24px.mdi-pencil]]]]]
+    [:div.control [:div.button.is-info.is-outlined {:id (str "edit-html-button-" id)} [:span.icon [:i.mdi.mdi-24px.mdi-pencil]]]]]
    [:div {:style "width:100%;" :id (str "edit-me-" id)} initial-value]
    [:div {:style "display: none;" :id (str "html-paste-" id)}
     [:strong.is-pulled-left "Current field contents"]

@@ -70,8 +70,8 @@
             :m-venue.spec/y-size        800
             :m-venue.spec/img-css-class "is-3by4"
             :m-venue.spec/base-path     "/img/6/"
-            :m-venue.spec/title {:m-venue.spec/nl-label "Uit Diablo 3"}
-            :m-venue.spec/alt {:m-venue.spec/nl-label "Een witchdoctor"}})
+            :m-venue.spec/title         {:m-venue.spec/nl-label "Uit Diablo 3"}
+            :m-venue.spec/alt           {:m-venue.spec/nl-label "Een witchdoctor"}})
 (def img-7 {:m-venue.spec/x-size        2362
             :m-venue.spec/y-size        3542
             :m-venue.spec/img-css-class "is-2by3"

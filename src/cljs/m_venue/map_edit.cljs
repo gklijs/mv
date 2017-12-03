@@ -74,7 +74,7 @@
      :init-f       #(do (doseq [element req-elements] (if-let [el-function (:init-f (second element))] (el-function)))
                         (doseq [element opt-elements] (if-let [el-function (:init-f (second element))] (el-function))))
      :validation-f #(doseq [element req-elements] ((:validation-f (second element))))
-     :get-value-f  #(reduce (partial map-reducer false)  (reduce (partial map-reducer true) {} req-elements) opt-elements)
+     :get-value-f  #(reduce (partial map-reducer false) (reduce (partial map-reducer true) {} req-elements) opt-elements)
      }))
 
 (defmethod get-edit-map :keys
@@ -89,7 +89,7 @@
     (get-edit-keys (rest merge-part) data)))
 
 (defn- merge-reducer
-  [result-map function-map ]
+  [result-map function-map]
   (if-let [value ((:get-value-f function-map))]
     (merge result-map value)
     result-map))
@@ -122,7 +122,7 @@
         range-id (inc (last (keys (get @map-edit-data id))))]
     (util/set-html [:div.notification {:id (str id "-" range-id)}
                     [:div [:button.delete {:id (str id "-button-" range-id)}]]
-                     (:html part)] id false)
+                    (:html part)] id false)
     (swap! map-edit-data #(assoc-in % [id range-id] {:validation-f (:validation-f part)
                                                      :get-value-f  (:get-value-f part)}))
     (if-let [part-function (:init-f part)] (part-function))
@@ -137,8 +137,8 @@
         function-map (reduce-kv vector-map-reducer {} parts)]
     (swap! map-edit-data #(assoc % id function-map))
     {:html         [:div [:div {:id id}
-                    (map-indexed #(vector :div.notification {:id (str id "-" %1)}
-                                          [:div [:button.delete {:id (str id "-button-" %1)}]] (:html %2)) parts)]
+                          (map-indexed #(vector :div.notification {:id (str id "-" %1)}
+                                                [:div [:button.delete {:id (str id "-button-" %1)}]] (:html %2)) parts)]
                     [:p.control [:button.button.is-primary {:id (str id "-plus")}
                                  [:span.icon [:i.mdi.mdi-24px.mdi-plus]]]]]
      :init-f       #(do

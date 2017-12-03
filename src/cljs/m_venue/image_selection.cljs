@@ -32,7 +32,7 @@
       (repo/execute-with-map key #(if-let [[spec map] %]
                                     (do
                                       (util/set-html (templates/responsive-image map "m") :selected-image)
-                                      (set!  (.-src (util/ensure-element :small-selected-image))
+                                      (set! (.-src (util/ensure-element :small-selected-image))
                                             (str (:m-venue.spec/base-path map) "36.jpg"))
                                       (reset! selected-image map)))))))
 

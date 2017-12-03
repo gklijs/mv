@@ -1,5 +1,5 @@
 (ns m-venue.test-data
-    (:require [m-venue.repo :as repo]))
+  (:require [m-venue.repo :as repo]))
 
 (def home-page {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Welkom bij Martha's venue"}
                                      :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door Martha"}
@@ -47,7 +47,7 @@
                                       :m-venue.spec/style :5}
                                      ]})
 
-(def initial-img-info {:m-venue.spec/img-path "resources/public/img/"
+(def initial-img-info {:m-venue.spec/img-path   "resources/public/img/"
                        :m-venue.spec/latest-img 10})
 
 (repo/set-map! "p-home" :m-venue.spec/gen-doc home-page)
