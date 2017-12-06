@@ -123,3 +123,7 @@
 (defn get-language
   []
   (.-lang (.-documentElement js/document)))
+
+(defn get-radio-value
+  [name]
+  (.-value (.querySelector js/document (str "input[name=\"" name "\"]:checked"))))

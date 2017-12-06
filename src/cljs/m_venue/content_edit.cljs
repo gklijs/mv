@@ -1,6 +1,6 @@
 (ns m-venue.content-edit
   (:require [m-venue.editor :as editor]
-            [m-venue.map-edit :refer [get-edit-map reset-map-edit-data]]
+            [m-venue.map-edit :refer [get-edit-map reset-map-edit]]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
             [m-venue.spec :as spec]
@@ -23,7 +23,7 @@
   (util/disable :play-edit-button)
   (util/disable :save-edit-button)
   (doseq [key @remove-keys] (util/unlisten-by-key key))
-  (reset-map-edit-data))
+  (reset-map-edit))
 
 (defn set-content
   [id spec value]
@@ -47,14 +47,13 @@
 
 (defn start-edit
   [id main-data]
-  (let [edit-map (get-edit-map (first main-data) (second main-data))]
+  (let [edit-map (get-edit-map 0 (first main-data) (second main-data))]
     (util/disable :start-main-edit-button)
     (util/disable :start-menu-edit-button)
     (let [key1 (util/on-click :verify-edit-button (:validation-f edit-map))
           key2 (util/on-click :play-edit-button #(play id (first main-data) (:get-value-f edit-map)))
           key3 (util/on-click :save-edit-button #(save id (first main-data) (:get-value-f edit-map)))]
-      (reset! remove-keys [key1 key2 key3])
-      )
+      (reset! remove-keys [key1 key2 key3]))
     (util/on-click-once :stop-edit-button stop-edit)
     (util/enable :stop-edit-button)
     (util/enable :verify-edit-button)

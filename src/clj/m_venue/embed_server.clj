@@ -3,14 +3,13 @@
   (:use [m-venue.handler])
   (:require [nginx.clojure.embed :as embed]
             [clojure.tools.logging :as log]
-            [m-venue.demo-data :as demo-data]
             [m-venue.chat :refer [jvm-init-handler]]
             [ring.middleware.reload :refer [wrap-reload]])
   (:import (java.awt HeadlessException Desktop)
            (java.net URI)))
 
 (defn start-server
-  "Run an emebed nginx-clojure for debug/test usage."
+  "Run an embed nginx-clojure for debug/test usage."
   [dev? port]
   (embed/run-server
     (if dev?
