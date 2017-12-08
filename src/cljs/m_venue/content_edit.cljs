@@ -29,6 +29,7 @@
   [id spec value]
   (cond
     (= spec ::spec/gen-doc) (util/set-html (templates/gd-content id value))
+    (= spec ::spec/nav-item) (util/set-html (templates/flex-main-menu (util/get-path) value))
     :else (util/log (str "could not set data " value "with id " id "because unknown spec: " spec))
     ))
 

@@ -5,16 +5,10 @@
 
 (defonce content-store (MVStore/open "content.db"))
 (defonce types ["i" "p" "n"])
-(defonce nav-map (atom nil))
-(defonce nav-parents (atom nil))
 
 (defn get-content-map
   [type]
   (.openMap content-store type))
-
-(defn create-nav-items
-  []
-  (let [n-content (get-content-map "n")]))
 
 (defn set-content
   [key data]

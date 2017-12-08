@@ -26,7 +26,7 @@
 
 (defn navbar-item
   [nav-item path parent-path]
-  (let [has-children (and (nil? parent-path) (::spec/nav-children nav-item))
+  (let [has-children (and (nil? parent-path) (> (count (::spec/nav-children nav-item)) 0))
         matching-part (if (nil? parent-path) (first path) (second path))
         is-active (if (and matching-part (= matching-part (::spec/p-reference nav-item))) " is-active")
         title [:span (::spec/n-title nav-item)]
@@ -42,8 +42,8 @@
       [:a {:href href :target target :class (str "navbar-item is-tab" is-active)} icon title])))
 
 (defn flex-main-menu
-  [path]
-  (if-let [navbar-items (::spec/nav-children (second (repo/get-map "n-main-nl")))]
+  [path nav-item]
+  (if-let [navbar-items (::spec/nav-children nav-item)]
     [:div#flex-main-menu.navbar-start
      (map #(navbar-item % path nil) navbar-items)]))
 
@@ -62,7 +62,7 @@
      [:span]
      [:span]]]
    [:div#main-menu.navbar-menu
-    (flex-main-menu path)
+    (flex-main-menu path (second (repo/get-map "n-main-nl")))
     [:div.navbar-end
      [:a.navbar-item.is-hidden-touch
       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}

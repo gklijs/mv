@@ -2,7 +2,8 @@
   (:import [goog.dom query]
            [goog.editor.Command])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
-  (:require [goog.editor.Field.EventType :as FieldEventType]
+  (:require [clojure.string :as string]
+            [goog.editor.Field.EventType :as FieldEventType]
             [goog.events :as gevents]
             [goog.events.EventType :as EventType]
             [goog.dom :as gdom]
@@ -76,6 +77,14 @@
       (set! (.-display (.-style element)) "")
       (set! (.-display (.-style element)) "none"))))
 
+(defn hide [id]
+  (if-let [element (ensure-element id)]
+    (set! (.-display (.-style element)) "none")))
+
+(defn show [id]
+  (if-let [element (ensure-element id)]
+    (set! (.-display (.-style element)) "")))
+
 (defn set-placeholder
   [id value]
   (if-let [element (ensure-element id)]
@@ -127,3 +136,8 @@
 (defn get-radio-value
   [name]
   (.-value (.querySelector js/document (str "input[name=\"" name "\"]:checked"))))
+
+(defn get-path
+  []
+  (if-let [path (.-pathname (.-location js/window))]
+    (rest (string/split path #"/"))))

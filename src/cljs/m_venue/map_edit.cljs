@@ -34,7 +34,6 @@
 
 (defn- map-reducer
   [required result-map [path function-map]]
-  (util/log (str "map-reducer called with result-map: " result-map " path " path " and value " ((:get-value-f function-map))))
   (if result-map
     (if-let [value ((:get-value-f function-map))]
       (if (keyword? path)
@@ -181,11 +180,19 @@
     ))
 
 (defn get-radio
-  [id default or-maps-count]
+  [id default option-range]
   [:div.control {:id id}
-   (for [it (range or-maps-count)]
+   (for [it option-range]
      (let [checked (if (= it default) "true" nil)]
-       [:label.radio [:input {:type "radio" :name id :checked checked :value it} it]]))])
+       [:label.radio {:id (str id "-" it)} [:input {:type "radio" :name id :checked checked :value it} it]]))])
+
+(defn update-parts
+  [option-range id get-radio-value]
+  (let [radio-value (get-radio-value)]
+    (doseq [it option-range]
+      (if (= it radio-value)
+        (util/show (str id "-" it))
+        (util/hide (str id "-" it))))))
 
 (defmethod get-edit-map :or
   [level spec data]
@@ -194,11 +201,12 @@
         [r-default or-maps] (reduce-kv (partial or-reducer data id new-level) [nil []] (into [] (rest spec)))
         default (if r-default r-default 0)
         radio-id (str id "-radio")
-        get-radio-value #(int (util/get-radio-value radio-id))]
-    {:html         [:div {:id id} (get-radio radio-id default (count or-maps)) (map-indexed #(get-or-html %1 default %2) or-maps)]
+        get-radio-value #(int (util/get-radio-value radio-id))
+        option-range (range (count or-maps))]
+    {:html         [:div {:id id} (get-radio radio-id default option-range) (map-indexed #(get-or-html %1 default %2) or-maps)]
      :init-f       #(do
                       (doseq [element or-maps] (if-let [el-function (:init-f (second element))] (el-function)))
-                      (util/log (get-radio-value)))
+                      (doseq [it option-range] (util/on-change (str radio-id "-" it) (fn [] (update-parts option-range id get-radio-value)))))
      :validation-f #((:validation-f (nth or-maps (get-radio-value))))
      :get-value-f  #((:get-value-f (nth or-maps (get-radio-value))))
      }
