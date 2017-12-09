@@ -43,7 +43,9 @@
   (page
     (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar path)
-    (main (gd-content id gd-map) (side-content))
+    (if-let [side-menu-nl (side-menu? path (second (repo/get-map "n-main-nl")))]
+      (main (side-content side-menu-nl) (gd-content id gd-map))
+      (main (gd-content id gd-map) (side-content)))
     editable))
 
 (defn login-page

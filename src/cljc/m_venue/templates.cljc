@@ -68,6 +68,35 @@
       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
 
+(defn side-menu-item
+  [base-path nav-item selected]
+  (let [is-active (if (= selected (::spec/p-reference nav-item)) " is-active")
+        icon (if-let [icon-class (::spec/mdi-reference nav-item)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])
+        [href target] (if-let [url (::spec/href nav-item)]
+                        [url "_blank"]
+                        [(str base-path "/" (::spec/p-reference nav-item)) "_self"])]
+    [:li [:a {:class is-active :href href :target target} icon (::spec/n-title nav-item)]
+     (if (> (count (::spec/nav-children nav-item)) 0)
+       [:ul.menu-list (map #(side-menu-item href % selected) (::spec/nav-children nav-item))])]))
+
+(defn side-menu
+  [level-two-child path]
+  (let [base-path (str "/" (first path) "/" (second path))
+        icon (if-let [icon-class (::spec/mdi-reference level-two-child)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])]
+    [:aside#side-menu.menu
+     [:a.menu-label {:href base-path} icon (::spec/n-title level-two-child)]
+     [:ul.menu-list (map #(side-menu-item base-path % (last path)) (::spec/nav-children level-two-child))]]))
+
+(defn side-menu?
+  [path nav-item]
+  (if-let [level-one-items (::spec/nav-children nav-item)]
+    (if-let [level-one-child (first (filter #(= (first path) (::spec/p-reference %)) level-one-items))]
+      (let [level-two-items (::spec/nav-children level-one-child)
+            level-two-part (second path)]
+        (if-let [level-two-child (first (filter #(= level-two-part (::spec/p-reference %)) level-two-items))]
+          (if (> (count (::spec/nav-children level-two-child)) 0)
+            (side-menu level-two-child path)))))))
+
 (defn footer
   "renders a footer"
   []
@@ -93,24 +122,25 @@
        [:i.mdi.mdi-message]]]]]])
 
 (defn side-content
-  "renders the tiles on the right side"
-  []
-  [:div#side-content.tile.is-vertical.is-parent
-   [:div.content.notification.tile.is-child
-    [:div.control.field.has-icons-left
-     [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
-     [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
-    [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
-    [:p#board.tile.is-vertical]]
-   [:a.content.notification.tile.is-child {:href "/login"}
-    [:p.title "Login"]
-    [:div.image.is-3by4
-     [:img {:src "/img/3/s.jpg"}]]
-    [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
-    [:div.image.is-128x128
-     [:img {:src "/img/4/256.jpg"}]]
-    [:div.image.is-64x64
-     [:img {:src (str "/img/5/64.jpg")}]]]])
+  ([] (side-content nil))
+  ([first-item]
+   [:div#side-content.tile.is-vertical.is-parent
+    (if first-item [:div first-item])
+    [:div.content.notification.tile.is-child
+     [:div.control.field.has-icons-left
+      [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
+      [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
+     [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
+     [:p#board.tile.is-vertical]]
+    [:a.content.notification.tile.is-child {:href "/login"}
+     [:p.title "Login"]
+     [:div.image.is-3by4
+      [:img {:src "/img/3/s.jpg"}]]
+     [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
+     [:div.image.is-128x128
+      [:img {:src "/img/4/256.jpg"}]]
+     [:div.image.is-64x64
+      [:img {:src (str "/img/5/64.jpg")}]]]]))
 
 (defn tile
   "renders a tile"

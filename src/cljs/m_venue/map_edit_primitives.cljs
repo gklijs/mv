@@ -33,8 +33,7 @@
                 (= spec-form (s/form spec/html)) :html
                 (set? spec-form) :set
                 (= ::spec/img spec) :img
-                :else :label
-                ))))
+                :else :label))))
 
 (defmethod get-primitive :label
   [id spec initial-value]
@@ -44,8 +43,7 @@
                     [:input.input {:type "text" :id value-id :value initial-value}]
                     [:label.label {:style "white-space: nowrap;"} spec]]
      :validation-f #(validate spec get-function value-id)
-     :get-value-f  #(get-if-valid spec get-function)}
-    ))
+     :get-value-f  #(get-if-valid spec get-function)}))
 
 (defmethod get-primitive :html
   [id spec initial-value]
