@@ -39,7 +39,9 @@
   [id spec initial-value]
   (let [value-id (str "edit-label-" id)
         get-function (fn [] (.-value (util/ensure-element value-id)))]
-    {:html         [:div.control [:input.input {:type "text" :id value-id :value initial-value}]]
+    {:html         [:div.field.is-grouped
+                    [:input.input {:type "text" :id value-id :value initial-value}]
+                    [:label.label {:style "white-space: nowrap;"} spec]]
      :validation-f #(validate spec get-function value-id)
      :get-value-f  #(get-if-valid spec get-function)}
     ))
@@ -79,7 +81,7 @@
                     [:p.control [:img {:id img-id}]]
                     (et/button (str value-id "-remove") :3 "close-circle")
                     (et/button (str value-id "-set") :3 "image")
-                    [:dive.control [:input.input {:type "text" :id value-id :value initial-value :maxlength 6 :size 6 :style "width:auto"}]]]
+                    [:div.control [:input.input {:type "text" :id value-id :value initial-value :maxlength 6 :size 6 :style "width:auto"}]]]
      :init-f       #(do
                       (if initial-value (repo/execute-with-map (str "i-" initial-value)
                                                                (fn [[spec map]] (set-img-f (str (:m-venue.spec/base-path map) "36.jpg")))))
