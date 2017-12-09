@@ -1,5 +1,6 @@
 (ns m-venue.content-edit
   (:require [m-venue.editor :as editor]
+            [m-venue.editor-templates :as ed]
             [m-venue.map-edit :refer [get-edit-map reset-map-edit]]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
@@ -18,6 +19,7 @@
   (util/set-html nil :edit-box)
   (util/enable :start-main-edit-button)
   (util/enable :start-menu-edit-button)
+  (util/enable :add-page-button)
   (util/disable :stop-edit-button)
   (util/disable :verify-edit-button)
   (util/disable :play-edit-button)
@@ -51,6 +53,7 @@
   (let [edit-map (get-edit-map 0 (first main-data) (second main-data))]
     (util/disable :start-main-edit-button)
     (util/disable :start-menu-edit-button)
+    (util/disable :add-page-button)
     (let [key1 (util/on-click :verify-edit-button (:validation-f edit-map))
           key2 (util/on-click :play-edit-button #(play id (first main-data) (:get-value-f edit-map)))
           key3 (util/on-click :save-edit-button #(save id (first main-data) (:get-value-f edit-map)))]
@@ -63,6 +66,21 @@
     (util/set-html (:html edit-map) :edit-box)
     ((:init-f edit-map))))
 
+(defn create-page
+  [get-value-f]
+  (if-let [create-map (get-value-f)]
+    (cond
+      (= (::spec/doc-type create-map) :gen-doc) (start-edit (str "p-" (::spec/p-reference create-map)) [::spec/gen-doc nil])
+      :else (util/log (str "could not create new page with map: " create-map))))
+  (util/log "something went wrong"))
+
+(defn add-page
+  []
+  (let [edit-map (get-edit-map 0 ::spec/new-page nil)
+        create-button (ed/button :create-page-button :1 "plus" false)]
+    (util/set-html (conj (:html edit-map) create-button) :edit-box)
+    (util/on-click :create-page-button #(create-page (:get-value-f edit-map)))))
+
 (defn init!
   "Initializes html and the handlers"
   []
@@ -70,4 +88,5 @@
   (let [id (util/get-data "main-content" "document")]
     (util/on-click :start-main-edit-button #(repo/execute-with-map id (partial start-edit id))))
   (let [id (str "n-main-" (util/get-language))]
-    (util/on-click :start-menu-edit-button #(repo/execute-with-map id (partial start-edit id)))))
+    (util/on-click :start-menu-edit-button #(repo/execute-with-map id (partial start-edit id))))
+  (util/on-click :add-page-button add-page))

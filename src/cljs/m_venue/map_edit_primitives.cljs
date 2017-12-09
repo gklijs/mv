@@ -14,7 +14,8 @@
     [value (get-function)]
     (if
       (s/valid? spec value)
-      value)))
+      value
+      (util/log (str s/explain spec value)))))
 
 (defn validate
   [spec get-function id]
@@ -30,7 +31,7 @@
               (cond
                 (= spec-form (s/form spec/label)) :label
                 (= spec-form (s/form spec/html)) :html
-                (= ::spec/style spec) :style
+                (set? spec-form) :set
                 (= ::spec/img spec) :img
                 :else :label
                 ))))
@@ -55,18 +56,14 @@
      :get-value-f  #(get-if-valid spec get-function)}
     ))
 
-(defmethod get-primitive :style
+(defmethod get-primitive :set
   [id spec initial-value]
   (let [value-id (str "edit-style-" id)
         warning-id (str "edit-style-span" id)
+        set-for-spec (sort (s/form spec))
         get-function (fn [] (keyword (.-value (util/ensure-element value-id))))]
     {:html         [:div.control [:span.select {:id warning-id} [:select {:id value-id}
-                                                                 [:option (if (= :0 initial-value) {:selected "selected"}) 0]
-                                                                 [:option (if (= :1 initial-value) {:selected "selected"}) 1]
-                                                                 [:option (if (= :2 initial-value) {:selected "selected"}) 2]
-                                                                 [:option (if (= :3 initial-value) {:selected "selected"}) 3]
-                                                                 [:option (if (= :4 initial-value) {:selected "selected"}) 4]
-                                                                 [:option (if (= :5 initial-value) {:selected "selected"}) 5]]]]
+                                                                 (for [item set-for-spec] [:option (if (= item initial-value) {:selected "selected"}) item])]]]
      :validation-f #(validate spec get-function warning-id)
      :get-value-f  #(get-if-valid spec get-function)}))
 

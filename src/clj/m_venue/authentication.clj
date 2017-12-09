@@ -17,15 +17,12 @@
       [(str "guest-" gc) true])))
 
 (defn is-editor
-  "For now only admin is an editor, should come from some data"
   [uid]
   (if-let [profile (users-db/get-profile uid)]
     (admin-spec/is-editor profile)
     false))
 
 (defn handle-login [uid pass session]
-  "Here we can add server-side auth. In this example we'll just always authenticate
-   the user successfully regardless what inputted."
   (log/debug "login with " uid ", old session :" session)
   (if-let [profile (users-db/get-profile uid)]
     (if (= pass (::admin-spec/password profile))

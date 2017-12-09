@@ -35,3 +35,6 @@
 (s/def ::nav-children (s/and (s/spec vector?) (s/every ::nav-item)))
 (s/def ::nav-item (s/keys :req [::n-title (or ::p-reference ::href)] :opt [::mdi-reference ::nav-children]))
 
+(s/def ::doc-type #{:gen-doc})
+(s/def ::new-page (s/keys :req [::p-reference ::doc-type]))
+
