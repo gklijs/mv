@@ -124,23 +124,32 @@
 (defn side-content
   ([] (side-content nil))
   ([first-item]
-   [:div#side-content.tile.is-vertical.is-parent
-    (if first-item [:div first-item])
-    [:div.content.notification.tile.is-child
-     [:div.control.field.has-icons-left
-      [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
-      [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
-     [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
-     [:p#board.tile.is-vertical]]
-    [:a.content.notification.tile.is-child {:href "/login"}
-     [:p.title "Login"]
-     [:div.image.is-3by4
-      [:img {:src "/img/3/s.jpg"}]]
-     [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
-     [:div.image.is-128x128
-      [:img {:src "/img/4/256.jpg"}]]
-     [:div.image.is-64x64
-      [:img {:src (str "/img/5/64.jpg")}]]]]))
+   [:div.tile.is-vertical.is-parent
+    [:div.tags.is-hidden-tablet
+     (if first-item
+       [:span.tag.icon.has-text-success [:i.mdi.mdi-48px.mdi-page-layout-sidebar-left]]
+       [:span.tag.icon.has-text-success [:i.mdi.mdi-48px.mdi-page-layout-sidebar-right]])
+     [:span [:button#burger-side-content.button.navbar-burger
+             [:span]
+             [:span]
+             [:span]]]]
+    [:div#side-content.is-hidden-mobile
+     (if first-item [:div first-item])
+     [:div.content.notification.tile.is-child
+      [:div.control.field.has-icons-left
+       [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
+       [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
+      [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
+      [:p#board.tile.is-vertical]]
+     [:a.content.notification.tile.is-child {:href "/login"}
+      [:p.title "Login"]
+      [:div.image.is-3by4
+       [:img {:src "/img/3/s.jpg"}]]
+      [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
+      [:div.image.is-128x128
+       [:img {:src "/img/4/256.jpg"}]]
+      [:div.image.is-64x64
+       [:img {:src (str "/img/5/64.jpg")}]]]]]))
 
 (defn tile
   "renders a tile"
