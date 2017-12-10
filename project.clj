@@ -23,15 +23,15 @@
             [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.946"]]
   :profiles {
-             :dev      {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                       [ring-mock "0.1.5"]]}
-             :embed    {:dependencies
-                                      [[nginx-clojure/nginx-clojure-embed "0.4.5"]
-                                       [ring/ring-devel "1.6.3"]]
-                        :aot          [m-venue.embed-server]
-                        :main         m-venue.embed-server
-                        :uberjar-name "m-venue-embed.jar"
-                        :cljsbuild    {:builds {:app {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+             :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                      [ring-mock "0.1.5"]]}
+             :embed   {:dependencies
+                                     [[nginx-clojure/nginx-clojure-embed "0.4.5"]
+                                      [ring/ring-devel "1.6.3"]]
+                       :aot          [m-venue.embed-server]
+                       :main         m-venue.embed-server
+                       :uberjar-name "m-venue-embed.jar"
+                       :cljsbuild    {:builds {:app  {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
                                                       :compiler
                                                                     {:main          "m-venue.app"
                                                                      :asset-path    "/js/out"
@@ -40,7 +40,7 @@
                                                                      :source-map    true
                                                                      :optimizations :none
                                                                      :pretty-print  true}}
-                                                :edit {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                                               :edit {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
                                                       :compiler
                                                                     {:main          "m-venue.edit-app"
                                                                      :asset-path    "/js/edit-out"
@@ -49,35 +49,36 @@
                                                                      :source-map    true
                                                                      :optimizations :none
                                                                      :pretty-print  true}}}}
-                        :sass         {:src              "resources/app/stylesheets"
-                                       :output-directory "resources/public/css"
-                                       :source-maps      true
-                                       :style            :nested}
-                        :source-paths ["env/dev/clj"]
-                        }
-             :uberjar  {:omit-source    true
-                        :cljsbuild      {:builds {:app
-                                                  {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
-                                                   :compiler
-                                                                 {:main          "m-venue.app"
-                                                                  :output-to     "resources/public/js/app.js"
-                                                                  :optimizations :advanced
-                                                                  :pretty-print  false}}
-                                                  :edit
-                                                  {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
-                                                   :compiler
-                                                                 {:main          "m-venue.edit-app"
-                                                                  :output-to     "resources/public/js/edit.js"
-                                                                  :optimizations :advanced
-                                                                  :pretty-print  false}}}}
-                        :sass           {:src              "resources/app/stylesheets"
-                                         :output-directory "resources/public/css"
-                                         :source-maps      false
-                                         :style            :compressed}
-                        :prep-tasks     ["compile" ["cljsbuild" "once" "app"] ["cljsbuild" "once" "edit"] ["sass" "once"]]
-                        :aot            [m-venue.handler]
-                        :uberjar-name   "m-venue-default.jar"
-                        :source-paths   ["env/prod/clj"]
-                        :resource-paths ["env/prod/resources"]
-                        }
+                       :sass         {:src              "resources/app/stylesheets"
+                                      :output-directory "resources/public/css"
+                                      :source-maps      true
+                                      :style            :nested}
+                       :source-paths ["env/dev/clj"]
+                       }
+             :uberjar {:omit-source    true
+                       :cljsbuild      {:builds {:app
+                                                 {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
+                                                  :compiler
+                                                                {:main          "m-venue.app"
+                                                                 :output-to     "resources/public/js/app.js"
+                                                                 :optimizations :advanced
+                                                                 :pretty-print  false}}
+                                                 :edit
+                                                 {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
+                                                  :compiler
+                                                                {:main          "m-venue.edit-app"
+                                                                 :output-to     "resources/public/js/edit.js"
+                                                                 :optimizations :advanced
+                                                                 :externs       ["externs/ckeditor.js"]
+                                                                 :pretty-print  false}}}}
+                       :sass           {:src              "resources/app/stylesheets"
+                                        :output-directory "resources/public/css"
+                                        :source-maps      false
+                                        :style            :compressed}
+                       :prep-tasks     ["compile" ["cljsbuild" "once" "app"] ["cljsbuild" "once" "edit"] ["sass" "once"]]
+                       :aot            [m-venue.handler]
+                       :uberjar-name   "m-venue-default.jar"
+                       :source-paths   ["env/prod/clj"]
+                       :resource-paths ["env/prod/resources"]
+                       }
              })

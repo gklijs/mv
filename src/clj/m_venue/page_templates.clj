@@ -34,7 +34,8 @@
          content
          (footer)
          (if (true? editable)
-           [:script {:src "/js/edit.js"}]
+           `([:script {:src "https://cdn.ckeditor.com/ckeditor5/1.0.0-alpha.2/balloon/ckeditor.js"}]
+              [:script {:src "/js/edit.js"}])
            [:script {:src "/js/app.js"}])
          ))
 

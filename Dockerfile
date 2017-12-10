@@ -13,7 +13,7 @@ RUN chmod o+r libs/m-venue-default.jar &&\
     chown -R nginx public &&\
     chmod u+rx $(find public -type d) &&\
     chmod u+r $(find public -type f) &&\
-    chmod 644 public/img &&\
+    chmod 755 public/img &&\
     chown nginx content.db &&\
     chown nginx users.db &&\
     chmod 644 content.db &&\

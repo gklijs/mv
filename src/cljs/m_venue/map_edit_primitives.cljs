@@ -3,17 +3,14 @@
             [clojure.string :as string]
             [m-venue.util :as util]
             [m-venue.spec :as spec]
-            [m-venue.editor :as editor]
             [m-venue.editor-templates :as et]
             [m-venue.image-selection :refer [selected-image-key]]
             [m-venue.repo :as repo]))
 
 (defn get-if-valid
   [spec get-function]
-  (if-let
-    [value (get-function)]
-    (if
-      (s/valid? spec value)
+  (if-let [value (get-function)]
+    (if (s/valid? spec value)
       value
       (util/log (str s/explain spec value)))))
 
@@ -47,12 +44,14 @@
 
 (defmethod get-primitive :html
   [id spec initial-value]
-  (let [get-function (fn [] (.-innerHTML (util/ensure-element (str "edit-me-" id))))]
-    {:html         (et/html-edit id initial-value)
-     :init-f       #(util/on-click-once (str "edit-html-button-" id) (fn [] (editor/init! id)))
-     :validation-f #(validate spec get-function (str "html-edit-" id))
-     :get-value-f  #(get-if-valid spec get-function)}
-    ))
+  (let [value-id (str "ckeditor-" id)
+        get-function (fn [] (.-innerHTML (util/ensure-element value-id)))]
+    {:html         [:div {:id value-id} initial-value]
+     :init-f       #(.create js/BalloonEditor
+                             (.querySelector js/document (str "#" value-id))
+                             #js {"toolbar" #js ["bold" "italic" "link" "numberedlist" "bulletedlist" "|" "undo" "redo"]})
+     :validation-f #(validate spec get-function value-id)
+     :get-value-f  #(get-if-valid spec get-function)}))
 
 (defmethod get-primitive :set
   [id spec initial-value]

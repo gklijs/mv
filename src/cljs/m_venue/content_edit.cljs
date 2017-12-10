@@ -1,6 +1,5 @@
 (ns m-venue.content-edit
-  (:require [m-venue.editor :as editor]
-            [m-venue.editor-templates :as ed]
+  (:require [m-venue.editor-templates :as ed]
             [m-venue.map-edit :refer [get-edit-map reset-map-edit]]
             [m-venue.repo :as repo]
             [m-venue.util :as util]
