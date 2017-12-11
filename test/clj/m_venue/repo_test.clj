@@ -43,6 +43,9 @@
                   ::spec/mdi-reference "information-outline"}
                  ]})
 
+(def prod-img-info {:m-venue.spec/img-path   "public/img/"
+                    :m-venue.spec/latest-img 5})
+
 (deftest repo-test
   (testing "set-gen-doc"
     (is (nil? (repo/set-map! "p-test-home" :m-venue.spec/gen-doc correct-gen-doc)))
@@ -104,5 +107,11 @@
     (repo/set-map! "p-sjors" :m-venue.spec/gen-doc correct-gen-doc)
     (repo/set-map! "p-saar" :m-venue.spec/gen-doc correct-gen-doc)
     (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)
+    (repo/close)
+    (Thread/sleep 10000)))
+
+(deftest set-prod-img-info
+  (testing "set-prod-img-info"
+    (repo/set-map! "i-info" ::spec/img-info prod-img-info)
     (repo/close)
     (Thread/sleep 10000)))
