@@ -15,8 +15,11 @@
 (s/def ::style #{:0 :1 :2 :3 :4 :5})
 (s/def ::tile (s/keys :req [::title ::text ::style] :opt [::sub-title ::img ::href]))
 (s/def ::tiles (s/and (s/spec vector?) (s/every ::tile)))
+(s/def ::img-part (s/keys :req [::img]))
+(s/def ::image-list (s/and (s/spec vector?) (s/every ::img-part)))
 
 (s/def ::gen-doc (s/keys :req [::tile ::tiles]))
+(s/def ::img-doc (s/keys :req [::tile ::image-list]))
 
 (s/def ::img-path (s/spec string?))
 (s/def ::latest-img (s/spec number?))
@@ -35,6 +38,6 @@
 (s/def ::nav-children (s/and (s/spec vector?) (s/every ::nav-item)))
 (s/def ::nav-item (s/keys :req [::n-title (or ::p-reference ::href)] :opt [::mdi-reference ::nav-children]))
 
-(s/def ::doc-type #{:gen-doc})
+(s/def ::doc-type #{:gen-doc :img-doc})
 (s/def ::new-page (s/keys :req [::p-reference ::doc-type]))
 

@@ -192,3 +192,21 @@
      [:div.tile.is-horizontal
       [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m") (first split-tiles))]
       [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) "m") (second split-tiles))]])])
+
+(defn reduce-splitter
+  [result key value]
+  (let [num (mod key (count result))]
+    (update result num #(conj % value))))
+
+(defn img-content
+  "renders content based on a image document"
+  [id image-map]
+  [:div#main-content.tile.is-9.is-vertical {:data-document id}
+   [:div.tile.is-parent
+    (tile (::spec/tile image-map) "image-tile" "l")]
+   (let [all-images (::spec/image-list image-map)
+         split-images (reduce-kv reduce-splitter [[] [] []] all-images)]
+     [:div.tile.is-horizontal
+      (for [image-list split-images] [:div.tile.is-4.is-vertical.is-parent
+                                      (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/img image-n))}
+                                                                 (responsive-image (second (repo/get-map (str "i-" (::spec/img image-n)))) "s")])])])])

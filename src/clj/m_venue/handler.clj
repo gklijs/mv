@@ -8,7 +8,6 @@
             [m-venue.spec]
             [m-venue.page-templates :as page-templates]
             [m-venue.websocket :refer [web-socket-routes]]
-            [nginx.clojure.core :as ncc]
             [nginx.clojure.session]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
@@ -29,9 +28,9 @@
   [req path]
   (let [main-doc (if path (str "p-" (last path)) "p-home")]
     (println (str path))
-    (if-let [home-gd (repo/get-map main-doc)]
+    (if-let [content (repo/get-map main-doc)]
       (let [[uid new] (get-user req)
-            body (page-templates/gd-page main-doc (second home-gd) path (is-editor uid))]
+            body (page-templates/content-page main-doc content path (is-editor uid))]
         (if new
           {:status  200
            :headers {"Content-Type" "text/html; charset=utf-8"}

@@ -30,6 +30,7 @@
   [id spec value]
   (cond
     (= spec ::spec/gen-doc) (util/set-html (templates/gd-content id value))
+    (= spec ::spec/img-doc) (util/set-html (templates/img-content id value))
     (= spec ::spec/nav-item) (do
                                (util/set-html (templates/flex-main-menu (util/get-path) value))
                                (if-let [sm (templates/side-menu? (util/get-path) value)] (util/set-html sm)))
@@ -72,6 +73,7 @@
   (if-let [create-map (get-value-f)]
     (cond
       (= (::spec/doc-type create-map) :gen-doc) (start-edit (str "p-" (::spec/p-reference create-map)) [::spec/gen-doc nil])
+      (= (::spec/doc-type create-map) :img-doc) (start-edit (str "p-" (::spec/p-reference create-map)) [::spec/img-doc nil])
       :else (util/log (str "could not create new page with map: " create-map)))))
 
 (defn add-page

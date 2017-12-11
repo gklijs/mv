@@ -1,6 +1,7 @@
 (ns m-venue.page-templates
   (:require [hiccup.page :refer [html5]]
             [m-venue.editor-templates :refer :all]
+            [m-venue.spec :as spec]
             [m-venue.templates :refer :all]
             [m-venue.repo :as repo]))
 (defn page
@@ -39,14 +40,21 @@
            [:script {:src "/js/app.js"}])
          ))
 
-(defn gd-page
-  [id gd-map path editable]
+(defn content
+  [id content-key content-map]
+  (cond
+    (= ::spec/gen-doc content-key) (gd-content id content-map)
+    (= ::spec/img-doc content-key) (img-content id content-map)
+    ))
+
+(defn content-page
+  [id [content-key content-map] path editable]
   (page
-    (get-in gd-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
+    (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar path)
     (if-let [side-menu-nl (side-menu? path (second (repo/get-map "n-main-nl")))]
-      (main (side-content side-menu-nl) (gd-content id gd-map))
-      (main (gd-content id gd-map) (side-content)))
+      (main (side-content side-menu-nl) (content id content-key content-map))
+      (main (content id content-key content-map) (side-content)))
     editable))
 
 (defn login-page
