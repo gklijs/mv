@@ -5,9 +5,9 @@
 
 (defn get-correct-image
   [size x-size]
-  (if (> x-size (get image-sizes size))
+  (if (> x-size (size image-sizes))
     size
-    "o"))
+    :o))
 
 (defn small-square-img
   [id]
@@ -20,7 +20,7 @@
 (defn responsive-image
   [img-reference size]
   [:figure {:class (str "image " (::spec/img-css-class img-reference))}
-   [:img {:src   (str (::spec/base-path img-reference) (get-correct-image size (::spec/x-size img-reference)) ".jpg")
+   [:img {:src   (str (::spec/base-path img-reference) (name (get-correct-image size (::spec/x-size img-reference))) ".jpg")
           :title (get-in img-reference [::spec/title :m-venue.spec/nl-label])
           :alt   (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])
 
@@ -186,12 +186,12 @@
   [id gd-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile gd-map) (str "gd-" 1) "l")]
+    (tile (::spec/tile gd-map) (str "gd-" 1) :l)]
    (let [all-tiles (::spec/tiles gd-map)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) "m") (first split-tiles))]
-      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) "m") (second split-tiles))]])])
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) :m) (first split-tiles))]
+      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) :m) (second split-tiles))]])])
 
 (defn reduce-splitter
   [result key value]
@@ -203,10 +203,10 @@
   [id image-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile image-map) "image-tile" "l")]
+    (tile (::spec/tile image-map) "image-tile" :l)]
    (let [all-images (::spec/image-list image-map)
          split-images (reduce-kv reduce-splitter [[] [] []] all-images)]
      [:div.tile.is-horizontal
       (for [image-list split-images] [:div.tile.is-4.is-vertical.is-parent
                                       (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/img image-n))}
-                                                                 (responsive-image (second (repo/get-map (str "i-" (::spec/img image-n)))) "s")])])])])
+                                                                 (responsive-image (second (repo/get-map (str "i-" (::spec/img image-n)))) :m)])])])])

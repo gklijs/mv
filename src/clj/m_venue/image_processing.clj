@@ -1,9 +1,7 @@
 (ns m-venue.image-processing
   (:import java.io.ByteArrayInputStream)
   (:require [clojure.java.io :as io]
-            [clojure.string :as string]
             [clojure.test :refer :all]
-            [clojure.tools.logging :as log]
             [image-resizer.crop :refer :all]
             [image-resizer.core :refer :all]
             [image-resizer.format :as format]
@@ -65,10 +63,10 @@
                        (resize-to-width square-buffered 36)
                        (str path "36.jpg")
                        :verbatim)]
-    (doseq [[name value] image-sizes]
+    (doseq [[key value] image-sizes]
       (if (> x-size value)
         (format/as-file (resize-to-width buffered-image value)
-                        (str path name ".jpg")
+                        (str path (name key) ".jpg")
                         :verbatim)))
     [(str "seti-info:" (repo/get-string "i-info")) (str "set" new-img-key ":" (repo/get-string new-img-key))]))
 

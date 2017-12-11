@@ -3,7 +3,6 @@
             [compojure.core :refer [defroutes GET POST]]
             [m-venue.admin-spec :as admin-spec]
             [m-venue.page-templates :as page-templates]
-            [m-venue.templates :as templates]
             [m-venue.users-db :as users-db]
             [ring.util.anti-forgery :refer [anti-forgery-field]])
   (:import (sun.security.util Password)))
@@ -33,7 +32,7 @@
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
              (handle-login uid pass session))
-           (GET "/login" [:as req]
+           (GET "/login" []
              (page-templates/login-page
                [:div#main-content.tile.is-9.is-vertical
                 [:div.tile.is-parent
@@ -49,4 +48,4 @@
                                  [:input.input {:placeholder "Password" :type :password :name :pass}]
                                  [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-lock]]]]
                     [:div.field [:p.control [:button.button {:type "submit"} "Login!"]]]
-                    ]]]]] req)))
+                    ]]]]])))

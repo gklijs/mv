@@ -3,7 +3,6 @@
            [goog.editor.Command])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [clojure.string :as string]
-            [goog.editor.Field.EventType :as FieldEventType]
             [goog.events :as gevents]
             [goog.events.EventType :as EventType]
             [goog.dom :as gdom]
@@ -36,10 +35,6 @@
 (defn on-change
   [id f]
   (gevents/listen (ensure-element id) EventType/CHANGE f))
-
-(defn on-delayed-change
-  [field f]
-  (gevents/listen field FieldEventType/DELAYEDCHANGE f))
 
 (defn unlisten-by-key
   [key]

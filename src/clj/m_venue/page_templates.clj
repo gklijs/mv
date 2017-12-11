@@ -58,7 +58,7 @@
     editable))
 
 (defn login-page
-  [login-structure req]
+  [login-structure]
   (page
     "login"
     (nav-bar ["login"])

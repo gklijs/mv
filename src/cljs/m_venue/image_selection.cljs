@@ -29,9 +29,9 @@
   (if-let [key (.-id (.-dataset target))]
     (do
       (reset! selected-image-key key)
-      (repo/execute-with-map key #(if-let [[spec map] %]
+      (repo/execute-with-map key #(if-let [map (second %)]
                                     (do
-                                      (util/set-html (templates/responsive-image map "m") :selected-image)
+                                      (util/set-html (templates/responsive-image map :m) :selected-image)
                                       (set! (.-src (util/ensure-element :small-selected-image))
                                             (str (:m-venue.spec/base-path map) "36.jpg"))
                                       (reset! selected-image map)))))))

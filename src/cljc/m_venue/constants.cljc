@@ -1,9 +1,9 @@
 (ns m-venue.constants)
 
 (def image-sizes
-  {"s" 278
-   "m" 449
-   "l" 962})
+  {:s 278
+   :m 449
+   :l 962})
 
 (def style-map
   {:0 ""
