@@ -1,6 +1,4 @@
 (ns m-venue.repo-test
-  (:import org.h2.mvstore.MVStore
-           (org.h2.mvstore MVMap))
   (:require [clojure.spec.alpha :as s]
             [clojure.test :refer :all]
             [m-venue.repo :as repo]
@@ -59,8 +57,7 @@
     (is (= correct-gen-doc (second (repo/get-map "p-test-home"))))
     (is (nil? (repo/get-map "mvp-xxxx")))
     (repo/remove-key "p-test-home")
-    (is (nil? (repo/get-map "p-test-home")))
-    (repo/close))
+    (is (nil? (repo/get-map "p-test-home"))))
   (testing "set-nav"
     (is (nil? (repo/set-map! "n-test" ::spec/nav-item nav-items))))
   (testing "get-nav"
@@ -70,8 +67,7 @@
     (is (= ::spec/nav-item (first (repo/get-map "n-test"))))
     (is (= nav-items (second (repo/get-map "n-test"))))
     (repo/remove-key "n-test")
-    (is (nil? (repo/get-map "n-test")))
-    (repo/close)))
+    (is (nil? (repo/get-map "n-test")))))
 
 (deftest test-mvstore
   (testing "something"
@@ -99,7 +95,6 @@
     (println (repo/get-string "n-main-nl"))
     (is (= ::spec/nav-item (first (repo/get-map "n-main-nl"))))
     (is (= nav-items (second (repo/get-map "n-main-nl"))))
-    (repo/close)
     (Thread/sleep 10000)))
 
 (deftest initial-cats
@@ -107,11 +102,9 @@
     (repo/set-map! "p-sjors" :m-venue.spec/gen-doc correct-gen-doc)
     (repo/set-map! "p-saar" :m-venue.spec/gen-doc correct-gen-doc)
     (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)
-    (repo/close)
     (Thread/sleep 10000)))
 
 (deftest set-prod-img-info
   (testing "set-prod-img-info"
     (repo/set-map! "i-info" ::spec/img-info prod-img-info)
-    (repo/close)
     (Thread/sleep 10000)))

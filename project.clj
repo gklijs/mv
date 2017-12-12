@@ -4,7 +4,7 @@
   :min-lein-version "2.0.0"
   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
-                 [com.h2database/h2 "1.4.196"]
+                 [com.taoensso/carmine "2.16.0"]
                  [hiccups "0.3.0" :scope "provided"]
                  [image-resizer "0.1.10"]
                  [nginx-clojure "0.4.5" :scope "provided"]

@@ -12,7 +12,13 @@
   "Run an embed nginx-clojure for debug/test usage."
   [dev? port]
   (embed/run-server
-    app
+    (if dev?
+      ;; Use wrap-reload to enable auto-reload namespaces of modified files
+      ;; DO NOT use wrap-reload in production enviroment
+      (do
+        (log/info "enable auto-reloading in dev enviroment")
+        (wrap-reload #'app))
+      app)
     {:port               port
      ;;setup jvm-init-handler
      :jvm-init-handler   jvm-init-handler

@@ -1,11 +1,8 @@
 (ns m-venue.image-test
-  (:require [clojure.string :as str]
-            [clojure.test :refer :all]
+  (:require [clojure.test :refer :all]
             [image-resizer.util :as util]
             [m-venue.image-processing :as processing]
-            [m-venue.spec]
-            [m-venue.test-data]
-            [clojure.string :as string])
+            [m-venue.spec])
   (:import (java.nio.file Files)))
 
 (deftest image-test
