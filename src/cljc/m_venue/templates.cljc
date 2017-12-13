@@ -1,5 +1,5 @@
 (ns m-venue.templates
-  (:require [m-venue.constants :refer [image-sizes style-map]]
+  (:require [m-venue.constants :refer [image-sizes style-map relative-height-map]]
             [m-venue.repo :as repo]
             [m-venue.spec :as spec]))
 
@@ -193,10 +193,16 @@
       [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) :m) (first split-tiles))]
       [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) :m) (second split-tiles))]])])
 
-(defn reduce-splitter
-  [result key value]
-  (let [num (mod key (count result))]
-    (update result num #(conj % value))))
+(defn first-comp
+  [i1 i2]
+  (compare (first i1) (first i2)))
+
+(defn height-splitter
+  [result value]
+  (print value)
+  (let [rel-height (get relative-height-map (::spec/img-css-class value))
+        new-first [(+ rel-height (first (first result))) (conj (second (first result)) value)]]
+    (sort first-comp (conj (rest result) new-first))))
 
 (defn img-content
   "renders content based on a image document"
@@ -204,9 +210,9 @@
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
     (tile (::spec/tile image-map) "image-tile" :l)]
-   (let [all-images (::spec/image-list image-map)
-         split-images (reduce-kv reduce-splitter [[] [] []] all-images)]
+   (let [all-images (mapv #(second (repo/get-map (str "i-" (::spec/img %)))) (::spec/image-list image-map))
+         split-images (reverse (reduce height-splitter [[0 `()] [0 `()] [0 `()]] all-images))]
      [:div.tile.is-horizontal
-      (for [image-list split-images] [:div.tile.is-4.is-vertical.is-parent
-                                      (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/img image-n))}
-                                                                 (responsive-image (second (repo/get-map (str "i-" (::spec/img image-n)))) :m)])])])])
+      (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent
+                                          (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/base-path image-n))}
+                                                                     (responsive-image image-n :m)])])])])

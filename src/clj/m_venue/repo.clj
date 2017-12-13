@@ -28,9 +28,7 @@
 (defn get-map
   "get map item from repo"
   [key]
-  (if-let [string-value (get-string key)]
-    (from-string string-value)
-    ))
+  (redis/get-map key))
 
 (defn remove-key
   [key]

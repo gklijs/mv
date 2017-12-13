@@ -26,6 +26,16 @@
         (str result))
       (log/debug "could not get data because invalid key: " key))))
 
+(defn get-map
+  [key]
+  (if-let [[type specifier] (string/split key #"-" 2)]
+    (if-let [conn (get conn-map type)]
+      (if-let [result (car/wcar conn (car/get specifier))]
+        [(first result) (s-core/de-ser-vector (first result) (second result))]
+        (log/debug "no result from redis for key " key))
+      (log/debug "could not get conn because invalid key: " key))
+    (log/debug "incorrect key: " key)))
+
 (defn remove-key
   [key]
   (if-let [[type specifier] (string/split key #"-" 2)]
@@ -47,8 +57,5 @@
 
 (defn get-profile
   [user-id]
-  (if-let [test (car/wcar u-conn (car/get user-id))]
-    (do
-      (log/debug "from the profile: " test)
-      (log/debug "results in: " (s-core/de-ser-vector (first test) (second test)))
-      (s-core/de-ser-vector (first test) (second test)))))
+  (if-let [result (car/wcar u-conn (car/get user-id))]
+    (s-core/de-ser-vector (first result) (second result))))

@@ -69,42 +69,19 @@
     (repo/remove-key "n-test")
     (is (nil? (repo/get-map "n-test")))))
 
-(deftest test-mvstore
-  (testing "something"
-    (let [mvstore (MVStore/open "test.db")
-          mvmap (.openMap mvstore "test")
-          set-something (.put mvmap "123" "456")
-          set-something2 (.put mvmap "1232" "4562")
-          set-something2 (.put mvmap "🇲🇼" "🇹🇬✜")]
-      (is (= 3 (.size mvmap)))
-      (is (= "456" (.get mvmap "123")))
-      (is (= "4562" (.get mvmap "1232")))
-      (is (= "🇹🇬✜" (.get mvmap "🇲🇼")))
-      (.commit mvstore)
-      (let [mvmap (.openMap mvstore "test2")
-            set-something (.put mvmap "123-" "456")
-            set-something2 (.put mvmap "🇲🇼-" "🇹🇬✜")]
-        (is (= 2 (.size mvmap)))
-        (is (= "456" (.get mvmap "123-")))
-        (is (= "🇹🇬✜" (.get mvmap "🇲🇼-")))
-        (.commit mvstore)))))
-
 (deftest initial-menu
   (testing "set-inital-menu"
     (repo/set-map! "n-main-nl" ::spec/nav-item nav-items)
     (println (repo/get-string "n-main-nl"))
     (is (= ::spec/nav-item (first (repo/get-map "n-main-nl"))))
-    (is (= nav-items (second (repo/get-map "n-main-nl"))))
-    (Thread/sleep 10000)))
+    (is (= nav-items (second (repo/get-map "n-main-nl"))))))
 
 (deftest initial-cats
   (testing "set-inital-cats"
     (repo/set-map! "p-sjors" :m-venue.spec/gen-doc correct-gen-doc)
     (repo/set-map! "p-saar" :m-venue.spec/gen-doc correct-gen-doc)
-    (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)
-    (Thread/sleep 10000)))
+    (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)))
 
 (deftest set-prod-img-info
   (testing "set-prod-img-info"
-    (repo/set-map! "i-info" ::spec/img-info prod-img-info)
-    (Thread/sleep 10000)))
+    (repo/set-map! "i-info" ::spec/img-info prod-img-info)))

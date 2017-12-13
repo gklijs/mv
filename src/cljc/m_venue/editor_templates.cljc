@@ -37,21 +37,6 @@
      [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
    [:div.column [:div#all-images]]])
 
-(defn html-edit
-  [id initial-value]
-  [:div.notification {:id (str "html-edit-" id)}
-   [:div.is-pulled-left {:id (str "toolbar-" id)}]
-   [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
-    [:div.control {:style "display: none;" :id (str "html-paste-button-" id)}
-     [:div.button.is-info [:span.icon [:i.mdi.mdi-24px.mdi-content-paste]]]]
-    [:div.control [:div.button.is-info.is-outlined {:id (str "edit-html-button-" id)} [:span.icon [:i.mdi.mdi-24px.mdi-pencil]]]]]
-   [:div {:style "width:100%;" :id (str "edit-me-" id)} initial-value]
-   [:div {:style "display: none;" :id (str "html-paste-" id)}
-    [:strong.is-pulled-left "Current field contents"]
-    [:div.control.is-pulled-right [:button.button.is-primary {:id (str "set-field-contents-" id)} "Set Field Contents"]]
-    [:br]
-    [:textarea {:style "height:100px;width:100%;" :id (str "field-contents-" id)}]]])
-
 (defn content-edit
   []
   [:div#main-content-edit.field.is-grouped.is-grouped-multiline {:style "display: none;"}

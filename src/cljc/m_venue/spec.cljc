@@ -27,7 +27,7 @@
 
 (s/def ::x-size (s/spec number?))
 (s/def ::y-size (s/spec number?))
-(s/def ::img-css-class #{"is-2by1" "is-16by9" "is-3by2" "is-4by3" "is-1by1" "is-3by4" "is-2by3" "is-9-by-16" "is-1by2"})
+(s/def ::img-css-class #{"is-2by1" "is-16by9" "is-3by2" "is-4by3" "is-1by1" "is-3by4" "is-2by3" "is-9by16" "is-1by2"})
 (s/def ::base-path (s/spec string?))
 (s/def ::alt (s/spec ::label))
 (s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path] :opt [::title ::alt]))
