@@ -51,9 +51,22 @@
       (car/wcar u-conn (car/set user-id serialized-profile)))
     (log/debug "could not set profile: " profile " because invalid according to spec")))
 
+(defn all-for-conn
+  ([function t conn] (all-for-conn function t conn 0))
+  ([function t conn cursor]
+   (log/debug "all-for-conn called" t conn cursor "first" (car/wcar conn (car/scan cursor)))
+   (let [[new-cursor key-list] (car/wcar conn (car/scan cursor))
+         value-list (car/wcar conn (apply car/mget key-list))
+         k-v-map (zipmap key-list value-list)]
+     (doseq [[k v] k-v-map] #(function t k (str v)))
+     (if (= "0" new-cursor) true (recur function t conn new-cursor))
+     )))
+
 (defn for-all
   [function]
-  (log/debug "function: " function "not called, because not implemented yet"))
+  (all-for-conn function "n" n-conn)
+  (all-for-conn function "i" i-conn)
+  (all-for-conn function "p" p-conn))
 
 (defn get-profile
   [user-id]

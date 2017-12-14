@@ -49,6 +49,8 @@
     (println (wcari* (car/get "home")))
     (println (wcarp* (car/get "main-nl")))
     (println (wcarn* (car/get "1")))
+    (println (wcarp* (car/scan 0)))
+    (println (wcarp* (apply car/mget ["home" "sjors" "kddk"])))
     ))
 
 
