@@ -1,8 +1,8 @@
-(ns m-venue.users-db-test
+(ns m-venue.users-test
 
   (:require [clojure.spec.alpha :as s]
             [clojure.test :refer :all]
-            [m-venue.redis :as redis]
+            [m-venue.repo :as repo]
             [m-venue.admin-spec :as admin-spec]))
 
 (def correct-profile {::admin-spec/username "Gerard Klijs"
@@ -18,10 +18,10 @@
 (deftest profile-test
   (testing "set"
     (is (s/valid? ::admin-spec/profile correct-profile))
-    (is (not (nil? (redis/set-profile "gklijs" correct-profile))))
-    (is (not (nil? (redis/set-profile "mhuijser" correct-profile2)))))
+    (is (not (nil? (repo/set-map! ::ad-spec/profile "gklijs" correct-profile))))
+    (is (not (nil? (repo/set-map! ::ad-spec/profile "mhuijser" correct-profile2)))))
   (testing "get"
-    (is (= correct-profile (redis/get-profile "gklijs")))
-    (is (= correct-profile2 (redis/get-profile "mhuijser")))))
+    (is (= correct-profile (second (repo/get-map :u "gklijs"))))
+    (is (= correct-profile2 (second (repo/get-map :u "mhuijser"))))))
 
 

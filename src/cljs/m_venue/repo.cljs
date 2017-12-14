@@ -46,15 +46,18 @@
     (util/log (str (s/explain-data spec data)))))
 
 (defn get-map
-  [key]
+  ([key]
+   (util/log (str "key used: " key))
   (if-let [val (.getItem (.-localStorage js/window) key)]
     (from-string val)))
+  ([conn-type key]
+   (get-map (str (name conn-type) "-" key))))
 
 (defn execute-with-map
-  "Returns value of `key' from browser's localStorage if accessible, otherwise tries to get it from remote"
+  "Returns value of 'key' from browser's localStorage if accessible, otherwise tries to get it from remote"
   [key function]
-  (if-let [val (.getItem (.-localStorage js/window) key)]
-    (function (from-string val))
+  (if-let [val (get-map key)]
+    (function val)
     (do
       (set-delayed! key function)
       (send-msg! (str "get" key)))))
@@ -79,9 +82,9 @@
     (if
       (not (= val (.getItem (.-localStorage js/window) key)))
       (do
+        (.setItem (.-localStorage js/window) key val)
         (render-loop key val)
-        (delayed-loop key val)
-        (.setItem (.-localStorage js/window) key val)))))
+        (delayed-loop key val)))))
 
 (defn init!
   "Initializes the handlers"

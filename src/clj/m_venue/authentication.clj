@@ -3,7 +3,7 @@
             [compojure.core :refer [defroutes GET POST]]
             [m-venue.admin-spec :as admin-spec]
             [m-venue.page-templates :as page-templates]
-            [m-venue.redis :as redis]
+            [m-venue.repo :as repo]
             [ring.util.anti-forgery :refer [anti-forgery-field]])
   (:import (sun.security.util Password)))
 
@@ -17,13 +17,13 @@
 
 (defn is-editor
   [uid]
-  (if-let [profile (redis/get-profile uid)]
+  (if-let [profile (second (repo/get-map :u uid))]
     (admin-spec/is-editor profile)
     false))
 
 (defn handle-login [uid pass session]
   (log/debug "login with " uid ", old session :" session)
-  (if-let [profile (redis/get-profile uid)]
+  (if-let [profile (second (repo/get-map :u uid))]
     (do
       (println profile)
       (if (= pass (::admin-spec/password profile))

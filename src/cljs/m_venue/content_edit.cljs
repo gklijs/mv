@@ -87,7 +87,7 @@
   "Initializes html and the handlers"
   []
   (util/on-click :edit-main-button view-edit-switch)
-  (let [id (util/get-data "main-content" "document")]
+  (let [id (str "p-" (util/get-data "main-content" "document"))]
     (util/on-click :start-main-edit-button #(repo/execute-with-map id (partial start-edit id))))
   (let [id (str "n-main-" (util/get-language))]
     (util/on-click :start-menu-edit-button #(repo/execute-with-map id (partial start-edit id))))

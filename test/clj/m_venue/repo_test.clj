@@ -52,29 +52,29 @@
       (is (seq? (::s/problems result)))))
   (testing "get-gen-doc"
     (s/explain :m-venue.spec/gen-doc correct-gen-doc)
-    (println (str "result from repo: " (repo/get-map "p-test-home")))
-    (is (= :m-venue.spec/gen-doc (first (repo/get-map "p-test-home"))))
-    (is (= correct-gen-doc (second (repo/get-map "p-test-home"))))
-    (is (nil? (repo/get-map "mvp-xxxx")))
-    (repo/remove-key "p-test-home")
-    (is (nil? (repo/get-map "p-test-home"))))
+    (println (str "result from repo: " (repo/get-map :p "test-home")))
+    (is (= :m-venue.spec/gen-doc (first (repo/get-map :p "test-home"))))
+    (is (= correct-gen-doc (second (repo/get-map :p "test-home"))))
+    (is (nil? (repo/get-map :p "xxxx")))
+    (repo/remove-key :p "test-home")
+    (is (nil? (repo/get-map :p "test-home"))))
   (testing "set-nav"
     (is (nil? (repo/set-map! "n-test" ::spec/nav-item nav-items))))
   (testing "get-nav"
     (s/explain ::spec/nav-item nav-items)
-    (println (str "result from repo: " (repo/get-map "n-test")))
+    (println (str "result from repo: " (repo/get-map :n "test")))
     (println (repo/get-string "n-test"))
-    (is (= ::spec/nav-item (first (repo/get-map "n-test"))))
-    (is (= nav-items (second (repo/get-map "n-test"))))
-    (repo/remove-key "n-test")
-    (is (nil? (repo/get-map "n-test")))))
+    (is (= ::spec/nav-item (first (repo/get-map :n "test"))))
+    (is (= nav-items (second (repo/get-map :n "test"))))
+    (repo/remove-key :n "test")
+    (is (nil? (repo/get-map :n "test")))))
 
 (deftest initial-menu
   (testing "set-inital-menu"
     (repo/set-map! "n-main-nl" ::spec/nav-item nav-items)
     (println (repo/get-string "n-main-nl"))
-    (is (= ::spec/nav-item (first (repo/get-map "n-main-nl"))))
-    (is (= nav-items (second (repo/get-map "n-main-nl"))))))
+    (is (= ::spec/nav-item (first (repo/get-map :n "main-nl"))))
+    (is (= nav-items (second (repo/get-map :n "main-nl"))))))
 
 (deftest initial-cats
   (testing "set-inital-cats"

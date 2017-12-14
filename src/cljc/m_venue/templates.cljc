@@ -62,7 +62,7 @@
      [:span]
      [:span]]]
    [:div#main-menu.navbar-menu
-    (flex-main-menu path (second (repo/get-map "n-main-nl")))
+    (flex-main-menu path (second (repo/get-map :n "main-nl")))
     [:div.navbar-end
      [:a.navbar-item.is-hidden-touch
       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
@@ -162,14 +162,14 @@
        [:p.title (::spec/nl-label (::spec/title tile))]
        (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
          [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map (str "i-" (::spec/img tile)))]
+       (if-let [img-reference-data (repo/get-map :i (::spec/img tile))]
          (responsive-image (second img-reference-data) size))
        [:p (get-in tile [::spec/text ::spec/nl-text])]]
       [:div {:class type-class :id id}
        [:p.title (::spec/nl-label (::spec/title tile))]
        (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
          [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map (str "i-" (::spec/img tile)))]
+       (if-let [img-reference-data (repo/get-map :i (::spec/img tile))]
          (responsive-image (second img-reference-data) size))
        [:p (get-in tile [::spec/text :m-venue.spec/nl-text])]])))
 
@@ -210,7 +210,7 @@
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
     (tile (::spec/tile image-map) "image-tile" :l)]
-   (let [all-images (mapv #(second (repo/get-map (str "i-" (::spec/img %)))) (::spec/image-list image-map))
+   (let [all-images (mapv #(second (repo/get-map :i %)) (::spec/image-list image-map))
          split-images (reverse (reduce height-splitter [[0 `()] [0 `()] [0 `()]] all-images))]
      [:div.tile.is-horizontal
       (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent

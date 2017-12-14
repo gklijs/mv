@@ -36,6 +36,6 @@
     (log/debug "message at ls- is" msg)
     (if
       (< (bigdec msg) 2)
-      (for-all #(send! ch (str "set" %1 ":" %2) true false))))
+      (for-all #(send! ch (str "set" (name %1) "-" %2 ":" %3) true false))))
   (fn [_ uid _]
     (str "user: " uid " left! Doesn't send local storage status data anymore")))

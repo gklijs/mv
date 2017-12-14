@@ -26,8 +26,8 @@
 
 (defn main-response
   [req path]
-  (let [main-doc (if path (str "p-" (last path)) "p-home")]
-    (if-let [content (repo/get-map main-doc)]
+  (let [main-doc (if path (last path) "home")]
+    (if-let [content (repo/get-map :p main-doc)]
       (let [[uid new] (get-user req)
             body (page-templates/content-page main-doc content path (is-editor uid))]
         (if new

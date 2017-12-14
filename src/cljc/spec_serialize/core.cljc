@@ -10,7 +10,7 @@
 
 (defmulti add-value
           "Adds a value from the data vector, possibly add a default if the value is nil"
-          (fn [use-defaults data-vector map idx itm]
+          (fn [_ _ _ _ itm]
             (if
               (keyword? itm)
               (let [spec-form (s/form itm)]
@@ -48,10 +48,13 @@
   (let [data-part (nth data-vector idx nil)
         spec-form (s/form itm)
         spec-type (second (nth spec-form 2))
-        mapping (rest (s/form spec-type))]
+        part-form (s/form spec-type)]
     (if (nil? data-part)
       (if use-defaults (assoc map itm (get @defaults itm)) map)
-      (assoc map itm (mapv #(de-ser-keys mapping %) data-part)))))
+      (if (and (coll? part-form) (= `s/keys (first part-form)))
+        (assoc map itm (mapv #(de-ser-keys (rest part-form) %) data-part))
+        (assoc map itm data-part))
+      )))
 
 (defmethod add-value :or
   [use-defaults data-vector map idx itm]
@@ -97,7 +100,7 @@
 
 (defmulti ser-key-part-or-reducer
           "Handles serialize on or-ed key part"
-          (fn [data coll keyword-or-list] (keyword? keyword-or-list)))
+          (fn [_ _ keyword-or-list] (keyword? keyword-or-list)))
 
 (defmethod ser-key-part-or-reducer true
   [data coll keyword-or-list]
@@ -142,15 +145,18 @@
 (defmethod ser-value :keys
   [spec data]
   (if-let [key-data (get data spec)]
-    (ser-map spec (get data spec))
+    (ser-map spec key-data)
     nil))
 
 (defmethod ser-value :vector
   [spec data]
   (if-let [vector-data (get data spec)]
     (let [spec-form (s/form spec)
-          spec-type (second (nth spec-form 2))]
-      (mapv #(ser-map spec-type %) vector-data))
+          spec-type (second (nth spec-form 2))
+          part-form (s/form spec-type)]
+      (if (and (coll? part-form) (= `s/keys (first part-form)))
+        (mapv #(ser-map spec-type %) vector-data)
+        vector-data))
     nil))
 
 (defmethod ser-value :or

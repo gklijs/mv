@@ -52,7 +52,7 @@
   (page
     (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
     (nav-bar path)
-    (if-let [side-menu-nl (side-menu? path (second (repo/get-map "n-main-nl")))]
+    (if-let [side-menu-nl (side-menu? path (second (repo/get-map :n "main-nl")))]
       (main (side-content side-menu-nl) (content id content-key content-map))
       (main (content id content-key content-map) (side-content)))
     editable))

@@ -1,6 +1,5 @@
 (ns m-venue.chat
-  (:require [clojure.string :as string]
-            [m-venue.websocket :refer [subscribe]]
+  (:require [m-venue.websocket :refer [subscribe]]
             [nginx.clojure.core :as ncc]))
 
 (def chatroom-users-channels (atom {}))
@@ -29,12 +28,12 @@
   ;             |User2| <------------------ |WorkerB|
   ;             /-----\                     +-------+
   (def chatroom-topic (ncc/build-topic! "chatroom-topic"))
-  ;; avoid duplicate adding when auto-reload namespace is enabled in dev enviroments.
+  ;; avoid duplicate adding when auto-reload namespace is enabled in dev environments.
   (when (bound? #'sub-listener-removal-fn) (sub-listener-removal-fn))
   (def sub-listener-removal-fn
     (ncc/sub! chatroom-topic nil
               (fn [msg _]
-                (doseq [[uid ch] @chatroom-users-channels]
+                (doseq [[_ ch] @chatroom-users-channels]
                   (ncc/send! ch (str "ch-" msg) true false)))))
   nil)
 
@@ -44,9 +43,8 @@
     (swap! chatroom-users-channels assoc uid ch)
     (ncc/pub! chatroom-topic (str uid ":[enter!]"))
     (str "user: " uid " connected!"))
-  (fn [ch uid msg] (ncc/pub! chatroom-topic (str uid ":" msg)))
-  (fn [ch uid reason]
+  (fn [_ uid msg] (ncc/pub! chatroom-topic (str uid ":" msg)))
+  (fn [_ uid reason]
     (swap! chatroom-users-channels dissoc uid)
     (ncc/pub! chatroom-topic (str uid ":[left!]"))
-    (str "user: " uid " left! Because " reason))
-  )
+    (str "user: " uid " left! Because " reason)))

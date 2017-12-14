@@ -78,9 +78,9 @@
                     [:div.control [:input.input {:type "text" :id value-id :value initial-value :maxlength 6 :size 6 :style "width:auto"}]]]
      :init-f       #(do
                       (if initial-value (repo/execute-with-map (str "i-" initial-value)
-                                                               (fn [[spec map]] (set-img-f (str (:m-venue.spec/base-path map) "36.jpg")))))
+                                                               (fn [[_ map]] (set-img-f (str (:m-venue.spec/base-path map) "36.jpg")))))
                       (util/on-change value-id (fn [] (set-img-f
-                                                        (if-let [value (repo/get-map (str "i-" (get-function)))]
+                                                        (if-let [value (repo/get-map :i (get-function))]
                                                           (str (:m-venue.spec/base-path (second value)) "36.jpg") ""))))
                       (util/on-click (str value-id "-remove") (fn [] (set-value-f "")))
                       (util/on-click (str value-id "-set") (fn [] (set-value-f (second (string/split @selected-image-key #"-" 2))))))
