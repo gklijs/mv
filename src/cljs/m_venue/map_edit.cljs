@@ -95,20 +95,34 @@
 (defn remove-vector-part
   [id range-id]
   (do
-    (util/remove-node (str id "-" range-id))
-    (swap! map-edit-data #(update % id dissoc range-id))))
+    (util/remove-node (str id "-" range-id))))
+
+(defn get-vector-html
+  [id range-id part-html]
+  [:div.notification {:id (str id "-" range-id) :data-id range-id}
+   [:div [:button.delete {:id (str id "-button-remove-" range-id)}]]
+   [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
+    [:p.control [:button.button.is-primary {:id (str id "-button-up-" range-id)}
+                 [:span.icon [:i.mdi.mdi-24px.mdi-arrow-up-thick]]]]
+    [:p.control [:button.button.is-primary {:id (str id "-button-down-" range-id)}
+                 [:span.icon [:i.mdi.mdi-24px.mdi-arrow-down-thick]]]]]
+   part-html])
 
 (defn add-to-vector
-  [level id spec-type]
+  [level id spec-type first]
   (let [part (get-edit-map level spec-type nil)
         range-id (inc (last (keys (get @map-edit-data id))))]
-    (util/set-html [:div.notification {:id (str id "-" range-id)}
-                    [:div [:button.delete {:id (str id "-button-" range-id)}]]
-                    (:html part)] id false)
+    (util/set-html (get-vector-html id range-id (:html part)) id false (if first 0 nil))
     (swap! map-edit-data #(assoc-in % [id range-id] {:validation-f (:validation-f part)
                                                      :get-value-f  (:get-value-f part)}))
     (if-let [part-function (:init-f part)] (part-function))
-    (util/on-click-once (str id "-button-" range-id) (fn [] (remove-vector-part id range-id)))))
+    (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-vector-part id range-id)))
+    (util/on-click-once (str id "-button-up-" range-id) (fn [] (util/move-up (str id "-" range-id))))
+    (util/on-click-once (str id "-button-down-" range-id) (fn [] (util/move-down (str id "-" range-id))))))
+
+(defn get-vector-id-list
+  [parent-id]
+  (util/for-all-children parent-id "div" #(int (util/get-data % "id"))))
 
 (defmethod get-edit-map :vector
   [level spec data]
@@ -119,18 +133,25 @@
         id (str "vector-" (swap! counter inc))
         function-map (reduce-kv vector-map-reducer {} parts)]
     (swap! map-edit-data #(assoc % id function-map))
-    {:html         [:div [:div {:id id}
-                          (map-indexed #(vector :div.notification {:id (str id "-" %1)}
-                                                [:div [:button.delete {:id (str id "-button-" %1)}]] (:html %2)) parts)]
-                    [:p.control [:button.button.is-primary {:id (str id "-plus")}
+    {:html         [:div
+                    [:p.control [:button.button.is-primary {:id (str id "-plus-above")}
+                                 [:span.icon [:i.mdi.mdi-24px.mdi-plus]]]]
+                    [:div {:id id}
+                     (map-indexed #(get-vector-html id %1 (:html %2)) parts)]
+                    [:p.control [:button.button.is-primary {:id (str id "-plus-under")}
                                  [:span.icon [:i.mdi.mdi-24px.mdi-plus]]]]]
      :init-f       #(do
                       (doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
                       (doseq [range-id (range (count parts))]
-                        (util/on-click-once (str id "-button-" range-id) (fn [] (remove-vector-part id range-id))))
-                      (util/on-click (str id "-plus") (fn [] (add-to-vector new-level id spec-type))))
-     :validation-f #(doseq [[key part] (get @map-edit-data id)] ((:validation-f part)))
-     :get-value-f  #(mapv (fn [[key part]] ((:get-value-f part))) (get @map-edit-data id))
+                        (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-vector-part id range-id)))
+                        (util/on-click-once (str id "-button-up-" range-id) (fn [] (util/move-up (str id "-" range-id))))
+                        (util/on-click-once (str id "-button-down-" range-id) (fn [] (util/move-down (str id "-" range-id)))))
+                      (util/on-click (str id "-plus-above") (fn [] (add-to-vector new-level id spec-type true)))
+                      (util/on-click (str id "-plus-under") (fn [] (add-to-vector new-level id spec-type false))))
+     :validation-f #(let [f-map (get @map-edit-data id)]
+                      (doseq [child-id (get-vector-id-list id)] ((:validation-f (get f-map child-id)))))
+     :get-value-f  #(let [f-map (get @map-edit-data id)]
+                      (mapv (fn [child-id] ((:get-value-f (get f-map child-id)))) (get-vector-id-list id)))
      }))
 
 (defn keys-present
@@ -209,5 +230,4 @@
                       (doseq [it option-range] (util/on-change (str radio-id "-" it) (fn [] (update-parts option-range id get-radio-value)))))
      :validation-f #((:validation-f (nth or-maps (get-radio-value))))
      :get-value-f  #((:get-value-f (nth or-maps (get-radio-value))))
-     }
-    ))
+     }))

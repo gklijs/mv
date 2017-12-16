@@ -15,7 +15,7 @@
                  [ring/ring-anti-forgery "1.1.0"]
                  [org.clojure/tools.reader "1.1.1"]]
   :source-paths ["src/clj" "src/cljc"]
-  :test-paths ["test/clj" "env/test/clj"]
+  :test-paths ["test/clj"]
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path "resources/public/js" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]
@@ -23,6 +23,7 @@
             [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.9.946"]]
   :profiles {
+             :test    {:source-paths ["env/test/clj"]}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring-mock "0.1.5"]]}
              :embed   {:dependencies

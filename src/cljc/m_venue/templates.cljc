@@ -211,7 +211,7 @@
    [:div.tile.is-parent
     (tile (::spec/tile image-map) "image-tile" :l)]
    (let [all-images (mapv #(second (repo/get-map :i %)) (::spec/image-list image-map))
-         split-images (reverse (reduce height-splitter [[0 `()] [0 `()] [0 `()]] all-images))]
+         split-images (reverse (reduce height-splitter [[0 []] [0 []] [0 []]] all-images))]
      [:div.tile.is-horizontal
       (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent
                                           (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/base-path image-n))}
