@@ -1,6 +1,5 @@
 (ns spec-serialize.impl
   (:require [cljs.reader :as reader]
-            [cljs.spec.alpha :as s]
             [spec-serialize.core :as core]))
 
 (defn to-string

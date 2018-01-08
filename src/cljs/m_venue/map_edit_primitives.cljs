@@ -23,7 +23,7 @@
 
 (defmulti get-primitive
           "Handles serialize on or-ed key part"
-          (fn [id spec initial-value]
+          (fn [_ spec _]
             (let [spec-form (s/form spec)]
               (cond
                 (= spec-form (s/form spec/label)) :label

@@ -13,7 +13,7 @@
 
 (defmulti get-edit-map
           "Gets the edit functions and html needed to change the value"
-          (fn [level spec data]
+          (fn [_ spec _]
             (if
               (keyword? spec)
               (let [spec-form (s/form spec)]
@@ -29,7 +29,7 @@
               :or)))
 
 (defmethod get-edit-map :keyword
-  [level spec data]
+  [_ spec data]
   (get-primitive (swap! counter inc) spec (spec data)))
 
 (defn- map-reducer
