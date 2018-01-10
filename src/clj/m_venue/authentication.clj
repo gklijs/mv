@@ -1,19 +1,16 @@
 (ns m-venue.authentication
-  (:require [clojure.tools.logging :as log]
+  (:require [buddy.hashers :as hashers]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [defroutes GET POST]]
             [m-venue.admin-spec :as admin-spec]
             [m-venue.page-templates :as page-templates]
             [m-venue.repo :as repo]
-            [ring.util.anti-forgery :refer [anti-forgery-field]])
-  (:import (sun.security.util Password)))
-
-(defonce guest-counter (atom 0))
+            [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 (defn get-user [req]
   (if-let [logged-in-user (-> req :session :uid)]
     [logged-in-user false]
-    (let [gc (swap! guest-counter inc)]
-      [(str "guest-" gc) true])))
+    [(str "guest-" (repo/get-guest-counter)) true]))
 
 (defn is-editor
   [uid]
@@ -24,12 +21,9 @@
 (defn handle-login [uid pass session]
   (log/debug "login with " uid ", old session :" session)
   (if-let [profile (second (repo/get-map :u uid))]
-    (do
-      (println profile)
-      (if (= pass (::admin-spec/password profile))
-        {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}
-        {:status 303 :headers {"Location" "/login"}})
-      )
+    (if (hashers/check pass (::admin-spec/password profile))
+      {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}
+      {:status 303 :headers {"Location" "/login"}})
     {:status 303 :headers {"Location" "/login"}}))
 
 (defroutes auth-routes

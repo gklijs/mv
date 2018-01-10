@@ -2,7 +2,8 @@
   :description "Site for cat lovers"
   :url "https://github.com/nginx-clojure/nginx-clojure/tree/master/example-projects/clojure-web-example"
   :min-lein-version "2.0.0"
-  :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
+  :dependencies [[buddy/buddy-hashers "1.3.0"]
+                 [ch.qos.logback/logback-classic "1.2.3"]
                  [compojure "1.6.0" :exclusions [ring/ring-core]]
                  [com.taoensso/carmine "2.16.0"]
                  [hiccups "0.3.0" :scope "provided"]

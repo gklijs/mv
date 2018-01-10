@@ -9,7 +9,7 @@
   (contains? editor (::role profile)))
 
 (s/def ::username label)
-(s/def ::password label)
+(s/def ::password (s/spec string?))
 (s/def ::email label)
 (s/def ::role #{"user" "editor" "admin"})
 (s/def ::profile (s/keys :req [::username ::password ::email ::role]))
