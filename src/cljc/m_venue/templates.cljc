@@ -135,12 +135,6 @@
              [:span]]]]
     [:div#side-content.is-hidden-mobile
      (if first-item [:div first-item])
-     [:div.content.notification.tile.is-child
-      [:div.control.field.has-icons-left
-       [:input#chat.input {:type :text :placeholder "type and press ENTER to chat"}]
-       [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-message-outline]]]
-      [:div.field [:span.input-group-btn [:button#sendbtn.button.is-primary {:type :button} "Send!"]]]
-      [:p#board.tile.is-vertical]]
      [:a.content.notification.tile.is-child {:href "/login"}
       [:p.title "Login"]
       [:div.image.is-3by4

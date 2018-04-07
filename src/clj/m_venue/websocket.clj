@@ -58,17 +58,6 @@
         (log/debug result)))))
 
 (defroutes web-socket-routes
-           ;; public Websocket server endpoint
-           (GET "/public" [:as req]
-             (let [ch (ncc/hijack! req true)
-                   uid (first (get-user req))]
-               (when (ncc/websocket-upgrade! ch true)
-                 (ncc/add-aggregated-listener! ch 500
-                                               {:on-open    (fn [ch] (on-open! ch uid false))
-                                                :on-message (fn [ch msg] (on-message! ch uid msg false))
-                                                :on-close   (fn [ch reason] (on-close! ch uid reason false))
-                                                :on-error   (fn [_ status] (log/warn "error on public web socket with status" status))})
-                 {:status 200 :body ch})))
            ;; edit Websocket server endpoint
            (GET "/editable" [:as req]
              (let [ch (ncc/hijack! req true)
