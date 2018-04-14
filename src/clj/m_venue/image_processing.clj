@@ -14,15 +14,21 @@
   "gives the best matching css class given a ratio"
   [ratio]
   (cond
-    (> ratio 1.85) "is-2by1"
-    (> ratio 1.6) "is-16by9"
-    (> ratio 1.4) "is-3by2"
-    (> ratio 1.2) "is-4by3"
-    (> ratio 0.85) "is-1by1"
-    (> ratio 0.7) "is-3by4"
-    (> ratio 0.6) "is-2by3"
+    (> ratio 2.5) "is-3by1"
+    (> ratio 1.88) "is-2by1"
+    (> ratio 1.72) "is-16by9"
+    (> ratio 1.58) "is-5by3"
+    (> ratio 1.42) "is-3by2"
+    (> ratio 1.29) "is-4by3"
+    (> ratio 1.13) "is-5by4"
+    (> ratio 0.9) "is-1by1"
+    (> ratio 0.78) "is-4by5"
+    (> ratio 0.71) "is-3by4"
+    (> ratio 0.63) "is-2by3"
+    (> ratio 0.58) "is-3by5"
     (> ratio 0.53) "is-9by16"
-    :else "is-1by2"))
+    (> ratio 0.42) "is-1by2"
+    :else "is-1by3"))
 
 (defn process
   "Renders the different kinds of variants needed for the site"
