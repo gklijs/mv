@@ -7,7 +7,7 @@
             [image-resizer.format :as format]
             [image-resizer.resize :refer :all]
             [image-resizer.util :as util]
-            [m-venue.constants :refer [image-sizes]]
+            [m-venue.constants :refer [image-sizes relative-height-map]]
             [m-venue.repo :as repo]))
 
 (defn best-matching-class
@@ -29,6 +29,18 @@
     (> ratio 0.53) "is-9by16"
     (> ratio 0.42) "is-1by2"
     :else "is-1by3"))
+
+(defn get-corrected-image [x-size y-size buffered-image css-class]
+  (let [rel-height (get relative-height-map css-class)
+        x-according-y (/ y-size rel-height)
+        y-according-x (* x-size rel-height)
+        dif-x (- x-size x-according-y)
+        dif-y (- y-size y-according-x)]
+    (cond
+      (> dif-x 2) [(crop-from buffered-image (/ dif-x 2) 0 x-according-y y-size) x-according-y]
+      (> dif-y 2) [(crop-from buffered-image 0 (/ dif-y 2) x-size y-according-x) x-size]
+      :else [buffered-image x-size])
+    ))
 
 (defn process
   "Renders the different kinds of variants needed for the site"
@@ -62,11 +74,15 @@
                           :verbatim)
         _ (format/as-file (resize-to-width square-buffered 36)
                           (str path "36.jpg")
-                          :verbatim)]
-    (doseq [[key value] image-sizes]
-      (if (> x-size value)
-        (format/as-file (resize-to-width buffered-image value)
-                        (str path (name key) ".jpg")
-                        :verbatim)))
+                          :verbatim)
+        [corrected-image corr-x] (get-corrected-image x-size y-size buffered-image css-class)]
+    (if
+      (> corr-x (:s image-sizes))
+      (doseq [[key value] image-sizes]
+        (if (> corr-x value)
+          (format/as-file (resize-to-width corrected-image value)
+                          (str path (name key) ".jpg")
+                          :verbatim)))
+      (format/as-file corrected-image (str path "s.jpg") :verbatim))
     [(str "seti-info:" (repo/get-string "i-info")) (str "set" new-img-key ":" (repo/get-string new-img-key))]))
 
