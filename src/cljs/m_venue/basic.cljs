@@ -9,7 +9,7 @@
 (defn toggle-side
   []
   (util/toggle-class :burger-side-content "is-active")
-  (util/toggle-class :side-content "is-hidden-mobile"))
+  (util/toggle-class :side-content "is-hidden"))
 
 (defn init!
   "Initializes basic ui listeners"

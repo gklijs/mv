@@ -49,18 +49,19 @@
 
 (defn content-page
   [id [content-key content-map] path editable]
-  (page
-    (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
-    (nav-bar path)
-    (if-let [side-menu-nl (side-menu? path (second (repo/get-map :n "main-nl")))]
-      (main (side-content side-menu-nl) (content id content-key content-map))
-      (main (content id content-key content-map) (side-content)))
-    editable))
+  (let [side-menu-nl (side-menu? path (second (repo/get-map :n "main-nl")))]
+    (page
+      (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
+      (nav-bar path side-menu-nl)
+      (if (nil? side-menu-nl)
+        (main (content id content-key content-map) (side-content) false)
+        (main (content id content-key content-map) (side-content side-menu-nl) true))
+      editable)))
 
 (defn login-page
   [login-structure]
   (page
     "login"
-    (nav-bar ["login"])
-    (main login-structure (side-content))
+    (nav-bar ["login"] nil)
+    (main login-structure (side-content) false)
     false))

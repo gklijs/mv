@@ -52,9 +52,7 @@
                                                                      :optimizations :none
                                                                      :pretty-print  true}}}}
                        :sass         {:src              "resources/app/stylesheets"
-                                      :output-directory "resources/public/css"
-                                      :source-maps      true
-                                      :style            :nested}
+                                      :output-directory "resources/public/css"}
                        :source-paths ["env/dev/clj"]
                        }
              :uberjar {:omit-source    true

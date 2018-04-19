@@ -48,9 +48,14 @@
      (map #(navbar-item % path nil) navbar-items)]))
 
 (defn nav-bar
-  [path]
+  [path side-menu]
   [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
    [:div.navbar-brand
+    (if side-menu
+      [:button#burger-side-content.button.navbar-burger
+       [:span]
+       [:span]
+       [:span]])
     [:a.navbar-item.is-tab
      {:href "/" :class (if (or (= nil path) (= ["home"] path)) "is-active" "")}
      [:span.is-large "Martha's Venue"]]
@@ -66,7 +71,9 @@
     [:div.navbar-end
      [:a.navbar-item.is-hidden-touch
       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]])
+      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]
+   (if side-menu
+     [:div#side-content.is-hidden side-menu])])
 
 (defn side-menu-item
   [base-path nav-item selected]
@@ -125,16 +132,8 @@
   ([] (side-content nil))
   ([first-item]
    [:div.tile.is-vertical.is-parent
-    [:div.tags.is-hidden-tablet
-     (if first-item
-       [:span.tag.icon.has-text-success [:i.mdi.mdi-48px.mdi-page-layout-sidebar-left]]
-       [:span.tag.icon.has-text-success [:i.mdi.mdi-48px.mdi-page-layout-sidebar-right]])
-     [:span [:button#burger-side-content.button.navbar-burger
-             [:span]
-             [:span]
-             [:span]]]]
-    [:div#side-content.is-hidden-mobile
-     (if first-item [:div first-item])
+    [:div#side-content
+     (if first-item [:div.is-hidden-mobile first-item])
      [:a.content.notification.tile.is-child {:href "/login"}
       [:p.title "Login"]
       [:div.image.is-3by4
@@ -169,11 +168,14 @@
 
 (defn main
   "renders content based on a general document"
-  [left right]
+  [main side reverse]
   [:section#main.section
    [:div.container
-    [:div.tile.is-ancestor
-     left right]]])
+    (if reverse
+      [:div.tile.is-ancestor.is-reversed
+       main side]
+      [:div.tile.is-ancestor
+       main side])]])
 
 (defn gd-content
   "renders content based on a general document"
