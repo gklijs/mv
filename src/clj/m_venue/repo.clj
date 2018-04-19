@@ -74,9 +74,3 @@
   (if-let [conn (conn-type conn-map)]
     (car/wcar conn (car/del key)))
   (log/debug "could not get data because invalid conn-type: " conn-type))
-
-(defn get-guest-counter
-  []
-  (if-let [result (car/wcar u-conn (car/incr "guest-counter"))]
-    result
-    (log/debug "could not get guest counter from redis")))

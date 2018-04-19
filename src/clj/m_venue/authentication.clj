@@ -8,15 +8,15 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 (defn get-user [req]
-  (if-let [logged-in-user (-> req :session :uid)]
-    [logged-in-user false]
-    [(str "guest-" (repo/get-guest-counter)) true]))
+  (-> req :session :uid))
 
 (defn is-editor
   [uid]
-  (if-let [profile (second (repo/get-map :u uid))]
-    (admin-spec/is-editor profile)
-    false))
+  (if (nil? uid)
+    false
+    (if-let [profile (second (repo/get-map :u uid))]
+      (admin-spec/is-editor profile)
+      false)))
 
 (defn handle-login [uid pass session]
   (log/debug "login with " uid ", old session :" session)

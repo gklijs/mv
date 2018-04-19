@@ -6,24 +6,17 @@
             [m-venue.image-processing :refer [process]]
             [nginx.clojure.core :as ncc]))
 
-(defonce subscriptions (atom {}))
 (defonce edit-subscriptions (atom {}))
-
-(defn subscribe
-  [id open-f message-f close-f]
-  (swap! subscriptions #(assoc % id [open-f message-f close-f]))
-  (swap! edit-subscriptions #(assoc % id [open-f message-f close-f])))
 
 (defn edit-subscribe
   [id open-f message-f close-f]
   (swap! edit-subscriptions #(assoc % id [open-f message-f close-f])))
 
 (defn on-open!
-  [ch uid edit-only]
-  (let [subs-map (if edit-only @edit-subscriptions @subscriptions)]
-    (doseq [[_ [open-f _ _]] subs-map]
-      (let [result (open-f ch uid)]
-        (log/debug result)))))
+  [ch uid]
+  (doseq [[_ [open-f _ _]] @edit-subscriptions]
+    (let [result (open-f ch uid)]
+      (log/debug result))))
 
 (defn on-message-handler
   [[handled? ch uid msg] id [_ message-f _]]
@@ -37,11 +30,10 @@
     (doseq [msg img-msgs] (ncc/send! ch msg true false))))
 
 (defn on-message!
-  [ch uid msg edit-only]
+  [ch uid msg]
   (cond
     (string? msg)
-    (let [subs-map (if edit-only @edit-subscriptions @subscriptions)
-          result (reduce-kv on-message-handler [false ch uid msg] subs-map)]
+    (let [result (reduce-kv on-message-handler [false ch uid msg] @edit-subscriptions)]
       (if
         (false? (first result))
         (log/warn "message was not handled by one of the subscribe handlers:" msg "from" uid))
@@ -51,23 +43,22 @@
     :else (process-binary ch (.array msg))))
 
 (defn on-close!
-  [ch uid reason edit-only]
-  (let [subs-map (if edit-only @edit-subscriptions @subscriptions)]
-    (doseq [[_ [_ _ close-f]] subs-map]
-      (let [result (close-f ch uid reason)]
-        (log/debug result)))))
+  [ch uid reason]
+  (doseq [[_ [_ _ close-f]] @edit-subscriptions]
+    (let [result (close-f ch uid reason)]
+      (log/debug result))))
 
 (defroutes web-socket-routes
            ;; edit Websocket server endpoint
            (GET "/editable" [:as req]
              (let [ch (ncc/hijack! req true)
-                   uid (first (get-user req))]
+                   uid (get-user req)]
                (if (and (is-editor uid) (ncc/websocket-upgrade! ch true))
                  (do
                    (ncc/add-aggregated-listener! ch (* 5 1024 1024)
-                                                 {:on-open    (fn [ch] (on-open! ch uid true))
-                                                  :on-message (fn [ch msg] (on-message! ch uid msg true))
-                                                  :on-close   (fn [ch reason] (on-close! ch uid reason true))
+                                                 {:on-open    (fn [ch] (on-open! ch uid))
+                                                  :on-message (fn [ch msg] (on-message! ch uid msg))
+                                                  :on-close   (fn [ch reason] (on-close! ch uid reason))
                                                   :on-error   (fn [_ status] (log/warn "error on edit web socket with status" status))})
                    {:status 200 :body ch})
                  (do

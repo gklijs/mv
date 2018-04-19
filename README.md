@@ -3,9 +3,8 @@
 A basic example about nginx-clojure & clojure web dev. It uses:
 * [Compojure](https://github.com/weavejester/compojure) (for uri routing)
 * [Hiccup](https://github.com/weavejester/hiccup) (for html rendering)
-* [Websocket API](http://nginx-clojure.github.io/more.html#38--sever-side-websocket) & [Sub/Pub API]() (to demo a simple chatroom)
+* [Websocket API](http://nginx-clojure.github.io/more.html#38--sever-side-websocket)
 * ring.middleware.reload (for auto-reloading modified namespaces in dev environments)
-
 
 ## Run It
 

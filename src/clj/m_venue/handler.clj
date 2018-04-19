@@ -2,7 +2,6 @@
   (:require [compojure.core :refer [defroutes GET routes]]
             [compojure.route :as route]
             [m-venue.authentication :refer [auth-routes get-user is-editor]]
-            [m-venue.chat]
             [m-venue.repo :as repo]
             [m-venue.repo-bridge]
             [m-venue.spec]
@@ -24,18 +23,15 @@
   ;; use nginx shared map store
   (nginx.clojure.session/shared-map-store "mySessionStore"))
 
+;;TODO -add language selection
+;;TODO -add not found page (mispoes)
 (defn main-response
   [req path]
   (let [main-doc (if path (last path) "home")]
     (if-let [content (repo/get-map :p main-doc)]
-      (let [[uid new] (get-user req)
+      (let [uid (get-user req)
             body (page-templates/content-page main-doc content path (is-editor uid))]
-        (if new
-          {:status  200
-           :headers {"Content-Type" "text/html; charset=utf-8"}
-           :body    body
-           :session (assoc (:session req) :uid uid)}
-          body))
+        body)
       (route/not-found "Not Found"))))
 
 (defroutes app-routes

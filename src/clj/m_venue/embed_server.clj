@@ -3,7 +3,6 @@
   (:use [m-venue.handler])
   (:require [nginx.clojure.embed :as embed]
             [clojure.tools.logging :as log]
-            [m-venue.chat :refer [jvm-init-handler]]
             [ring.middleware.reload :refer [wrap-reload]])
   (:import (java.awt HeadlessException Desktop)
            (java.net URI)))
@@ -20,11 +19,8 @@
         (wrap-reload #'app))
       app)
     {:port               port
-     ;;setup jvm-init-handler
-     :jvm-init-handler   jvm-init-handler
-     ;; define shared map for PubSubTopic
-     :http-user-defined, "shared_map PubSubTopic tinymap?space=1m&entries=256;\n
-                          shared_map mySessionStore tinymap?space=1m&entries=256;"}))
+     ;; define shared map for Sessions
+     :http-user-defined, "shared_map mySessionStore tinymap?space=1m&entries=256;"}))
 
 (defn stop-server
   "Stop the embed nginx-clojure"
