@@ -1,6 +1,4 @@
 (ns m-venue.util
-  (:import [goog.dom query]
-           [goog.editor.Command])
   (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [clojure.string :as string]
             [goog.events :as gevents]
@@ -47,6 +45,10 @@
   ISeqable
   (-seq [coll] (lazy-nodelist coll)))
 
+(extend-type js/NodeList
+  ISeqable
+  (-seq [array] (array-seq array 0)))
+
 (defn ensure-element [x]
   (cond
     (gdom/isElement x) x
@@ -65,6 +67,15 @@
                       (f target)))))
 
 (defn on-click-once [id f] (gevents/listenOnce (ensure-element id) EventType/CLICK f))
+
+(defn on-click-all-by-class
+  "set onclick for all with id starting with"
+  [class f]
+  (let [items (.querySelectorAll js/document (str "." class))]
+    (log items)
+    (log (count items))
+    (doseq [id items]
+      (on-click-target id f))))
 
 (defn on-change
   [id f]
@@ -194,3 +205,8 @@
       (do
         (gdom/removeNode node)
         (gdom/insertSiblingAfter node prev)))))
+
+(defn get-viewport-size
+  []
+  (let [vs (gdom/getViewportSize)]
+    [(.-height vs) (.-width vs)]))

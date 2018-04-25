@@ -1,7 +1,9 @@
 (ns m-venue.pub
-  (:require [m-venue.basic :as basic]))
+  (:require [m-venue.basic :as basic]
+            [m-venue.img-doc :as img-doc]))
 
 (defn init!
   "Initializes the handlers and websocket"
   []
-  (basic/init!))
+  (basic/init!)
+  (img-doc/init!))

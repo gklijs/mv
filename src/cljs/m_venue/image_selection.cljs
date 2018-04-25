@@ -9,7 +9,7 @@
 (defonce selected-image-key (atom nil))
 
 (add-watch selected-image nil
-           (fn [k r os ns]
+           (fn [_ _ _ ns]
              (set! (.-value (util/ensure-element :title-nl)) "")
              (set! (.-value (util/ensure-element :alt-nl)) "")
              (util/set-placeholder :title-nl (get-in ns [:m-venue.spec/title :m-venue.spec/nl-label]))

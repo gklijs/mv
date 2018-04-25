@@ -4,8 +4,8 @@
   :min-lein-version "2.0.0"
   :dependencies [[buddy/buddy-hashers "1.3.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
-                 [compojure "1.6.0" :exclusions [ring/ring-core]]
-                 [com.taoensso/carmine "2.18.0"]
+                 [compojure "1.6.1" :exclusions [ring/ring-core]]
+                 [com.taoensso/carmine "2.18.1"]
                  [hiccups "0.3.0" :scope "provided"]
                  [image-resizer "0.1.10"]
                  [nginx-clojure "0.4.5" :scope "provided"]
@@ -13,15 +13,14 @@
                  [org.clojure/clojurescript "1.10.238" :scope "provided"]
                  [org.clojure/tools.logging "0.4.0"]
                  [ring/ring-defaults "0.3.1"]
-                 [ring/ring-anti-forgery "1.2.0"]
-                 [org.clojure/tools.reader "1.2.2"]]
+                 [ring/ring-anti-forgery "1.2.0"]]
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj"]
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path "resources/public/js" "resources/public/css"]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-cooper "1.2.2"]
-            [lein-sass "0.4.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
+            [lein-sass "0.5.0" :exclusions [org.apache.commons/commons-compress org.clojure/clojure org.codehaus.plexus/plexus-utils]]
             [org.clojure/clojurescript "1.10.238"]]
   :profiles {
              :test    {:source-paths ["env/test/clj"]}
@@ -52,7 +51,9 @@
                                                                      :optimizations :none
                                                                      :pretty-print  true}}}}
                        :sass         {:src              "resources/app/stylesheets"
-                                      :output-directory "resources/public/css"}
+                                      :output-directory "resources/public/css"
+                                      :source-maps      true
+                                      :style            "nested"}
                        :source-paths ["env/dev/clj"]
                        }
              :uberjar {:omit-source    true

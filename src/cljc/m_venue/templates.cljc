@@ -7,7 +7,7 @@
   [size x-size]
   (if (> x-size (size image-sizes))
     size
-    :o))
+    :s))
 
 (defn small-square-img
   [id]
@@ -52,7 +52,7 @@
   [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
    [:div.navbar-brand
     (if side-menu
-      [:button#burger-side-content.button.navbar-burger
+      [:button#burger-side-content.button.navbar-burger.is-hidden-tablet
        [:span]
        [:span]
        [:span]])
@@ -210,5 +210,27 @@
          split-images (reverse (reduce height-splitter [[0 []] [0 []] [0 []]] all-images))]
      [:div.tile.is-horizontal
       (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent
-                                          (for [image-n image-list] [:div.tile.is-child {:id (str "img-tile-" (::spec/base-path image-n))}
+                                          (for [image-n image-list] [:div.tile.is-child.enlargeable-image {:id         (str "img-tile-" (::spec/base-path image-n))
+                                                                                                           :data-src   (str (::spec/base-path image-n) "o.jpg")
+                                                                                                           :data-title (get-in image-n [::spec/title :m-venue.spec/nl-label])
+                                                                                                           :data-alt   (get-in image-n [::spec/alt :m-venue.spec/nl-label])
+                                                                                                           :data-x     (get image-n :m-venue.spec/x-size)
+                                                                                                           :data-y     (get image-n ::spec/y-size)}
                                                                      (responsive-image image-n :m)])])])])
+
+(defn image-modal-style
+  [src alt title scale]
+  (let [m {:src   src
+           :alt   alt
+           :title title}]
+    (if (and (number? scale) (< scale 100))
+      (assoc m :style (str "max-width: " scale "%; margin-left: " (str (/ (- 100 scale) 2) "%")))
+      m)))
+
+(defn image-modal
+  [src alt title scale]
+  [:div#image-modal.modal.is-active
+   [:div.modal-background]
+   [:p.image
+    [:img (image-modal-style src alt title scale)]]
+   [:button.modal-close.is-large {:aria-label "close"}]])
