@@ -17,6 +17,7 @@
   []
   (util/set-html nil :edit-box)
   (util/enable :start-main-edit-button)
+  (util/enable :start-side-edit-button)
   (util/enable :start-menu-edit-button)
   (util/enable :add-page-button)
   (util/disable :stop-edit-button)
@@ -54,6 +55,7 @@
   [id main-data]
   (let [edit-map (get-edit-map 0 (first main-data) (second main-data))]
     (util/disable :start-main-edit-button)
+    (util/disable :start-side-edit-button)
     (util/disable :start-menu-edit-button)
     (util/disable :add-page-button)
     (let [key1 (util/on-click :verify-edit-button (:validation-f edit-map))
@@ -89,6 +91,8 @@
   (util/on-click :edit-main-button view-edit-switch)
   (let [id (str "p-" (util/get-data "main-content" "document"))]
     (util/on-click :start-main-edit-button #(repo/execute-with-map id (partial start-edit id))))
+  (let [id (str "n-side-" (util/get-language))]
+    (util/on-click :start-side-edit-button #(repo/execute-with-map id (partial start-edit id))))
   (let [id (str "n-main-" (util/get-language))]
     (util/on-click :start-menu-edit-button #(repo/execute-with-map id (partial start-edit id))))
   (util/on-click :add-page-button add-page))

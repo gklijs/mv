@@ -4,18 +4,18 @@
             [m-venue.repo :as repo]
             [m-venue.spec :as spec]))
 
-(def correct-gen-doc {:m-venue.spec/tile  {:m-venue.spec/title     {:m-venue.spec/nl-label "Alles over katten"}
-                                           :m-venue.spec/sub-title {:m-venue.spec/nl-label "Door Martha"}
-                                           :m-venue.spec/text      {:m-venue.spec/nl-text "Een mogelijk erg lange text over katten."}
-                                           :m-venue.spec/style     :1}
-                      :m-venue.spec/tiles [{:m-venue.spec/title {:m-venue.spec/nl-label "Alles over het voer"}
-                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}
-                                            :m-venue.spec/style :4
-                                            :m-venue.spec/href  "http://www.nu.nl"}
-                                           {:m-venue.spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
-                                            :m-venue.spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
-                                            :m-venue.spec/img   1
-                                            :m-venue.spec/style :3}
+(def correct-gen-doc {:m-venue.spec/tile  {::spec/title     {:m-venue.spec/nl-label "Alles over katten"}
+                                           ::spec/sub-title {:m-venue.spec/nl-label "Door Martha"}
+                                           ::spec/text      {:m-venue.spec/nl-text "Een mogelijk erg lange text over katten."}
+                                           ::spec/style     :1}
+                      :m-venue.spec/tiles [{::spec/title {:m-venue.spec/nl-label "Alles over het voer"}
+                                            ::spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over het voeren van katten."}
+                                            ::spec/style :4
+                                            ::spec/href  "http://www.nu.nl"}
+                                           {::spec/title {:m-venue.spec/nl-label "Alles over speeltjes"}
+                                            ::spec/text  {:m-venue.spec/nl-text "Een mogelijk erg lange text over speeltjes voor katten."}
+                                            ::spec/img   1
+                                            ::spec/style :3}
                                            ]})
 
 (def nav-items {::spec/n-title "Nederlands menu"
@@ -41,8 +41,10 @@
                   ::spec/mdi-reference "information-outline"}
                  ]})
 
-(def prod-img-info {:m-venue.spec/img-path   "public/img/"
-                    :m-venue.spec/latest-img 5})
+(def prod-img-info {::spec/img-path   "public/img/"
+                    ::spec/latest-img 5})
+
+(def correct-side-content {::spec/ref-list ["sjors" "saar" "amber"]})
 
 (deftest repo-test
   (testing "set-gen-doc"
@@ -78,9 +80,13 @@
 
 (deftest initial-cats
   (testing "set-inital-cats"
-    (repo/set-map! "p-sjors" :m-venue.spec/gen-doc correct-gen-doc)
-    (repo/set-map! "p-saar" :m-venue.spec/gen-doc correct-gen-doc)
-    (repo/set-map! "p-amber" :m-venue.spec/gen-doc correct-gen-doc)))
+    (repo/set-map! "p-sjors" ::spec/gen-doc correct-gen-doc)
+    (repo/set-map! "p-saar" ::spec/gen-doc correct-gen-doc)
+    (repo/set-map! "p-amber" ::spec/gen-doc correct-gen-doc)))
+
+(deftest initial-side-content
+  (testing "set-initial-side-content"
+    (repo/set-map! "n-side-nl" ::spec/side-content correct-side-content)))
 
 (deftest set-prod-img-info
   (testing "set-prod-img-info"

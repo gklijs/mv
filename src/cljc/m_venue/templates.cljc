@@ -128,21 +128,17 @@
        {:href "https://github.com/jgthms/bulma"}
        [:i.mdi.mdi-message]]]]]])
 
-(defn side-content
-  ([] (side-content nil))
-  ([first-item]
-   [:div.tile.is-vertical.is-parent
-    [:div#side-content
-     (if first-item [:div.is-hidden-mobile first-item])
-     [:a.content.notification.tile.is-child {:href "/login"}
-      [:p.title "Login"]
-      [:div.image.is-3by4
-       [:img {:src "/img/3/s.jpg"}]]
-      [:p.subtitle "Klik op de notificatie om naar de pagina te gaan"]
-      [:div.image.is-128x128
-       [:img {:src "/img/4/256.jpg"}]]
-      [:div.image.is-64x64
-       [:img {:src (str "/img/5/64.jpg")}]]]]]))
+(defn s-content
+  ([] (s-content nil))
+  ([path] (s-content path nil))
+  ([path first-item]
+   (let [side-content (second (repo/get-map :n "side-nl"))
+         last (if (vector? path) (last path))
+         refs (remove #(= % last) (::spec/ref-list side-content))]
+     [:div.tile.is-vertical.is-parent
+      [:div#side-content
+       (if first-item [:div.is-hidden-mobile first-item])
+       [:p (str refs)]]])))
 
 (defn tile
   "renders a tile"

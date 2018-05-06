@@ -57,7 +57,11 @@
     (gdom/isNodeLike x) (gdom/getElement x)
     :else (do (log (str "could not convert to element: " x)) nil)))
 
-(defn on-click [id f] (gevents/listen (ensure-element id) EventType/CLICK f))
+(defn on-click
+  [id f]
+  (if-let [e (ensure-element id)]
+    (gevents/listen e EventType/CLICK f)
+    (print "Could not find element with id " id)))
 
 (defn on-click-target
   [id f]
@@ -72,8 +76,6 @@
   "set onclick for all with id starting with"
   [class f]
   (let [items (.querySelectorAll js/document (str "." class))]
-    (log items)
-    (log (count items))
     (doseq [id items]
       (on-click-target id f))))
 

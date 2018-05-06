@@ -11,9 +11,7 @@
     (str "user: " uid " is ready to get data"))
   (fn [ch _ key]
     (log/debug "key from get is" key)
-    (if-let [data (get-string key)]
-      (send! ch (str "set" key ":" data) true false)
-      (send! ch (str "set" key ":" nil) true false)))
+    (send! ch (str "set" key ":" (get-string key)) true false))
   (fn [_ uid _]
     (str "user: " uid " left! Doesn't get data anymore")))
 

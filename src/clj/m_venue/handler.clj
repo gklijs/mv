@@ -27,7 +27,7 @@
 ;;TODO -add not found page (mispoes)
 (defn main-response
   [req path]
-  (let [main-doc (if path (last path) "home")]
+  (let [main-doc (if (vector? path) (last path) "home")]
     (if-let [content (repo/get-map :p main-doc)]
       (let [uid (get-user req)
             body (page-templates/content-page main-doc content path (is-editor uid))]

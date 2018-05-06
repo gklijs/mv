@@ -41,3 +41,6 @@
 (s/def ::doc-type #{:gen-doc :img-doc})
 (s/def ::new-page (s/keys :req [::p-reference ::doc-type]))
 
+(s/def ::ref-list (s/and (s/spec vector?) (s/every ::p-reference)))
+(s/def ::side-content (s/keys :req [::ref-list]))
+

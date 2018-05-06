@@ -42,6 +42,7 @@
   [:div#main-content-edit.field.is-grouped.is-grouped-multiline {:style "display: none;"}
    (button :start-menu-edit-button :1 "menu" false)
    (button :start-main-edit-button :1 "view-dashboard" false)
+   (button :start-side-edit-button :1 "page-layout-sidebar-right" false)
    (button :add-page-button :1 "plus" false)
    (button :stop-edit-button :1 "stop" true)
    (button :verify-edit-button :1 "verified" true)

@@ -35,7 +35,7 @@
          content
          (footer)
          (if (true? editable)
-           `([:script {:src "https://cdn.ckeditor.com/ckeditor5/1.0.0-alpha.2/balloon/ckeditor.js"}]
+           `([:script {:src "https://cdn.ckeditor.com/ckeditor5/10.0.0/balloon/ckeditor.js"}]
               [:script {:src "/js/edit.js"}])
            [:script {:src "/js/app.js"}])
          ))
@@ -54,8 +54,8 @@
       (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
       (nav-bar path side-menu-nl)
       (if (nil? side-menu-nl)
-        (main (content id content-key content-map) (side-content) false)
-        (main (content id content-key content-map) (side-content side-menu-nl) true))
+        (main (content id content-key content-map) (s-content path) false)
+        (main (content id content-key content-map) (s-content path side-menu-nl) true))
       editable)))
 
 (defn login-page
@@ -63,5 +63,5 @@
   (page
     "login"
     (nav-bar ["login"] nil)
-    (main login-structure (side-content) false)
+    (main login-structure (s-content) false)
     false))
