@@ -33,7 +33,7 @@
         icon (if-let [icon-class (::spec/mdi-reference nav-item)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])
         [href target] (if-let [url (::spec/href nav-item)]
                         [url "_blank"]
-                        [(str parent-path "/" (::spec/p-reference nav-item)) "_self"])]
+                        [(str "/" (::spec/p-reference nav-item)) "_self"])]
     (if has-children
       [:div.navbar-item.has-dropdown.is-hoverable
        [:a {:href href :target target :class (str "navbar-link" is-active)} icon title]
@@ -57,7 +57,7 @@
        [:span]
        [:span]])
     [:a.navbar-item.is-tab
-     {:href "/" :class (if (or (= nil path) (= ["home"] path)) "is-active" "")}
+     {:href "/" :class (if (= "home" path) "is-active" "")}
      [:span.is-large "Martha's Venue"]]
     [:a.navbar-item.is-hidden-desktop
      {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
@@ -75,24 +75,39 @@
    (if side-menu
      [:div#side-content.is-hidden side-menu])])
 
+(defn path-finder
+  [result menu]
+  (if (string? result)
+    (if (= result (::spec/p-reference menu))
+      (list result)
+      (let [content-key-or-path (reduce path-finder result (::spec/nav-children menu))]
+        (if (string? content-key-or-path)
+          result
+          (conj content-key-or-path (::spec/p-reference menu)))))
+    result))
+
+(defn get-path
+  [content-key menu]
+  (reduce path-finder content-key (::spec/nav-children menu)))
+
 (defn side-menu-item
-  [base-path nav-item selected]
-  (let [is-active (if (= selected (::spec/p-reference nav-item)) " is-active")
+  [nav-item remaining-path]
+  (let [p-reference (::spec/p-reference nav-item)
+        is-active (if (and p-reference (= p-reference (first remaining-path))) " is-active")
         icon (if-let [icon-class (::spec/mdi-reference nav-item)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])
-        [href target] (if-let [url (::spec/href nav-item)]
-                        [url "_blank"]
-                        [(str base-path "/" (::spec/p-reference nav-item)) "_self"])]
+        [href target] (if p-reference
+                        [(str "/" p-reference) "_self"]
+                        [(::spec/href nav-item) "_blank"])]
     [:li [:a {:class is-active :href href :target target} icon (::spec/n-title nav-item)]
      (if (> (count (::spec/nav-children nav-item)) 0)
-       [:ul.menu-list (map #(side-menu-item href % selected) (::spec/nav-children nav-item))])]))
+       [:ul.menu-list (map #(side-menu-item % (rest remaining-path)) (::spec/nav-children nav-item))])]))
 
 (defn side-menu
   [level-two-child path]
-  (let [base-path (str "/" (first path) "/" (second path))
-        icon (if-let [icon-class (::spec/mdi-reference level-two-child)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])]
+  (let [icon (if-let [icon-class (::spec/mdi-reference level-two-child)] [:span.icon [:i {:class (str "mdi mdi-24px mdi-" icon-class)}]])]
     [:aside#side-menu.menu
-     [:a.menu-label {:href base-path} icon (::spec/n-title level-two-child)]
-     [:ul.menu-list (map #(side-menu-item base-path % (last path)) (::spec/nav-children level-two-child))]]))
+     [:a.menu-label {:href (str "/" (second path))} icon (::spec/n-title level-two-child)]
+     [:ul.menu-list (map #(side-menu-item % (drop 2 path)) (::spec/nav-children level-two-child))]]))
 
 (defn side-menu?
   [path nav-item]
@@ -128,39 +143,42 @@
        {:href "https://github.com/jgthms/bulma"}
        [:i.mdi.mdi-message]]]]]])
 
+(defn tile
+  "renders a tile"
+  ([t id size] (tile t id size nil))
+  ([t id size url]
+   (let [type-class (str "notification tile is-child " (get style-map (get t :m-venue.spec/style)))
+         href (if url url (::spec/href t))
+         target (if url "_self" "_blank")
+         id (str "tile-" id)]
+     (if href
+       [:a {:class type-class :href href :id id :target target}
+        [:p.title (::spec/nl-label (::spec/title t))]
+        (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
+          [:p.subtitle sub-title])
+        (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
+          (responsive-image (second img-reference-data) size))
+        [:p (get-in t [::spec/text ::spec/nl-text])]]
+       [:div {:class type-class :id id}
+        [:p.title (::spec/nl-label (::spec/title t))]
+        (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
+          [:p.subtitle sub-title])
+        (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
+          (responsive-image (second img-reference-data) size))
+        [:p (get-in t [::spec/text :m-venue.spec/nl-text])]]))))
+
 (defn s-content
   ([] (s-content nil))
   ([path] (s-content path nil))
   ([path first-item]
    (let [side-content (second (repo/get-map :n "side-nl"))
-         last (if (vector? path) (last path))
+         last (if (list? path) (last path))
          refs (remove #(= % last) (::spec/ref-list side-content))]
      [:div.tile.is-vertical.is-parent
-      [:div#side-content
-       (if first-item [:div.is-hidden-mobile first-item])
-       [:p (str refs)]]])))
-
-(defn tile
-  "renders a tile"
-  [tile id size]
-  (let [type-class (str "notification tile is-child " (get style-map (get tile :m-venue.spec/style)))
-        href (::spec/href tile)
-        id (str "tile-" id)]
-    (if href
-      [:a {:class type-class :href href :id id}
-       [:p.title (::spec/nl-label (::spec/title tile))]
-       (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
-         [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map :i (::spec/img tile))]
-         (responsive-image (second img-reference-data) size))
-       [:p (get-in tile [::spec/text ::spec/nl-text])]]
-      [:div {:class type-class :id id}
-       [:p.title (::spec/nl-label (::spec/title tile))]
-       (if-let [sub-title (::spec/nl-label (::spec/sub-title tile))]
-         [:p.subtitle sub-title])
-       (if-let [img-reference-data (repo/get-map :i (::spec/img tile))]
-         (responsive-image (second img-reference-data) size))
-       [:p (get-in tile [::spec/text :m-venue.spec/nl-text])]])))
+      (if first-item [:div#side-content [:div.is-hidden-mobile first-item]])
+      (for [ref refs]
+        (if-let [content (repo/get-map :p ref)]
+          (tile (::spec/tile (second content)) ref :s (str "/" ref))))])))
 
 (defn main
   "renders content based on a general document"

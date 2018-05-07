@@ -26,11 +26,11 @@
 ;;TODO -add language selection
 ;;TODO -add not found page (mispoes)
 (defn main-response
-  [req path]
-  (let [main-doc (if (vector? path) (last path) "home")]
-    (if-let [content (repo/get-map :p main-doc)]
+  [req page]
+  (let [content-key (if (string? page) page "home")]
+    (if-let [content (repo/get-map :p content-key)]
       (let [uid (get-user req)
-            body (page-templates/content-page main-doc content path (is-editor uid))]
+            body (page-templates/content-page content-key content (is-editor uid))]
         body)
       (route/not-found "Not Found"))))
 
@@ -38,20 +38,8 @@
            ;; home page
            (GET "/" [:as req]
              (main-response req nil))
-           (GET "/:p1" [p1 :as req]
-             (main-response req [p1]))
-           (GET "/:p1/:p2" [p1 p2 :as req]
-             (main-response req [p1 p2]))
-           (GET "/:p1/:p2/:p3" [p1 p2 p3 :as req]
-             (main-response req [p1 p2 p3]))
-           (GET "/:p1/:p2/:p3/:p4" [p1 p2 p3 p4 :as req]
-             (main-response req [p1 p2 p3 p4]))
-           (GET "/:p1/:p2/:p3/:p4/:p5" [p1 p2 p3 p4 p5 :as req]
-             (main-response req [p1 p2 p3 p4 p5]))
-           (GET "/:p1/:p2/:p3/:p4/:p5/:p6" [p1 p2 p3 p4 p5 p6 :as req]
-             (main-response req [p1 p2 p3 p4 p5 p6]))
-           (GET "/:p1/:p2/:p3/:p4/:p5/:p6/:p7" [p1 p2 p3 p4 p5 p6 p7 :as req]
-             (main-response req [p1 p2 p3 p4 p5 p6 p7])))
+           (GET "/:p" [p :as req]
+             (main-response req p)))
 
 (def app
   (wrap-defaults (routes auth-routes web-socket-routes app-routes)

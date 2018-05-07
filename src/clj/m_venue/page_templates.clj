@@ -3,7 +3,8 @@
             [m-venue.editor-templates :refer :all]
             [m-venue.spec :as spec]
             [m-venue.templates :refer :all]
-            [m-venue.repo :as repo]))
+            [m-venue.repo :as repo]
+            [clojure.tools.logging :as log]))
 (defn page
   [title app-bar content editable]
   (html5 {:class "has-navbar-fixed-top" :lang "nl"}
@@ -48,8 +49,12 @@
     ))
 
 (defn content-page
-  [id [content-key content-map] path editable]
-  (let [side-menu-nl (side-menu? path (second (repo/get-map :n "main-nl")))]
+  [id [content-key content-map] editable]
+  (let [menu (second (repo/get-map :n "main-nl"))
+        path (get-path id menu)
+        _ (log/debug "get path called with: " id " and " menu)
+        _ (log/debug "path is: " path)
+        side-menu-nl (side-menu? path menu)]
     (page
       (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
       (nav-bar path side-menu-nl)
