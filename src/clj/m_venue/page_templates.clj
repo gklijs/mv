@@ -59,8 +59,8 @@
       (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
       (nav-bar path side-menu-nl)
       (if (nil? side-menu-nl)
-        (main (content id content-key content-map) (s-content path) false)
-        (main (content id content-key content-map) (s-content path side-menu-nl) true))
+        (main path (content id content-key content-map) (s-content path) false)
+        (main path (content id content-key content-map) (s-content path side-menu-nl) true))
       editable)))
 
 (defn login-page
@@ -68,5 +68,5 @@
   (page
     "login"
     (nav-bar ["login"] nil)
-    (main login-structure (s-content) false)
+    (main nil login-structure (s-content) false)
     false))

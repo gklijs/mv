@@ -1,7 +1,8 @@
 (ns m-venue.templates
   (:require [m-venue.constants :refer [image-sizes style-map relative-height-map]]
             [m-venue.repo :as repo]
-            [m-venue.spec :as spec]))
+            [m-venue.spec :as spec]
+            [clojure.string :as string]))
 
 (defn get-correct-image
   [size x-size]
@@ -180,11 +181,36 @@
         (if-let [content (repo/get-map :p ref)]
           (tile (::spec/tile (second content)) ref :s (str "/" ref))))])))
 
+(defn breadcrumb
+  [p-reference last]
+  (let [title (-> (repo/get-map :p p-reference)
+                  second
+                  ::spec/tile
+                  ::spec/title
+                  ::spec/nl-label)]
+    (if last
+      [:li.is-active [:a {:href       "#"
+                          :aria-label "page"} title]]
+      [:li [:a {:href (str "/" p-reference)} title]])))
+
+(defn breadcrumbs
+  [elements]
+  [:nav.breadcrumb.is-hidden-touch {:aria-label "breadcrumbs"}
+   [:ul
+    [:li [:a {:href "/"} "Home"]]
+    (for [el (drop-last elements)]
+      (breadcrumb el false))
+    (breadcrumb (last elements) true)]])
+
 (defn main
   "renders content based on a general document"
-  [main side reverse]
+  [path main side reverse]
   [:section#main.section
    [:div.container
+    (cond
+      (= path "home") nil
+      (string? path) (breadcrumbs (list path))
+      (list? path) (breadcrumbs path))
     (if reverse
       [:div.tile.is-ancestor.is-reversed
        main side]
