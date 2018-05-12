@@ -32,7 +32,7 @@
       (let [uid (get-user req)
             body (page-templates/content-page content-key content (is-editor uid))]
         body)
-      (route/not-found "Not Found"))))
+      (route/not-found (page-templates/content-page "mispoes" (repo/get-map :p "mispoes") (is-editor (get-user req)))))))
 
 (defroutes app-routes
            ;; home page
