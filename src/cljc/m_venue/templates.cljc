@@ -176,7 +176,7 @@
          last (if (list? path) (last path))
          refs (remove #(= % last) (::spec/ref-list side-content))]
      [:div.tile.is-vertical.is-parent
-      (if first-item [:div#side-content [:div.is-hidden-mobile first-item]])
+      (if first-item [:div#side-content.tile.is-child [:div.is-hidden-mobile first-item]])
       (for [ref refs]
         (if-let [content (repo/get-map :p ref)]
           (tile (::spec/tile (second content)) ref :s (str "/" ref))))])))
