@@ -42,7 +42,7 @@
                  ]})
 
 (def prod-img-info {::spec/img-path   "public/img/"
-                    ::spec/latest-img 5})
+                    ::spec/latest-img 0})
 
 (def correct-side-content {::spec/ref-list ["sjors" "saar" "amber"]})
 
