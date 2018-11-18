@@ -24,7 +24,6 @@
   (nginx.clojure.session/shared-map-store "mySessionStore"))
 
 ;;TODO -add language selection
-;;TODO -add not found page (mispoes)
 (defn main-response
   [req page]
   (let [content-key (if (string? page) page "home")]

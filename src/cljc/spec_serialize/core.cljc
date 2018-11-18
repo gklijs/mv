@@ -64,7 +64,7 @@
       (let [data-part (nth data-vector idx nil)]
         (if (nil? data-part)
           (if use-defaults (add-value true nil map 0 (second itm)) map)
-          (add-value use-defaults (rest data-part) map 0 (nth itm (+ 1 (first data-part))))))
+          (add-value use-defaults (rest data-part) map 0 (nth itm (inc (first data-part))))))
       (= operator-type "and")
       (if (nil? data-vector)
         (if use-defaults (reduce-kv (partial add-value true nil) map (vec (rest itm))) map)
@@ -144,20 +144,18 @@
 
 (defmethod ser-value :keys
   [spec data]
-  (if-let [key-data (get data spec)]
-    (ser-map spec key-data)
-    nil))
+  (when-let [key-data (get data spec)]
+    (ser-map spec key-data)))
 
 (defmethod ser-value :vector
   [spec data]
-  (if-let [vector-data (get data spec)]
+  (when-let [vector-data (get data spec)]
     (let [spec-form (s/form spec)
           spec-type (second (nth spec-form 2))
           part-form (s/form spec-type)]
       (if (and (coll? part-form) (= `s/keys (first part-form)))
         (mapv #(ser-map spec-type %) vector-data)
-        vector-data))
-    nil))
+        vector-data))))
 
 (defmethod ser-value :or
   [spec data]

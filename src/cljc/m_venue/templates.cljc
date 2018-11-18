@@ -19,15 +19,17 @@
   [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
 
 (defn responsive-image
-  [img-reference size]
-  [:figure {:class (str "image " (::spec/img-css-class img-reference))}
-   [:img {:src   (str (::spec/base-path img-reference) (name (get-correct-image size (::spec/x-size img-reference))) ".jpg")
-          :title (get-in img-reference [::spec/title :m-venue.spec/nl-label])
-          :alt   (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])
+  ([img-reference size] (responsive-image img-reference size nil))
+  ([img-reference size extra-class]
+   (let [ec (if (keyword? extra-class) (str " " (name extra-class)))]
+     [:figure {:class (str "image " (::spec/img-css-class img-reference) ec)}
+      [:img {:src   (str (::spec/base-path img-reference) (name (get-correct-image size (::spec/x-size img-reference))) ".jpg")
+             :title (get-in img-reference [::spec/title :m-venue.spec/nl-label])
+             :alt   (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])))
 
 (defn navbar-item
   [nav-item path parent-path]
-  (let [has-children (and (nil? parent-path) (> (count (::spec/nav-children nav-item)) 0))
+  (let [has-children (and (nil? parent-path) (pos? (count (::spec/nav-children nav-item))))
         matching-part (if (nil? parent-path) (first path) (second path))
         is-active (if (and matching-part (= matching-part (::spec/p-reference nav-item))) " is-active")
         title [:span (::spec/n-title nav-item)]
@@ -100,8 +102,8 @@
                         [(str "/" p-reference) "_self"]
                         [(::spec/href nav-item) "_blank"])]
     [:li [:a {:class is-active :href href :target target} icon (::spec/n-title nav-item)]
-     (if (> (count (::spec/nav-children nav-item)) 0)
-       [:ul.menu-list (map #(side-menu-item % (rest remaining-path)) (::spec/nav-children nav-item))])]))
+     (if-let [items (not-empty (::spec/nav-children nav-item))]
+       [:ul.menu-list (map #(side-menu-item % (rest remaining-path)) items)])]))
 
 (defn side-menu
   [level-two-child path]
@@ -117,7 +119,7 @@
       (let [level-two-items (::spec/nav-children level-one-child)
             level-two-part (second path)]
         (if-let [level-two-child (first (filter #(= level-two-part (::spec/p-reference %)) level-two-items))]
-          (if (> (count (::spec/nav-children level-two-child)) 0)
+          (if (pos? (count (::spec/nav-children level-two-child)))
             (side-menu level-two-child path)))))))
 
 (defn footer
@@ -149,7 +151,7 @@
   ([t id size] (tile t id size nil))
   ([t id size url]
    (let [type-class (str "notification tile is-child " (get style-map (get t :m-venue.spec/style)))
-         href (if url url (::spec/href t))
+         href (or url (::spec/href t))
          target (if url "_self" "_blank")
          id (str "tile-" id)]
      (if href
@@ -237,7 +239,7 @@
   [result value]
   (print value)
   (let [rel-height (get relative-height-map (::spec/img-css-class value))
-        new-first [(+ rel-height (first (first result))) (conj (second (first result)) value)]]
+        new-first [(+ rel-height (ffirst result)) (conj (second (first result)) value)]]
     (sort first-comp (conj (rest result) new-first))))
 
 (defn img-content
@@ -250,13 +252,13 @@
          split-images (reverse (reduce height-splitter [[0 []] [0 []] [0 []]] all-images))]
      [:div.tile.is-horizontal.is-flex
       (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent
-                                          (for [image-n image-list] [:div.tile.is-child.enlargeable-image {:id         (str "img-tile-" (::spec/base-path image-n))
-                                                                                                           :data-src   (str (::spec/base-path image-n) "o.jpg")
-                                                                                                           :data-title (get-in image-n [::spec/title :m-venue.spec/nl-label])
-                                                                                                           :data-alt   (get-in image-n [::spec/alt :m-venue.spec/nl-label])
-                                                                                                           :data-x     (get image-n :m-venue.spec/x-size)
-                                                                                                           :data-y     (get image-n ::spec/y-size)}
-                                                                     (responsive-image image-n :m)])])])])
+                                          (for [image-n image-list] [:div.tile.is-child {:id         (str "img-tile-" (::spec/base-path image-n))
+                                                                                         :data-src   (str (::spec/base-path image-n) "o.jpg")
+                                                                                         :data-title (get-in image-n [::spec/title :m-venue.spec/nl-label])
+                                                                                         :data-alt   (get-in image-n [::spec/alt :m-venue.spec/nl-label])
+                                                                                         :data-x     (get image-n :m-venue.spec/x-size)
+                                                                                         :data-y     (get image-n ::spec/y-size)}
+                                                                     (responsive-image image-n :m :enlargeable-image)])])])])
 
 (defn image-modal-style
   [src alt title scale]

@@ -1,6 +1,6 @@
 (ns m-venue.embed-server
   (:gen-class)
-  (:use [m-venue.handler])
+  (:use [m-venue.handler :only (app)])
   (:require [nginx.clojure.embed :as embed]
             [clojure.tools.logging :as log]
             [ring.middleware.reload :refer [wrap-reload]])
