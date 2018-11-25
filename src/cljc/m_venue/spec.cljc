@@ -25,12 +25,14 @@
 (s/def ::latest-img (s/spec number?))
 (s/def ::img-info (s/keys :req [::img-path ::latest-img]))
 
+(s/def ::base-64-square (s/spec string?))
+(s/def ::base-64 (s/spec string?))
 (s/def ::x-size (s/spec number?))
 (s/def ::y-size (s/spec number?))
 (s/def ::img-css-class #{"is-3by1" "is-2by1" "is-16by9" "is-5by3" "is-3by2" "is-4by3" "is-5by4" "is-1by1" "is-4by5" "is-3by4" "is-2by3" "is-3by5" "is-9by16" "is-1by2" "is-1by3"})
 (s/def ::base-path (s/spec string?))
 (s/def ::alt (s/spec ::label))
-(s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path] :opt [::title ::alt]))
+(s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path ::base-64 ::base-64-square] :opt [::title ::alt]))
 
 (s/def ::n-title label)
 (s/def ::p-reference label)

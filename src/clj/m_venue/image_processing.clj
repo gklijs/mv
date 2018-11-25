@@ -1,5 +1,7 @@
 (ns m-venue.image-processing
-  (:import java.io.ByteArrayInputStream)
+  (:import java.io.ByteArrayInputStream
+           org.apache.commons.io.IOUtils
+           (java.util Base64))
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [image-resizer.crop :refer :all]
@@ -42,6 +44,14 @@
       :else [buffered-image x-size])
     ))
 
+(defn to-base-64-encoding
+  [buffered-image]
+  (let [^ByteArrayInputStream stream (format/as-stream buffered-image "jpg")
+        bytes (IOUtils/toByteArray stream)
+        encoder (Base64/getEncoder)]
+    (.encodeToString encoder bytes)
+    ))
+
 (defn process
   "Renders the different kinds of variants needed for the site"
   [byte-array]
@@ -57,11 +67,6 @@
         _ (repo/set-map! "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
         _ (io/make-parents (io/file (str path "o.jpg")))
         new-img-key (str "i-" new-img-latest)
-        _ (repo/set-map! new-img-key :m-venue.spec/img-reference
-                         {:m-venue.spec/x-size        x-size
-                          :m-venue.spec/y-size        y-size
-                          :m-venue.spec/img-css-class css-class
-                          :m-venue.spec/base-path     (str "/img/" new-img-latest "/")})
         _ (format/as-file buffered-image (str path "o.jpg") :verbatim)
         square-intermediate (if (> ratio 1) (resize-to-height buffered-image 256) (resize-to-width buffered-image 256))
         [x-square y-square] (util/dimensions square-intermediate)
@@ -72,9 +77,15 @@
         _ (format/as-file (resize-to-width square-buffered 64)
                           (str path "64.jpg")
                           :verbatim)
-        _ (format/as-file (resize-to-width square-buffered 36)
-                          (str path "36.jpg")
-                          :verbatim)
+        small-square (resize-to-width square-buffered 36)
+        _ (format/as-file small-square (str path "36.jpg") :verbatim)
+        _ (repo/set-map! new-img-key :m-venue.spec/img-reference
+                         {:m-venue.spec/x-size         x-size
+                          :m-venue.spec/y-size         y-size
+                          :m-venue.spec/img-css-class  css-class
+                          :m-venue.spec/base-path      (str "/img/" new-img-latest "/")
+                          :m-venue.spec/base-64        (to-base-64-encoding small-square)
+                          :m-venue.spec/base-64-square (to-base-64-encoding (resize-to-width buffered-image 36))})
         [corrected-image corr-x] (get-corrected-image x-size y-size buffered-image css-class)]
     (if
       (> corr-x (:s image-sizes))

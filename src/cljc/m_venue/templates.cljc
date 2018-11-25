@@ -1,14 +1,33 @@
 (ns m-venue.templates
   (:require [m-venue.constants :refer [image-sizes style-map relative-height-map]]
             [m-venue.repo :as repo]
-            [m-venue.spec :as spec]
-            [clojure.string :as string]))
+            [m-venue.spec :as spec]))
 
-(defn get-correct-image
-  [size x-size]
-  (if (> x-size (size image-sizes))
-    size
-    :s))
+(defn add-img-srcset-part
+  [img-reference srcset key size]
+  (if
+    (< size (::spec/x-size img-reference))
+    (str srcset (::spec/base-path img-reference) (name key) ".jpg " size "w, ")
+    (reduced srcset)))
+
+(defn img-srcset
+  [img-reference]
+  (let
+    [srcset (reduce-kv (partial add-img-srcset-part img-reference) "" image-sizes)]
+    (str srcset (::spec/base-path img-reference) "o.jpg " (::spec/x-size img-reference) "w")))
+
+(defn add-img-sizes-part
+  [img-reference sizes _ size]
+  (if
+    (< size (::spec/x-size img-reference))
+    (str sizes "(max-width: " size "px) " size "px, ")
+    (reduced sizes)))
+
+(defn img-sizes
+  [img-reference]
+  (let
+    [sizes (reduce-kv (partial add-img-sizes-part img-reference) "" image-sizes)]
+    (str sizes (::spec/x-size img-reference) "px")))
 
 (defn small-square-img
   [id]
@@ -19,13 +38,15 @@
   [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
 
 (defn responsive-image
-  ([img-reference size] (responsive-image img-reference size nil))
-  ([img-reference size extra-class]
+  ([img-reference] (responsive-image img-reference nil))
+  ([img-reference extra-class]
    (let [ec (if (keyword? extra-class) (str " " (name extra-class)))]
      [:figure {:class (str "image " (::spec/img-css-class img-reference) ec)}
-      [:img {:src   (str (::spec/base-path img-reference) (name (get-correct-image size (::spec/x-size img-reference))) ".jpg")
-             :title (get-in img-reference [::spec/title :m-venue.spec/nl-label])
-             :alt   (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])))
+      [:img {:srcset (img-srcset img-reference)
+             :sizes  (img-sizes img-reference)
+             :src    (str "data:image/jpeg;base64," (::spec/base-64 img-reference))
+             :title  (get-in img-reference [::spec/title :m-venue.spec/nl-label])
+             :alt    (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])))
 
 (defn navbar-item
   [nav-item path parent-path]
@@ -148,8 +169,8 @@
 
 (defn tile
   "renders a tile"
-  ([t id size] (tile t id size nil))
-  ([t id size url]
+  ([t id] (tile t id nil))
+  ([t id url]
    (let [type-class (str "notification tile is-child " (get style-map (get t :m-venue.spec/style)))
          href (or url (::spec/href t))
          target (if url "_self" "_blank")
@@ -160,14 +181,14 @@
         (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
           [:p.subtitle sub-title])
         (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
-          (responsive-image (second img-reference-data) size))
+          (responsive-image (second img-reference-data)))
         [:p (get-in t [::spec/text ::spec/nl-text])]]
        [:div {:class type-class :id id}
         [:p.title (::spec/nl-label (::spec/title t))]
         (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
           [:p.subtitle sub-title])
         (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
-          (responsive-image (second img-reference-data) size))
+          (responsive-image (second img-reference-data)))
         [:p (get-in t [::spec/text :m-venue.spec/nl-text])]]))))
 
 (defn s-content
@@ -181,7 +202,7 @@
       (if first-item [:div#side-content.tile.is-child [:div.is-hidden-mobile first-item]])
       (for [ref refs]
         (if-let [content (repo/get-map :p ref)]
-          (tile (::spec/tile (second content)) ref :s (str "/" ref))))])))
+          (tile (::spec/tile (second content)) ref (str "/" ref))))])))
 
 (defn breadcrumb
   [p-reference last]
@@ -224,12 +245,12 @@
   [id gd-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile gd-map) (str "gd-" 1) :l)]
+    (tile (::spec/tile gd-map) (str "gd-" 1))]
    (let [all-tiles (::spec/tiles gd-map)
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) :m) (first split-tiles))]
-      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) :m) (second split-tiles))]])])
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))]
+      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1))) (second split-tiles))]])])
 
 (defn first-comp
   [i1 i2]
@@ -247,7 +268,7 @@
   [id image-map]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile image-map) "image-tile" :l)]
+    (tile (::spec/tile image-map) "image-tile")]
    (let [all-images (mapv #(second (repo/get-map :i %)) (::spec/image-list image-map))
          split-images (reverse (reduce height-splitter [[0 []] [0 []] [0 []]] all-images))]
      [:div.tile.is-horizontal.is-flex
@@ -258,7 +279,7 @@
                                                                                          :data-alt   (get-in image-n [::spec/alt :m-venue.spec/nl-label])
                                                                                          :data-x     (get image-n :m-venue.spec/x-size)
                                                                                          :data-y     (get image-n ::spec/y-size)}
-                                                                     (responsive-image image-n :m :enlargeable-image)])])])])
+                                                                     (responsive-image image-n :enlargeable-image)])])])])
 
 (defn image-modal-style
   [src alt title scale]
