@@ -51,7 +51,7 @@
         (str result)
         (log/debug "could not get data because not present:" key))
       (log/debug "could not get data because no valid type:" conn-type))
-    (log/debug "set-string! failed because key" key "could not be split to be [spec vec-value]")))
+    (log/debug "get-string failed because key" key "could not be split to be [spec vec-value]")))
 
 (defn all-for-conn
   ([function t] (all-for-conn function t 0))

@@ -53,8 +53,8 @@
       (if use-defaults (assoc map itm (get @defaults itm)) map)
       (if (and (coll? part-form) (= `s/keys (first part-form)))
         (assoc map itm (mapv #(de-ser-keys (rest part-form) %) data-part))
-        (assoc map itm data-part))
-      )))
+        (assoc map itm data-part)))))
+
 
 (defmethod add-value :or
   [use-defaults data-vector map idx itm]

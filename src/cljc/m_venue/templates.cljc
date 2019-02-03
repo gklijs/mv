@@ -30,12 +30,14 @@
     (str sizes (::spec/x-size img-reference) "px")))
 
 (defn small-square-img
-  [id]
-  [:img {:id (str "img-select-" id) :src (str "/img/" id "/64.jpg") :data-id (str "i-" id)}])
+  [img-summary]
+  (let [id (::spec/img img-summary)
+        path (str (::spec/base-path img-summary) "64.jpg")]
+    [:img {:id (str "img-select-" id) :src path :data-id (str "i-" id)}]))
 
 (defn all-images
-  [latest]
-  [:figure#all-images (map small-square-img (take latest (iterate dec latest)))])
+  [all-images]
+  [:figure#all-images (map small-square-img (::spec/img-summaries all-images))])
 
 (defn responsive-image
   ([img-reference] (responsive-image img-reference nil))

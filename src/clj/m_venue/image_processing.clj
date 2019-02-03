@@ -1,7 +1,8 @@
 (ns m-venue.image-processing
   (:import java.io.ByteArrayInputStream
            org.apache.commons.io.IOUtils
-           (java.util Base64))
+           (java.util Base64)
+           (java.time Instant))
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [image-resizer.crop :refer :all]
@@ -13,24 +14,23 @@
             [m-venue.repo :as repo]))
 
 (defn best-matching-class
-  "gives the best matching css class given a ratio"
   [ratio]
-  (cond
-    (> ratio 2.5) "is-3by1"
-    (> ratio 1.88) "is-2by1"
-    (> ratio 1.72) "is-16by9"
-    (> ratio 1.58) "is-5by3"
-    (> ratio 1.42) "is-3by2"
-    (> ratio 1.29) "is-4by3"
-    (> ratio 1.13) "is-5by4"
-    (> ratio 0.9) "is-1by1"
-    (> ratio 0.78) "is-4by5"
-    (> ratio 0.71) "is-3by4"
-    (> ratio 0.63) "is-2by3"
-    (> ratio 0.58) "is-3by5"
-    (> ratio 0.53) "is-9by16"
-    (> ratio 0.42) "is-1by2"
-    :else "is-1by3"))
+  (condp < ratio
+    2.5 "is-3by1"
+    1.88 "is-2by1"
+    1.72 "is-16by9"
+    1.58 "is-5by3"
+    1.42 "is-3by2"
+    1.29 "is-4by3"
+    1.13 "is-5by4"
+    0.9 "is-1by1"
+    0.78 "is-4by5"
+    0.71 "is-3by4"
+    0.63 "is-2by3"
+    0.58 "is-3by5"
+    0.53 "is-9by16"
+    0.42 "is-1by2"
+    "is-1by3"))
 
 (defn get-corrected-image [x-size y-size buffered-image css-class]
   (let [rel-height (get relative-height-map css-class)
@@ -41,16 +41,41 @@
     (cond
       (> dif-x 2) [(crop-from buffered-image (/ dif-x 2) 0 x-according-y y-size) x-according-y]
       (> dif-y 2) [(crop-from buffered-image 0 (/ dif-y 2) x-size y-according-x) x-size]
-      :else [buffered-image x-size])
-    ))
+      :else [buffered-image x-size])))
+
 
 (defn to-base-64-encoding
   [buffered-image]
   (let [^ByteArrayInputStream stream (format/as-stream buffered-image "jpg")
         bytes (IOUtils/toByteArray stream)
         encoder (Base64/getEncoder)]
-    (.encodeToString encoder bytes)
-    ))
+    (.encodeToString encoder bytes)))
+
+(defn add-base-64
+  [result [first second]]
+  (println "first: " first)
+  (println "second: " second)
+  (let [base-10-number (Long/valueOf (str first second) 8)]
+    (condp > base-10-number
+      10 (str result base-10-number)
+      36 (str result (char (+ base-10-number 55)))
+      62 (str result (char (+ base-10-number 61)))
+      63 (str result "-")
+      (str result "_"))))
+
+(defn int->path
+  [number]
+  (let [base-8 (Long/toString number 8)
+        base-8-with-zero (if (= 0 (mod (count base-8) 2)) base-8 (str "0" base-8))]
+    (reduce add-base-64 "" (partition 2 base-8-with-zero))))
+
+(def i-s
+               {:m-venue.spec/img-summaries [{:m-venue.spec/img 1 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/1/"}
+                                             {:m-venue.spec/img 2 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/2/"}
+                                             {:m-venue.spec/img 3 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/3/"}
+                                             {:m-venue.spec/img 4 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/4/"}
+                                             {:m-venue.spec/img 5 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/5/"}
+                                             {:m-venue.spec/img 6 :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path "/img/6/"}]})
 
 (defn process
   "Renders the different kinds of variants needed for the site"
@@ -63,7 +88,7 @@
         img-info (second (repo/get-map :i "info"))
         destination-image-path (:m-venue.spec/img-path img-info)
         new-img-latest (inc (:m-venue.spec/latest-img img-info))
-        path (str destination-image-path new-img-latest "/")
+        path (str destination-image-path (int->path new-img-latest) "/")
         _ (repo/set-map! "i-info" :m-venue.spec/img-info (assoc img-info :m-venue.spec/latest-img new-img-latest))
         _ (io/make-parents (io/file (str path "o.jpg")))
         new-img-key (str "i-" new-img-latest)
@@ -83,9 +108,11 @@
                          {:m-venue.spec/x-size         x-size
                           :m-venue.spec/y-size         y-size
                           :m-venue.spec/img-css-class  css-class
-                          :m-venue.spec/base-path      (str "/img/" new-img-latest "/")
+                          :m-venue.spec/base-path      (str "/img/" (int->path new-img-latest) "/")
                           :m-venue.spec/base-64        (to-base-64-encoding small-square)
                           :m-venue.spec/base-64-square (to-base-64-encoding (resize-to-width buffered-image 36))})
+        new-image-summary {:m-venue.spec/img new-img-latest :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now)) :m-venue.spec/base-path (str "/img/" (int->path new-img-latest) "/")}
+        _ (repo/set-map! "i-summary" :m-venue.spec/all-images (update i-s :m-venue.spec/img-summaries #(conj % new-image-summary)))
         [corrected-image corr-x] (get-corrected-image x-size y-size buffered-image css-class)]
     (if
       (> corr-x (:s image-sizes))
@@ -95,5 +122,5 @@
                           (str path (name key) ".jpg")
                           :verbatim)))
       (format/as-file corrected-image (str path "s.jpg") :verbatim))
-    [(str "seti-info:" (repo/get-string "i-info")) (str "set" new-img-key ":" (repo/get-string new-img-key))]))
+    [(str "seti-info:" (repo/get-string "i-info")) (str "seti-summary:" (repo/get-string "i-summary")) (str "set" new-img-key ":" (repo/get-string new-img-key))]))
 

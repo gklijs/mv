@@ -44,5 +44,4 @@
                     [:div.field [:p.control.has-icons-left
                                  [:input.input {:placeholder "Password" :type :password :name :pass}]
                                  [:span.icon.is-small.is-left [:i.mdi.mdi-24px.mdi-lock]]]]
-                    [:div.field [:p.control [:button.button {:type "submit"} "Login!"]]]
-                    ]]]]])))
+                    [:div.field [:p.control [:button.button {:type "submit"} "Login!"]]]]]]]])))

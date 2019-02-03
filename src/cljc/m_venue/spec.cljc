@@ -34,6 +34,11 @@
 (s/def ::alt (s/spec ::label))
 (s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path ::base-64 ::base-64-square] :opt [::title ::alt]))
 
+(s/def ::img-uploaded-timestamp (s/spec number?))
+(s/def ::img-summary (s/keys :req [::img ::img-uploaded-timestamp ::base-path]))
+(s/def ::img-summaries (s/and (s/spec vector?) (s/every ::img-summary)))
+(s/def ::all-images (s/keys :req [::img-summaries]))
+
 (s/def ::n-title label)
 (s/def ::p-reference label)
 (s/def ::mdi-reference label)

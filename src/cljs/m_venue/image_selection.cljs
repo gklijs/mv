@@ -59,8 +59,8 @@
   "Initializes html and the handlers"
   []
   (util/on-click :image-selection-button show-hide-columns)
-  (repo/execute-with-map "i-info" #(util/set-html (templates/all-images (:m-venue.spec/latest-img (second %)))))
-  (repo/set-renderer! #"i-info" #(util/set-html (templates/all-images (:m-venue.spec/latest-img (second %)))))
+  (repo/execute-with-map "i-summary" #(util/set-html (templates/all-images (second %))))
+  (repo/set-renderer! #"i-summary" #(util/set-html (templates/all-images (second %))))
   (util/on-click-target :image-selection-columns #(select-image %))
   (util/on-click :selected-image show-hide-edit)
   (util/on-click :image-save-button save-image))
