@@ -4,6 +4,8 @@
 (def html (s/and (s/spec string?) #(> (count %) 20)))
 (def label (s/and (s/spec string?) #(> (count %) 2) #(< (count %) 40)))
 
+(s/def ::language #{:nl})
+
 (s/def ::nl-label label)
 (s/def ::label (s/keys :req [::nl-label]))
 (s/def ::nl-text html)
@@ -21,10 +23,6 @@
 (s/def ::gen-doc (s/keys :req [::tile ::tiles]))
 (s/def ::img-doc (s/keys :req [::tile ::image-list]))
 
-(s/def ::img-path (s/spec string?))
-(s/def ::latest-img (s/spec number?))
-(s/def ::img-info (s/keys :req [::img-path ::latest-img]))
-
 (s/def ::base-64-square (s/spec string?))
 (s/def ::base-64 (s/spec string?))
 (s/def ::x-size (s/spec number?))
@@ -34,10 +32,12 @@
 (s/def ::alt (s/spec ::label))
 (s/def ::img-reference (s/keys :req [::x-size ::y-size ::img-css-class ::base-path ::base-64 ::base-64-square] :opt [::title ::alt]))
 
+(s/def ::img-path (s/spec string?))
+(s/def ::latest-img (s/spec integer?))
 (s/def ::img-uploaded-timestamp (s/spec number?))
 (s/def ::img-summary (s/keys :req [::img ::img-uploaded-timestamp ::base-path]))
-(s/def ::img-summaries (s/and (s/spec vector?) (s/every ::img-summary)))
-(s/def ::all-images (s/keys :req [::img-summaries]))
+(s/def ::img-summaries (s/and (s/spec map?) (s/every-kv keyword? ::img-summary)))
+(s/def ::all-images (s/keys :req [::img-summaries ::img-path ::latest-img]))
 
 (s/def ::n-title label)
 (s/def ::p-reference label)
@@ -45,9 +45,17 @@
 (s/def ::nav-children (s/and (s/spec vector?) (s/every ::nav-item)))
 (s/def ::nav-item (s/keys :req [::n-title (or ::p-reference ::href)] :opt [::mdi-reference ::nav-children]))
 
+(s/def ::menu-summaries (s/and (s/spec map?) (s/every-kv keyword? ::language)))
+(s/def ::all-menus (s/keys :req [::menu-summaries]))
+
 (s/def ::doc-type #{:gen-doc :img-doc})
 (s/def ::new-page (s/keys :req [::p-reference ::doc-type]))
 
+(s/def ::page-created-timestamp (s/spec number?))
+(s/def ::page-modified-timestamp (s/spec number?))
+(s/def ::page-summary (s/keys :req [::page-created-timestamp ::page-modified-timestamp]))
+(s/def ::page-summaries (s/and (s/spec map?) (s/every-kv keyword? ::page-summary)))
+(s/def ::all-pages (s/keys :req [::page-summaries]))
+
 (s/def ::ref-list (s/and (s/spec vector?) (s/every ::p-reference)))
 (s/def ::side-content (s/keys :req [::ref-list]))
-

@@ -14,10 +14,6 @@ RUN chmod o+r libs/m-venue-default.jar &&\
     chmod u+rx $(find public -type d) &&\
     chmod u+r $(find public -type f) &&\
     chmod 755 public/img &&\
-    chown nginx content.db &&\
-    chown nginx users.db &&\
-    chmod 644 content.db &&\
-    chmod 600 users.db
 
 EXPOSE 80 443
 CMD ["./nginx", "-g", "daemon off;"]

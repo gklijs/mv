@@ -1,7 +1,7 @@
 (ns spec-serialize.core
   (:require [clojure.spec.alpha :as s]))
 
-(def defaults (atom {}))
+(defonce defaults (atom {}))
 
 (defn set-default
   "Adds a default value to be used to deserialize data"
@@ -21,6 +21,10 @@
                        (coll? (second spec-form))
                        (> (count (second spec-form)) 1)
                        (= (second (second spec-form)) `vector?)) :vector
+                  (and (= (first spec-form) `s/and)
+                       (coll? (second spec-form))
+                       (> (count (second spec-form)) 1)
+                       (= (second (second spec-form)) `map?)) :map
                   :else :keyword))
               :or)))
 
@@ -55,6 +59,25 @@
         (assoc map itm (mapv #(de-ser-keys (rest part-form) %) data-part))
         (assoc map itm data-part)))))
 
+(defmethod add-value :map
+  [use-defaults data-vector map idx itm]
+  (let [data-part (nth data-vector idx nil)
+        spec-form (s/form itm)
+        key-type (second (nth spec-form 2))
+        value-type (nth (nth spec-form 2) 2)
+        key-form (if (keyword? key-type)(s/form key-type))
+        value-form (if (keyword? value-type)(s/form value-type))
+        key-f (if
+                (and (coll? key-form) (= `s/keys (first key-form)))
+                     #(de-ser-keys key-type %)
+                     #(identity %))
+        value-f (if
+                  (and (coll? value-form) (= `s/keys (first value-form)))
+                       #(de-ser-keys value-type %)
+                       #(identity %))]
+    (if (nil? data-part)
+      (if use-defaults (assoc map itm (get @defaults itm)) map)
+      (assoc map itm (into {} (map (fn [[k v]] [(key-f k) (value-f v)]) data-part))))))
 
 (defmethod add-value :or
   [use-defaults data-vector map idx itm]
@@ -124,7 +147,7 @@
 
 (defmulti ser-value
           "Serialize some value, removing the keys, which we can add later on, because we know the spec"
-          (fn [spec data]
+          (fn [spec _]
             (if
               (keyword? spec)
               (let [spec-form (s/form spec)]
@@ -135,6 +158,10 @@
                        (coll? (second spec-form))
                        (> (count (second spec-form)) 1)
                        (= (second (second spec-form)) `vector?)) :vector
+                  (and (= (first spec-form) `s/and)
+                       (coll? (second spec-form))
+                       (> (count (second spec-form)) 1)
+                       (= (second (second spec-form)) `map?)) :map
                   :else :keyword))
               :or)))
 
@@ -156,6 +183,24 @@
       (if (and (coll? part-form) (= `s/keys (first part-form)))
         (mapv #(ser-map spec-type %) vector-data)
         vector-data))))
+
+(defmethod ser-value :map
+  [spec data]
+  (when-let [map-data (get data spec)]
+    (let [spec-form (s/form spec)
+          key-type (second (nth spec-form 2))
+          value-type (nth (nth spec-form 2) 2)
+          key-form (if (keyword? key-type)(s/form key-type))
+          value-form (if (keyword? value-type)(s/form value-type))
+          key-f (if
+                  (and (coll? key-form) (= `s/keys (first key-form)))
+                       #(ser-map key-type %)
+                       #(identity %))
+          value-f (if
+                    (and (coll? value-form) (= `s/keys (first value-form)))
+                         #(ser-map value-type %)
+                         #(identity %))]
+      (into {} (map (fn [[k v]] [(key-f k) (value-f v)]) map-data)))))
 
 (defmethod ser-value :or
   [spec data]
@@ -186,4 +231,3 @@
       (= spec-type `s/keys) (ser-keys (rest spec-form) data)
       (= spec-type `s/merge) (mapv #(ser-merge-part % data) (rest spec-form))
       :else data)))
-

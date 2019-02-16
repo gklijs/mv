@@ -5,7 +5,6 @@
   :dependencies [[buddy/buddy-hashers "1.3.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [compojure "1.6.1" :exclusions [ring/ring-core]]
-                 [com.taoensso/carmine "2.19.1"]
                  [hiccups "0.3.0" :scope "provided"]
                  [image-resizer "0.1.10"]
                  [nginx-clojure "0.4.5" :scope "provided"]

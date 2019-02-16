@@ -56,6 +56,8 @@
 (defn execute-with-map
   "Returns value of 'key' from browser's localStorage if accessible, otherwise tries to get it from remote"
   [key function]
+  (util/log (str "execute with map called with key " key))
+  (util/log (str "current val " (get-map key)))
   (if-let [val (get-map key)]
     (function val)
     (do

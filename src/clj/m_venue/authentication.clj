@@ -24,7 +24,9 @@
     (if (hashers/check pass (::admin-spec/password profile))
       {:status 303 :session (assoc session :uid uid) :headers {"Location" "/"}}
       {:status 303 :headers {"Location" "/login"}})
-    {:status 303 :headers {"Location" "/login"}}))
+    (do
+      (hashers/check pass "bcrypt+sha512$0a954502d5adab29144b959f9f0fe608$12$7017d30af672bbf14282b2de3dd912205293b4f24b9b8255")
+      {:status 303 :headers {"Location" "/login"}})))
 
 (defroutes auth-routes
            (POST "/login" [uid pass :as {session :session}]
