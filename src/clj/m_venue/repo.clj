@@ -78,14 +78,14 @@
 (defn- update-if-still-valid
   [f [spec map]]
   (let [new-map (f map)]
-    (if s/valid? spec new-map)
+    (if (s/valid? spec new-map)
     [spec new-map]
-    [spec map]))
+    [spec map])))
 
 (defn update-map!
   [k key f]
   (with-keys k key #(if-let [data-atom (%1 data-atoms)]
-                      (%2 (swap! data-atom update %2 (fn [val] (update-if-still-valid f val))))
+                      (second (%2 (swap! data-atom update %2 (fn [val] (update-if-still-valid f val)))))
                       (log/debug "update-content failed because k" %1 "is not valid, there is no map. Valid keys are" (keys data-atoms)))))
 
 (defn set-map!

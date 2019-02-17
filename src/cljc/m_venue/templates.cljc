@@ -30,10 +30,9 @@
     (str sizes (::spec/x-size img-reference) "px")))
 
 (defn small-square-img
-  [img-summary]
-  (let [id (::spec/img img-summary)
-        path (str (::spec/base-path img-summary) "64.jpg")]
-    [:img {:id (str "img-select-" id) :src path :data-id (str "i-" id)}]))
+  [[id img-summary]]
+  (let [path (str (::spec/base-path img-summary) "64.jpg")]
+    [:img {:id (str "img-select-" (name id)) :src path :data-id (str "i-" (name id)) :data-bla (str img-summary)}]))
 
 (defn all-images
   [all-images]

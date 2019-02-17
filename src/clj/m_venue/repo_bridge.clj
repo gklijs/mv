@@ -13,7 +13,7 @@
   (fn [ch _ kkey]
     (log/debug "key from get is" kkey)
     (if-let [[k key] (string/split kkey #"-" 2)]
-      (send! ch (str "set" key ":" (get-string k key)) true false)))
+      (send! ch (str "set" kkey ":" (get-string k key)) true false)))
   (fn [_ uid _]
     (str "user: " uid " left! Doesn't get data anymore")))
 

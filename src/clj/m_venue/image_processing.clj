@@ -72,10 +72,9 @@
   [summary]
   (let [update-counter (update summary :m-venue.spec/latest-img inc)
         new-img-latest (:m-venue.spec/latest-img update-counter)
-        new-image-summary {:m-venue.spec/img new-img-latest
-                           :m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now))
+        new-image-summary {:m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now))
                            :m-venue.spec/base-path (str "/img/" (int->path new-img-latest) "/")}]
-    (update summary :m-venue.spec/all-images assoc (keyword (str new-img-latest)) new-image-summary)))
+    (update update-counter :m-venue.spec/img-summaries  assoc (keyword (str new-img-latest)) new-image-summary)))
 
 (defn process
   "Renders the different kinds of variants needed for the site"

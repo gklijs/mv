@@ -35,7 +35,7 @@
 (s/def ::img-path (s/spec string?))
 (s/def ::latest-img (s/spec integer?))
 (s/def ::img-uploaded-timestamp (s/spec number?))
-(s/def ::img-summary (s/keys :req [::img ::img-uploaded-timestamp ::base-path]))
+(s/def ::img-summary (s/keys :req [::img-uploaded-timestamp ::base-path]))
 (s/def ::img-summaries (s/and (s/spec map?) (s/every-kv keyword? ::img-summary)))
 (s/def ::all-images (s/keys :req [::img-summaries ::img-path ::latest-img]))
 

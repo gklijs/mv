@@ -48,36 +48,33 @@
           (assoc map itm maybe-empty))))))
 
 (defmethod add-value :vector
-  [use-defaults data-vector map idx itm]
+  [use-defaults data-vector m idx itm]
   (let [data-part (nth data-vector idx nil)
-        spec-form (s/form itm)
-        spec-type (second (nth spec-form 2))
+        [_ _ [_ spec-type]] (s/form itm)
         part-form (s/form spec-type)]
     (if (nil? data-part)
-      (if use-defaults (assoc map itm (get @defaults itm)) map)
+      (if use-defaults (assoc m itm (get @defaults itm)) m)
       (if (and (coll? part-form) (= `s/keys (first part-form)))
-        (assoc map itm (mapv #(de-ser-keys (rest part-form) %) data-part))
-        (assoc map itm data-part)))))
+        (assoc m itm (mapv #(de-ser-keys (rest part-form) %) data-part))
+        (assoc m itm data-part)))))
 
 (defmethod add-value :map
-  [use-defaults data-vector map idx itm]
+  [use-defaults data-vector m idx itm]
   (let [data-part (nth data-vector idx nil)
-        spec-form (s/form itm)
-        key-type (second (nth spec-form 2))
-        value-type (nth (nth spec-form 2) 2)
-        key-form (if (keyword? key-type)(s/form key-type))
-        value-form (if (keyword? value-type)(s/form value-type))
+        [_ _ [_ key-type value-type]] (s/form itm)
+        key-form (if (keyword? key-type) (s/form key-type))
+        value-form (if (keyword? value-type) (s/form value-type))
         key-f (if
                 (and (coll? key-form) (= `s/keys (first key-form)))
-                     #(de-ser-keys key-type %)
-                     #(identity %))
+                #(de-ser-keys (rest key-form) %)
+                #(identity %))
         value-f (if
                   (and (coll? value-form) (= `s/keys (first value-form)))
-                       #(de-ser-keys value-type %)
-                       #(identity %))]
+                  #(de-ser-keys (rest value-form) %)
+                  #(identity %))]
     (if (nil? data-part)
-      (if use-defaults (assoc map itm (get @defaults itm)) map)
-      (assoc map itm (into {} (map (fn [[k v]] [(key-f k) (value-f v)]) data-part))))))
+      (if use-defaults (assoc m itm (get @defaults itm)) m)
+      (assoc m itm (into {} (map (fn [[k v]] [(key-f k) (value-f v)]) data-part))))))
 
 (defmethod add-value :or
   [use-defaults data-vector map idx itm]
@@ -144,6 +141,7 @@
     (mapv inc coll)))
 
 (declare ser-map)
+(declare ser-keys)
 
 (defmulti ser-value
           "Serialize some value, removing the keys, which we can add later on, because we know the spec"
@@ -177,29 +175,26 @@
 (defmethod ser-value :vector
   [spec data]
   (when-let [vector-data (get data spec)]
-    (let [spec-form (s/form spec)
-          spec-type (second (nth spec-form 2))
+    (let [[_ _ [_ spec-type]] (s/form spec)
           part-form (s/form spec-type)]
       (if (and (coll? part-form) (= `s/keys (first part-form)))
-        (mapv #(ser-map spec-type %) vector-data)
+        (mapv #(ser-keys (rest part-form) %) vector-data)
         vector-data))))
 
 (defmethod ser-value :map
   [spec data]
   (when-let [map-data (get data spec)]
-    (let [spec-form (s/form spec)
-          key-type (second (nth spec-form 2))
-          value-type (nth (nth spec-form 2) 2)
-          key-form (if (keyword? key-type)(s/form key-type))
-          value-form (if (keyword? value-type)(s/form value-type))
+    (let [[_ _ [_ key-type value-type]] (s/form spec)
+          key-form (if (keyword? key-type) (s/form key-type))
+          value-form (if (keyword? value-type) (s/form value-type))
           key-f (if
                   (and (coll? key-form) (= `s/keys (first key-form)))
-                       #(ser-map key-type %)
-                       #(identity %))
+                  #(ser-keys (rest key-form) %)
+                  #(identity %))
           value-f (if
                     (and (coll? value-form) (= `s/keys (first value-form)))
-                         #(ser-map value-type %)
-                         #(identity %))]
+                    #(ser-keys (rest value-form) %)
+                    #(identity %))]
       (into {} (map (fn [[k v]] [(key-f k) (value-f v)]) map-data)))))
 
 (defmethod ser-value :or
