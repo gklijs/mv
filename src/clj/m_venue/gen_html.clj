@@ -6,8 +6,10 @@
   [_ key value]
   (if
     (not= :summary key)
-    (let [html (page-templates/content-page (name key) value false)]
-      (spit (str "resources/public/nl/" (name key) ".html") html))))
+    (let [html (page-templates/content-page (name key) value false)
+          file-name (str "resources/public/nl/" (name key) ".html")]
+      (clojure.java.io/make-parents file-name)
+      (spit file-name html))))
 
 (defn -main
   [& args]
