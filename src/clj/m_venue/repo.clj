@@ -1,10 +1,12 @@
 (ns m-venue.repo
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.edn :as edn]
+            [clojure.java.io :as io]
+            [clojure.set :as set]
+            [clojure.spec.alpha :as s]
             [clojure.tools.logging :as log]
+            [m-venue.admin-spec]
             [m-venue.env-config :refer [file-map]]
-            [spec-serialize.core :refer [de-ser-vector ser-map]]
-            [clojure.edn :as edn]
-            [clojure.java.io :as io]))
+            [spec-serialize.core :refer [de-ser-vector ser-map]]))
 
 (defn- keys->path
   [k key]
@@ -41,9 +43,9 @@
   (log/debug "file-sync called with" k watch-key r os ns)
   (let [old-keys (set (keys os))
         new-keys (set (keys ns))
-        removed (clojure.set/difference old-keys new-keys)
-        added (clojure.set/difference new-keys old-keys)
-        kept (clojure.set/intersection old-keys new-keys)]
+        removed (set/difference old-keys new-keys)
+        added (set/difference new-keys old-keys)
+        kept (set/intersection old-keys new-keys)]
     (doseq [r removed] (io/delete-file (keys->path k r)))
     (doseq [a added] (spit-map k a ns))
     (doseq [a kept] (if (not (= (get os a) (get ns a))) (spit-map k a ns)))))
@@ -79,8 +81,8 @@
   [f [spec map]]
   (let [new-map (f map)]
     (if (s/valid? spec new-map)
-    [spec new-map]
-    [spec map])))
+      [spec new-map]
+      [spec map])))
 
 (defn update-map!
   [k key f]

@@ -11,7 +11,8 @@
             [image-resizer.resize :refer :all]
             [image-resizer.util :as util]
             [m-venue.constants :refer [image-sizes relative-height-map]]
-            [m-venue.repo :as repo]))
+            [m-venue.repo :as repo]
+            [clojure.string :as string]))
 
 (defn best-matching-class
   [ratio]
@@ -68,12 +69,16 @@
         base-8-with-zero (if (= 0 (mod (count base-8) 2)) base-8 (str "0" base-8))]
     (reduce add-base-64 "" (partition 2 base-8-with-zero))))
 
+(defn img-path->rel-path
+  [img-path]
+  (string/replace img-path "resources/public" ""))
+
 (defn summary-update
   [summary]
   (let [update-counter (update summary :m-venue.spec/latest-img inc)
         new-img-latest (:m-venue.spec/latest-img update-counter)
         new-image-summary {:m-venue.spec/img-uploaded-timestamp (.toEpochMilli (Instant/now))
-                           :m-venue.spec/base-path (str "/img/" (int->path new-img-latest) "/")}]
+                           :m-venue.spec/base-path (str (img-path->rel-path (:m-venue.spec/img-path summary)) (int->path new-img-latest) "/")}]
     (update update-counter :m-venue.spec/img-summaries  assoc (keyword (str new-img-latest)) new-image-summary)))
 
 (defn process
@@ -105,7 +110,7 @@
                          {:m-venue.spec/x-size         x-size
                           :m-venue.spec/y-size         y-size
                           :m-venue.spec/img-css-class  css-class
-                          :m-venue.spec/base-path      (str "/img/" (int->path new-img-latest) "/")
+                          :m-venue.spec/base-path      (str (img-path->rel-path (:m-venue.spec/img-path img-summary)) (int->path new-img-latest) "/")
                           :m-venue.spec/base-64        (to-base-64-encoding small-square)
                           :m-venue.spec/base-64-square (to-base-64-encoding (resize-to-width buffered-image 36))})
         [corrected-image corr-x] (get-corrected-image x-size y-size buffered-image css-class)]
