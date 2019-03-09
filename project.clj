@@ -79,6 +79,14 @@
                         :uberjar-name   "m-venue-default.jar"
                         :source-paths   ["env/prod/clj"]
                         :resource-paths ["env/prod/resources"]}
-             :gen-html {:main m-venue.gen-html
-                        :source-paths ["env/prod/clj"]}
+             :gen-html {:cljsbuild    {:builds {:app
+                                                {:source-paths ["src/cljc" "src/cljs" "env/prod/cljs"]
+                                                 :compiler
+                                                               {:main          "m-venue.app"
+                                                                :output-to     "resources/public/js/app.js"
+                                                                :optimizations :advanced
+                                                                :pretty-print  false}}}}
+                        :main         m-venue.gen-html
+                        :source-paths ["env/prod/clj"]
+                        :prep-tasks   ["compile" ["cljsbuild" "once" "app"]]}
              })
