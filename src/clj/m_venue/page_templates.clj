@@ -52,8 +52,6 @@
   [id [content-key content-map] editable]
   (let [menu (second (repo/get-map :n "main-nl"))
         path (get-path id menu)
-        _ (log/debug "get path called with: " id " and " menu)
-        _ (log/debug "path is: " path)
         side-menu-nl (side-menu? path menu)]
     (page
       (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])

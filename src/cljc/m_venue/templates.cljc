@@ -232,7 +232,7 @@
   [:section#main.section
    [:div.container
     (cond
-      (= path "home") nil
+      (or (= path "home") (= path "index")) nil
       (string? path) (breadcrumbs (list path))
       (list? path) (breadcrumbs path))
     (if reverse
@@ -259,7 +259,6 @@
 
 (defn height-splitter
   [result value]
-  (print value)
   (let [rel-height (get relative-height-map (::spec/img-css-class value))
         new-first [(+ rel-height (ffirst result)) (conj (second (first result)) value)]]
     (sort first-comp (conj (rest result) new-first))))

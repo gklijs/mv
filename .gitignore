@@ -71,4 +71,8 @@ pom.xml.asc
 .cpcache/
 
 resources/public/js/*
+resources/public/_redirects
+resources/public/nl/
+resources/public/en/
+resources/public/de/
 

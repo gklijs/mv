@@ -1,5 +1,0 @@
-# proxy to html files
-/:subject /nl/:subject.html 200
-
-# show mispoes when not a static resource
-/* /nl/mispoes.html 404
