@@ -1,1 +1,3 @@
-[:m-venue.spec/gen-doc [[[[[["Alles over katten"] []] [["Een mogelijk erg lange text over katten."] []] :1] [[["Door Martha"] []] nil nil]] [[[[["Alles over het voer"] []] [["Een mogelijk erg lange text over het voeren van katten."] []] :4] [nil nil "http://www.nu.nl"]] [[[["Alles over speeltjes"] []] [["Een mogelijk erg lange text over speeltjes voor katten."] []] :3] [nil 1 nil]]]] []]]
+[:m-venue.spec/gen-doc [[
+                         [[{:nl [["Sjors" "<p>Een mogelijk erg lange introductie tot Martha's Venue en mogelijke links naar nieuws en nestjes enzo. (aangepast opnieuw)</p>"] [nil]]} :1][1 nil]]
+                         [[[{:nl [["Dit is Ixion" "Hij heeft het bij ons erg naar zijn zin"] ["en een ondertitel"]]} :5 ][2 nil]]] []]]]
