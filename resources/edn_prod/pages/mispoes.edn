@@ -1,1 +1,3 @@
-[:m-venue.spec/gen-doc [[[[[["Mispoes"] []] [["<p><br data-cke-filler=\"true\"></p>"] []] :0] [[["Helaas de pagina is niet gevonden."] []] 4 nil]] []] []]]
+[:m-venue.spec/gen-doc [[
+                         [[{:nl [["Dit is een betere tekst" "<p>Een mogelijk erg lange introductie tot Martha's Venue en mogelijke links naar nieuws en nestjes enzo. (aangepast opnieuw)</p>"] [nil]]} :1][nil nil]]
+                         [[[{:nl [["Dit is Ixion" "Hij heeft het bij ons erg naar zijn zin"] ["en een ondertitel"]]} :2] [1 nil]]] []]]]

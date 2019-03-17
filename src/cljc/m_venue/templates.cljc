@@ -1,5 +1,6 @@
 (ns m-venue.templates
-  (:require [m-venue.constants :refer [image-sizes style-map relative-height-map]]
+  (:require [m-venue.constants :refer [image-sizes style-map relative-height-map flags-map]]
+            [m-venue.gen-util :as gen-util]
             [m-venue.repo :as repo]
             [m-venue.spec :as spec]))
 
@@ -32,7 +33,7 @@
 (defn small-square-img
   [[id img-summary]]
   (let [path (str (::spec/base-path img-summary) "64.jpg")]
-    [:img {:id (str "img-select-" (name id)) :src path :data-id (str "i-" (name id)) :data-bla (str img-summary)}]))
+    [:img {:id (str "img-select-" (name id)) :src path :data-id (str "i-" (name id))}]))
 
 (defn all-images
   [all-images]
@@ -40,14 +41,16 @@
 
 (defn responsive-image
   ([img-reference] (responsive-image img-reference nil))
-  ([img-reference extra-class]
-   (let [ec (if (keyword? extra-class) (str " " (name extra-class)))]
+  ([img-reference context] (responsive-image img-reference context nil))
+  ([img-reference context extra-class]
+   (let [ec (if (keyword? extra-class) (str " " (name extra-class)))
+         image-meta (gen-util/get-by-language (::spec/img-meta-infos img-reference) context)]
      [:figure {:class (str "image " (::spec/img-css-class img-reference) ec)}
       [:img {:srcset (img-srcset img-reference)
              :sizes  (img-sizes img-reference)
              :src    (str "data:image/jpeg;base64," (::spec/base-64 img-reference))
-             :title  (get-in img-reference [::spec/title :m-venue.spec/nl-label])
-             :alt    (get-in img-reference [::spec/alt :m-venue.spec/nl-label])}]])))
+             :title  (::spec/title image-meta)
+             :alt    (::spec/alt image-meta)}]])))
 
 (defn navbar-item
   [nav-item path parent-path]
@@ -73,32 +76,39 @@
      (map #(navbar-item % path nil) navbar-items)]))
 
 (defn nav-bar
-  [path side-menu]
-  [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
-   [:div.navbar-brand
-    (if side-menu
-      [:button#burger-side-content.button.navbar-burger.is-hidden-tablet
+  [path side-menu context other-languages]
+  (let [id (if (string? path) path (last path))]
+    [:nav#nav-bar.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
+     [:div.navbar-brand
+      (if side-menu
+        [:button#burger-side-content.button.navbar-burger.is-hidden-tablet
+         [:span]
+         [:span]
+         [:span]])
+      [:a.navbar-item.is-tab
+       {:href "/" :class (if (or (= "home" path) (= "index" path)) "is-active" "")}
+       [:span.is-large "Martha's Venue"]]
+      [:a.navbar-item.is-hidden-desktop
+       {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
+       [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
+      (for [language other-languages]
+        [:a.navbar-item.is-hidden-desktop
+         {:href (str "/" (name language) "/" id)} (language flags-map)])
+      [:button#burger-menu.button.navbar-burger
        [:span]
        [:span]
-       [:span]])
-    [:a.navbar-item.is-tab
-     {:href "/" :class (if (= "home" path) "is-active" "")}
-     [:span.is-large "Martha's Venue"]]
-    [:a.navbar-item.is-hidden-desktop
-     {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-     [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
-    [:button#burger-menu.button.navbar-burger
-     [:span]
-     [:span]
-     [:span]]]
-   [:div#main-menu.navbar-menu
-    (flex-main-menu path (second (repo/get-map :n "main-nl")))
-    [:div.navbar-end
-     [:a.navbar-item.is-hidden-touch
-      {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
-      [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]]]
-   (if side-menu
-     [:div#side-content.is-hidden side-menu])])
+       [:span]]]
+     [:div#main-menu.navbar-menu
+      (flex-main-menu path (second (repo/get-map :n (str "main-" (name (::spec/language context))))))
+      [:div.navbar-end
+       [:a.navbar-item.is-hidden-touch
+        {:target "_blank", :href "https://www.facebook.com/Marthasvenue"}
+        [:span.icon {:style "color: #4267b2;"} [:i.mdi.mdi-24px.mdi-facebook]]]
+       (for [language other-languages]
+         [:a.navbar-item.is-hidden-touch
+          {:href (str "/" (name language) "/" id)} (language flags-map)])]]
+     (if side-menu
+       [:div#side-content.is-hidden side-menu])]))
 
 (defn path-finder
   [result menu]
@@ -170,71 +180,76 @@
 
 (defn tile
   "renders a tile"
-  ([t id] (tile t id nil))
-  ([t id url]
-   (let [type-class (str "notification tile is-child " (get style-map (get t :m-venue.spec/style)))
+  ([t id context] (tile t id context nil))
+  ([t id context url]
+   (let [type-class (str "notification tile is-child " ((::spec/style t) style-map))
          href (or url (::spec/href t))
          target (if url "_self" "_blank")
-         id (str "tile-" id)]
+         id (str "tile-" id)
+         content (gen-util/get-by-language (::spec/texts t) context)]
      (if href
        [:a {:class type-class :href href :id id :target target}
-        [:p.title (::spec/nl-label (::spec/title t))]
-        (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
+        [:p.title (::spec/title content)]
+        (if-let [sub-title (::spec/sub-title content)]
           [:p.subtitle sub-title])
         (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
-          (responsive-image (second img-reference-data)))
-        [:p (get-in t [::spec/text ::spec/nl-text])]]
+          (responsive-image (second img-reference-data) context))
+        [:p (::spec/text content)]]
        [:div {:class type-class :id id}
-        [:p.title (::spec/nl-label (::spec/title t))]
-        (if-let [sub-title (::spec/nl-label (::spec/sub-title t))]
+        [:p.title (::spec/title content)]
+        (if-let [sub-title (::spec/sub-title content)]
           [:p.subtitle sub-title])
         (if-let [img-reference-data (repo/get-map :i (::spec/img t))]
-          (responsive-image (second img-reference-data)))
-        [:p (get-in t [::spec/text :m-venue.spec/nl-text])]]))))
+          (responsive-image (second img-reference-data) context))
+        [:p (::spec/text content)]]))))
 
 (defn s-content
-  ([] (s-content nil))
-  ([path] (s-content path nil))
-  ([path first-item]
-   (let [side-content (second (repo/get-map :n "side-nl"))
+  ([context] (s-content context nil))
+  ([context path] (s-content context path nil))
+  ([context path first-item]
+   (let [language (name (::spec/language context))
+         side-content (second (repo/get-map :n (str "side-" language)))
          last (if (list? path) (last path))
          refs (remove #(= % last) (::spec/ref-list side-content))]
      [:div.tile.is-vertical.is-parent
       (if first-item [:div#side-content.tile.is-child [:div.is-hidden-mobile first-item]])
       (for [ref refs]
         (if-let [content (repo/get-map :p ref)]
-          (tile (::spec/tile (second content)) ref (str "/" ref))))])))
+          (tile (::spec/tile (second content)) ref context (str "/" language "/" ref))))])))
 
 (defn breadcrumb
-  [p-reference last]
-  (let [title (-> (repo/get-map :p p-reference)
-                  second
-                  ::spec/tile
-                  ::spec/title
-                  ::spec/nl-label)]
-    (if last
-      [:li.is-active [:a {:href       "#"
-                          :aria-label "page"} title]]
-      [:li [:a {:href (str "/" p-reference)} title]])))
+  [p-reference context last]
+  (let [language (name (::spec/language context))
+        t (second (repo/get-map :p p-reference))
+        content (gen-util/get-by-language (get-in t [::spec/tile ::spec/texts]) context)
+        title (if content (::spec/title content) p-reference)]
+    (if content
+      (if last
+        [:li.is-active [:a {:href       "#"
+                            :aria-label "page"} title]]
+        [:li [:a {:href (str "/" language "/" p-reference)} title]])
+      (if last
+        [:li.is-active [:p title]]
+        [:li [:p title]]))))
 
 (defn breadcrumbs
-  [elements]
+  [elements context]
   [:nav.breadcrumb.is-hidden-touch {:aria-label "breadcrumbs"}
    [:ul
     [:li [:a {:href "/"} "Home"]]
     (for [el (drop-last elements)]
-      (breadcrumb el false))
-    (breadcrumb (last elements) true)]])
+      (breadcrumb el context false))
+    (breadcrumb (last elements) context true)]])
 
 (defn main
   "renders content based on a general document"
-  [path main side reverse]
+  [path context main side reverse]
   [:section#main.section
    [:div.container
     (cond
-      (or (= path "home") (= path "index")) nil
-      (string? path) (breadcrumbs (list path))
-      (list? path) (breadcrumbs path))
+      (or (= path "login") (= path "home") (= path "index")) nil
+      (string? path) (breadcrumbs (list path) context)
+      (list? path) (breadcrumbs path context))
     (if reverse
       [:div.tile.is-ancestor.is-reversed
        main side]
@@ -243,15 +258,15 @@
 
 (defn gd-content
   "renders content based on a general document"
-  [id gd-map]
+  [id gd-map context]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile gd-map) (str "gd-" 1))]
-   (let [all-tiles (::spec/tiles gd-map)
+    (tile (::spec/tile gd-map) (str "gd-" 1) context)]
+   (let [all-tiles (filter #(get-in % [::spec/texts (::spec/language context)]) (::spec/tiles gd-map))
          split-tiles (split-at (/ (count all-tiles) 2) all-tiles)]
      [:div.tile.is-horizontal
-      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1))) (first split-tiles))]
-      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1))) (second split-tiles))]])])
+      [:div#child-tiles-left.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 %1)) context) (first split-tiles))]
+      [:div#child-tiles-right.tile.is-vertical.is-parent (map-indexed #(tile %2 (str "gd-" (+ 2 (count (first split-tiles)) %1)) context) (second split-tiles))]])])
 
 (defn first-comp
   [i1 i2]
@@ -265,21 +280,23 @@
 
 (defn img-content
   "renders content based on a image document"
-  [id image-map]
+  [id image-map context]
   [:div#main-content.tile.is-9.is-vertical {:data-document id}
    [:div.tile.is-parent
-    (tile (::spec/tile image-map) "image-tile")]
+    (tile (::spec/tile image-map) "image-tile" context)]
    (let [all-images (mapv #(second (repo/get-map :i %)) (::spec/image-list image-map))
          split-images (reverse (reduce height-splitter [[0 []] [0 []] [0 []]] all-images))]
      [:div.tile.is-horizontal.is-flex
       (for [[_ image-list] split-images] [:div.tile.is-4.is-vertical.is-parent
-                                          (for [image-n image-list] [:div.tile.is-child {:id         (str "img-tile-" (::spec/base-path image-n))
-                                                                                         :data-src   (str (::spec/base-path image-n) "o.jpg")
-                                                                                         :data-title (get-in image-n [::spec/title :m-venue.spec/nl-label])
-                                                                                         :data-alt   (get-in image-n [::spec/alt :m-venue.spec/nl-label])
-                                                                                         :data-x     (get image-n :m-venue.spec/x-size)
-                                                                                         :data-y     (get image-n ::spec/y-size)}
-                                                                     (responsive-image image-n :enlargeable-image)])])])])
+                                          (for [image-n image-list]
+                                            (let [image-meta (gen-util/get-by-language (::spec/img-meta-infos image-n) context)]
+                                              [:div.tile.is-child {:id         (str "img-tile-" (::spec/base-path image-n))
+                                                                   :data-src   (str (::spec/base-path image-n) "o.jpg")
+                                                                   :data-title (::spec/title image-meta)
+                                                                   :data-alt   (::spec/alt image-meta)
+                                                                   :data-x     (::spec/x-size image-n)
+                                                                   :data-y     (::spec/y-size image-n)}
+                                               (responsive-image image-n context :enlargeable-image)]))])])])
 
 (defn image-modal-style
   [src alt title scale]

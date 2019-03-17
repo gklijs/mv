@@ -112,7 +112,8 @@
                           :m-venue.spec/img-css-class  css-class
                           :m-venue.spec/base-path      (str (img-path->rel-path (:m-venue.spec/img-path img-summary)) (int->path new-img-latest) "/")
                           :m-venue.spec/base-64        (to-base-64-encoding small-square)
-                          :m-venue.spec/base-64-square (to-base-64-encoding (resize-to-width buffered-image 36))})
+                          :m-venue.spec/base-64-square (to-base-64-encoding (resize-to-width buffered-image 36))
+                          :m-venue.spec/img-meta-infos {}})
         [corrected-image corr-x] (get-corrected-image x-size y-size buffered-image css-class)]
     (if
       (> corr-x (:s image-sizes))

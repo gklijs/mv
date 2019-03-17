@@ -1,5 +1,5 @@
 (ns m-venue.editor-templates
-  (:require [m-venue.constants :refer [style-map]]))
+  (:require [m-venue.constants :refer [style-map flags-map]]))
 
 (defn button
   ([id style icon] (button id style icon false))
@@ -21,18 +21,35 @@
    [:p.control [:button#clear-storage-button.button.is-danger
                 [:span.icon [:i.mdi.mdi-24px.mdi-delete]]]]])
 
+(defn image-meta-data
+  [img-meta-info]
+  (let [used-languages (keys img-meta-info)
+        non-used-languages (remove (set used-languages) (keys flags-map))]
+    [:div#image-meta-data
+     (for [nu non-used-languages]
+       [:button.button {:id (str "switch-image-meta-" (name nu))} (nu flags-map)])
+     (for [ul used-languages]
+       [:div.field.is-grouped
+        [:div.field [:button.button {:id (str "switch-image-meta-" (name ul))} [:span.icon [:i.mdi.mdi-24px.mdi-delete]]]]
+        [:div.field
+         [:div.control.has-icons-left [:input.input {:id          (str "title-" (name ul))
+                                                     :type        "text"
+                                                     :placeholder (get-in img-meta-info [ul :m-venue.spec/title])}]
+          [:span.icon.is-small.is-left (ul flags-map)]]]
+        [:div.field
+         [:div.control.has-icons-left [:input.input {:id          (str "alt-" (name ul))
+                                                     :type        "text"
+                                                     :placeholder (get-in img-meta-info [ul :m-venue.spec/alt])}]
+          [:span.icon.is-small.is-left (ul flags-map)]]]])
+     ]))
+
 (defn image-selection-columns
   []
   [:div#image-selection-columns.columns {:style "display: none;"}
    [:div.column.is-one-quarter
     [:a#selected-image]]
    [:div#image-edit.column.is-half {:style "display: none;"}
-    [:div.field
-     [:label.label "Title"]
-     [:div.control.has-icons-left [:input#title-nl.input {:type "text"}] [:span.icon.is-small.is-left "🇳🇱"]]]
-    [:div.field
-     [:label.label "Alt"]
-     [:div.control.has-icons-left [:input#alt-nl.input {:type "text"}] [:span.icon.is-small.is-left "🇳🇱"]]]
+    (image-meta-data nil)
     [:div.field
      [:div.control [:button#image-save-button.button.is-primary "Save"]]]]
    [:div.column [:div#all-images]]])

@@ -1,2 +1,4 @@
 [:m-venue.spec/all-menus [[{:main-nl :nl
-                            :side-nl :nl}] []]]
+                            :side-nl :nl
+                            :main-en :en
+                            :side-en :en}] []]]

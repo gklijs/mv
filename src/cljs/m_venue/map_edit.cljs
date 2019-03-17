@@ -1,5 +1,6 @@
 (ns m-venue.map-edit
   (:require [cljs.spec.alpha :as s]
+            [m-venue.constants :refer [flags-map]]
             [m-venue.map-edit-primitives :refer [get-primitive]]
             [m-venue.util :as util]))
 
@@ -25,6 +26,11 @@
                        (coll? (second spec-form))
                        (> (count (second spec-form)) 1)
                        (= (second (second spec-form)) `vector?)) :vector
+                  (and (= (first spec-form) `s/and)
+                       (coll? (second spec-form))
+                       (> (count (second spec-form)) 1)
+                       (= (second (second spec-form)) `map?)
+                       (= :m-venue.spec/language (second (nth spec-form 2)))) :language-map
                   :else :keyword))
               :or)))
 
@@ -86,20 +92,24 @@
      :get-value-f  #(reduce merge-reducer {} parts)
      }))
 
+(defn remove-part
+  [id range-id]
+  (do
+    (util/remove-node (str id "-" range-id))))
+
+(defn get-child-id-list
+  [parent-id]
+  (util/for-all-children parent-id "div" #(int (util/get-data % "id"))))
+
 (defn vector-map-reducer
   [map range-id part]
   (assoc map range-id
              {:validation-f (:validation-f part)
               :get-value-f  (:get-value-f part)}))
 
-(defn remove-vector-part
-  [id range-id]
-  (do
-    (util/remove-node (str id "-" range-id))))
-
 (defn get-vector-html
   [id range-id part-html]
-  [:div.notification {:id (str id "-" range-id) :data-id range-id}
+  [:div.notification {:id (str id "-" range-id)}
    [:div [:button.delete {:id (str id "-button-remove-" range-id)}]]
    [:div.field.is-grouped.is-grouped-multiline.is-pulled-right
     [:p.control [:button.button.is-primary {:id (str id "-button-up-" range-id)}
@@ -116,13 +126,9 @@
     (swap! map-edit-data #(assoc-in % [id range-id] {:validation-f (:validation-f part)
                                                      :get-value-f  (:get-value-f part)}))
     (if-let [part-function (:init-f part)] (part-function))
-    (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-vector-part id range-id)))
+    (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-part id range-id)))
     (util/on-click-once (str id "-button-up-" range-id) (fn [] (util/move-up (str id "-" range-id))))
     (util/on-click-once (str id "-button-down-" range-id) (fn [] (util/move-down (str id "-" range-id))))))
-
-(defn get-vector-id-list
-  [parent-id]
-  (util/for-all-children parent-id "div" #(int (util/get-data % "id"))))
 
 (defmethod get-edit-map :vector
   [level spec data]
@@ -143,15 +149,64 @@
      :init-f       #(do
                       (doseq [part parts] (if-let [part-function (:init-f part)] (part-function)))
                       (doseq [range-id (range (count parts))]
-                        (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-vector-part id range-id)))
+                        (util/on-click-once (str id "-button-remove-" range-id) (fn [] (remove-part id range-id)))
                         (util/on-click-once (str id "-button-up-" range-id) (fn [] (util/move-up (str id "-" range-id))))
                         (util/on-click-once (str id "-button-down-" range-id) (fn [] (util/move-down (str id "-" range-id)))))
                       (util/on-click (str id "-plus-above") (fn [] (add-to-vector new-level id spec-type true)))
                       (util/on-click (str id "-plus-under") (fn [] (add-to-vector new-level id spec-type false))))
      :validation-f #(let [f-map (get @map-edit-data id)]
-                      (doseq [child-id (get-vector-id-list id)] ((:validation-f (get f-map child-id)))))
+                      (doseq [child-id (get-child-id-list id)] ((:validation-f (get f-map child-id)))))
      :get-value-f  #(let [f-map (get @map-edit-data id)]
-                      (mapv (fn [child-id] ((:get-value-f (get f-map child-id)))) (get-vector-id-list id)))
+                      (mapv (fn [child-id] ((:get-value-f (get f-map child-id)))) (get-child-id-list id)))
+     }))
+
+(defn get-language-map-html
+  [id language part-html]
+  [:div.notification {:id (str id "-" (name language))}
+   [:div [:button.delete {:id (str id "-button-hide-" (name language))}]]
+   [:p (language flags-map)]
+   part-html])
+
+(defn language-map-reducer
+  [map [language part]]
+  (assoc map language
+             {:validation-f (:validation-f part)
+              :get-value-f  (:get-value-f part)}))
+
+(defmethod get-edit-map :language-map
+  [level spec data]
+  (let [new-level (+ 1 level)
+        spec-form (s/form spec)
+        spec-type (nth (nth spec-form 2) 2)
+        all-languages (keys flags-map)
+        language-map-data (spec data)
+        parts (map #(vector % (get-edit-map new-level spec-type {spec-type (% language-map-data)})) all-languages)
+        id (str "lg-map-" (swap! counter inc))
+        function-map (reduce language-map-reducer {} parts)
+        non-used-languages (remove (set (keys language-map-data)) all-languages)]
+    (swap! map-edit-data #(assoc % id function-map))
+    {:html         [:div
+                    [:p.control
+                     (for [language all-languages]
+                       [:button.button {:id (str id "-button-toggle-" (name language))} (language flags-map)])
+                     ]
+                    [:div {:id id}
+                     (map #(get-language-map-html id (first %) (:html (second %))) parts)]]
+     :init-f       #(do
+                      (doseq [language non-used-languages] (util/toggle-visibility (str id "-" (name language))))
+                      (doseq [[_ part] parts] (if-let [part-function (:init-f part)] (part-function)))
+                      (doseq [language all-languages]
+                        (util/on-click (str id "-button-hide-" (name language)) (fn [] (util/hide (str id "-" (name language)))))
+                        (util/on-click (str id "-button-toggle-" (name language)) (fn [] (util/toggle-visibility (str id "-" (name language)))))))
+     :validation-f #(let [f-map (get @map-edit-data id)]
+                      (doseq [language all-languages]
+                        (if
+                          (util/is-visible? (str id "-" (name language)))
+                          ((get-in f-map [language :validation-f])))))
+     :get-value-f  #(let [f-map (get @map-edit-data id)]
+                      (into {} (map (fn [language] (if
+                                                     (util/is-visible? (str id "-" (name language)))
+                                                     [language ((get-in f-map [language :get-value-f]))])) all-languages)))
      }))
 
 (defn keys-present

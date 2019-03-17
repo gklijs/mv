@@ -3,11 +3,13 @@
             [m-venue.editor-templates :refer :all]
             [m-venue.spec :as spec]
             [m-venue.templates :refer :all]
-            [m-venue.repo :as repo]
-            [clojure.tools.logging :as log]))
+            [m-venue.repo :as repo]))
+
+(def base-url "https://mv.gklijs.tech")
+
 (defn page
-  [title app-bar content editable]
-  (html5 {:class "has-navbar-fixed-top" :lang "nl"}
+  [id title app-bar content context editable]
+  (html5 {:class "has-navbar-fixed-top" :lang (name (::spec/language context))}
          [:meta {:charset "utf-8"}]
          [:meta {:content "width=device-width, initial-scale=1", :name "viewport"}]
          [:title title]
@@ -25,6 +27,9 @@
          [:link {:href "/favicon-96x96.png", :sizes "96x96", :type "image/png", :rel "icon"}]
          [:link {:href "/favicon-16x16.png", :sizes "16x16", :type "image/png", :rel "icon"}]
          [:link {:href "/manifest.json", :rel "manifest"}]
+         (if (or (= id "home") (= id "index"))
+           [:link {:href (str base-url "/" (name (::spec/language context)) "/"), :rel "canonical"}]
+           [:link {:href (str base-url "/" (name (::spec/language context)) "/" id), :rel "canonical"}])
          [:meta {:content "#ffffff", :name "msapplication-TileColor"}]
          [:meta {:content "/ms-icon-144x144.png", :name "msapplication-TileImage"}]
          [:meta {:content "#ffffff", :name "theme-color"}]
@@ -36,35 +41,42 @@
          content
          (footer)
          (if (true? editable)
-           `([:script {:src "https://cdn.ckeditor.com/ckeditor5/10.0.0/balloon/ckeditor.js"}]
+           `([:script {:src "https://cdn.ckeditor.com/ckeditor5/12.0.0/balloon/ckeditor.js"}]
               [:script {:src "/js/edit.js"}])
            [:script {:src "/js/app.js"}])
          ))
 
 (defn content
-  [id content-key content-map]
+  [id content-key content-map context]
   (cond
-    (= ::spec/gen-doc content-key) (gd-content id content-map)
-    (= ::spec/img-doc content-key) (img-content id content-map)
+    (= ::spec/gen-doc content-key) (gd-content id content-map context)
+    (= ::spec/img-doc content-key) (img-content id content-map context)
     ))
 
 (defn content-page
-  [id [content-key content-map] editable]
-  (let [menu (second (repo/get-map :n "main-nl"))
+  [id [content-key content-map] context editable]
+  (let [menu (second (repo/get-map :n (str "main-" (name (::spec/language context)))))
         path (get-path id menu)
-        side-menu-nl (side-menu? path menu)]
+        side-menu (side-menu? path menu)
+        cont (content id content-key content-map context)
+        other-languages (keys (dissoc (get-in content-map [::spec/tile ::spec/texts]) (::spec/language context)))]
     (page
-      (get-in content-map [:m-venue.spec/tile :m-venue.spec/title :m-venue.spec/nl-label])
-      (nav-bar path side-menu-nl)
-      (if (nil? side-menu-nl)
-        (main path (content id content-key content-map) (s-content path) false)
-        (main path (content id content-key content-map) (s-content path side-menu-nl) true))
+      id
+      (get-in content-map [::spec/tile :m-venue.spec/title ::spec/nl-label])
+      (nav-bar path side-menu context other-languages)
+      (if (nil? side-menu)
+        (main path context cont (s-content context path) false)
+        (main path context cont (s-content context path side-menu) true))
+      context
       editable)))
 
 (defn login-page
   [login-structure]
-  (page
-    "login"
-    (nav-bar ["login"] nil)
-    (main nil login-structure (s-content) false)
-    false))
+  (let [context {::spec/username "guest" ::spec/language :nl}]
+    (page
+      "login"
+      "login"
+      (nav-bar ["login"] nil context [])
+      (main "login" context login-structure (s-content context) false)
+      context
+      false)))

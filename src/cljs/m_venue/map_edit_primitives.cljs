@@ -26,8 +26,8 @@
           (fn [_ spec _]
             (let [spec-form (s/form spec)]
               (cond
-                (= spec-form (s/form spec/label)) :label
-                (= spec-form (s/form spec/html)) :html
+                (= ::spec/label spec) :label
+                (= ::spec/html spec) :html
                 (set? spec-form) :set
                 (= ::spec/img spec) :img
                 :else :label))))

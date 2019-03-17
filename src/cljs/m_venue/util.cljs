@@ -127,10 +127,10 @@
   (if-let [element (ensure-element id)]
     (set! (.-display (.-style element)) "")))
 
-(defn set-placeholder
-  [id value]
-  (if-let [element (ensure-element id)]
-    (set! (.-placeholder element) value)))
+(defn is-visible? [id]
+  (let [element (ensure-element id)
+        style-display (.-display (.-style element))]
+    (= style-display "")))
 
 (defn node-from-data
   [data]

@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes GET routes]]
             [compojure.route :as route]
             [m-venue.authentication :refer [auth-routes get-user is-editor]]
+            [m-venue.constants :refer [flags-map]]
             [m-venue.repo :as repo]
             [m-venue.repo-bridge]
             [m-venue.spec]
@@ -23,22 +24,23 @@
   ;; use nginx shared map store
   (nginx.clojure.session/shared-map-store "mySessionStore"))
 
-;;TODO -add language selection
 (defn main-response
-  [req page]
-  (let [content-key (if (string? page) page "home")]
-    (if-let [content (repo/get-map :p content-key)]
-      (let [uid (get-user req)
-            body (page-templates/content-page content-key content (is-editor uid))]
-        body)
-      (route/not-found (page-templates/content-page "mispoes" (repo/get-map :p "mispoes") (is-editor (get-user req)))))))
+  [req lang page]
+  (let [language (if (lang flags-map) lang (first (first flags-map)))
+        uid (get-user req)
+        context {:m-venue.spec/language language :m-venue.spec/username uid}]
+    (if-let [content (repo/get-map :p page)]
+      (page-templates/content-page page content context (is-editor uid))
+      (route/not-found (page-templates/content-page "mispoes" (repo/get-map :p "mispoes") context (is-editor (get-user req)))))))
 
 (defroutes app-routes
            ;; home page
            (GET "/" [:as req]
-             (main-response req nil))
-           (GET "/:p" [p :as req]
-             (main-response req p)))
+             (main-response req :nl "home"))
+           (GET "/:page" [page :as req]
+             (main-response req :nl page))
+           (GET "/:lang/:page" [lang page :as req]
+             (main-response req (keyword lang) page)))
 
 (def app
   (wrap-defaults (routes auth-routes web-socket-routes app-routes)

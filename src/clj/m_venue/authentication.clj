@@ -8,11 +8,13 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 (defn get-user [req]
-  (-> req :session :uid))
+  (if-let [user (-> req :session :uid)]
+    user
+    "guest"))
 
 (defn is-editor
   [uid]
-  (if (nil? uid)
+  (if (= uid "guest")
     false
     (if-let [profile (second (repo/get-map :u uid))]
       (admin-spec/is-editor profile)

@@ -29,14 +29,15 @@
 
 (defn set-content
   [id spec value]
-  (cond
-    (= spec ::spec/gen-doc) (util/set-html (templates/gd-content id value))
-    (= spec ::spec/img-doc) (util/set-html (templates/img-content id value))
-    (= spec ::spec/nav-item) (do
-                               (util/set-html (templates/flex-main-menu (util/get-path) value))
-                               (if-let [sm (templates/side-menu? (util/get-path) value)] (util/set-html sm)))
-    :else (util/log (str "could not set data " value "with id " id "because unknown spec: " spec))
-    ))
+  (let [context {::spec/username "guest" ::spec/language :nl}]
+    (cond
+      (= spec ::spec/gen-doc) (util/set-html (templates/gd-content id value context))
+      (= spec ::spec/img-doc) (util/set-html (templates/img-content id value context))
+      (= spec ::spec/nav-item) (do
+                                 (util/set-html (templates/flex-main-menu (util/get-path) value))
+                                 (if-let [sm (templates/side-menu? (util/get-path) value)] (util/set-html sm)))
+      :else (util/log (str "could not set data " value "with id " id "because unknown spec: " spec))
+      )))
 
 (defn play
   [id spec get-value-f]

@@ -1,1 +1,3 @@
-[:m-venue.spec/img-doc [[[[[["Dit is niet saar"] []] [["<p><br data-cke-filler=\"true\"></p>"] []] :3] [[["sdasdadds dsad da dd"] []] 1 nil]] [3 2]] []]]
+[:m-venue.spec/gen-doc [[
+                         [[{:nl [["Saar1" "<p>Een mogelijk erg lange introductie tot Martha's Venue en mogelijke links naar nieuws en nestjes enzo. (aangepast opnieuw)</p>"] [nil]]} :1][nil nil]]
+                         [[[{:nl [["Dit is Ixion" "Hij heeft het bij ons erg naar zijn zin"] ["en een ondertitel"]]} :4 ][1 nil]]] []]]]
