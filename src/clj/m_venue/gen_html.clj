@@ -9,7 +9,7 @@
   [_ key value]
   (if
     (not= :summary key)
-    (for [language (keys (get-in (second value) [::spec/tile ::spec/texts]))]
+    (doseq [language (keys (get-in (second value) [::spec/tile ::spec/texts]))]
       (let [page-name (if (= key :home) "index" (name key))
             context {::spec/language language ::spec/username "guest"}
             html (page-templates/content-page page-name value context false)
